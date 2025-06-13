@@ -1,0 +1,207 @@
+# =====================================
+# 資料探勘課程 .gitignore
+# =====================================
+
+# 資料集檔案 (可通過 data_download.py 重新下載)
+# =====================================
+datasets/raw/
+datasets/processed/
+data_mining_course/datasets/raw/
+data_mining_course/datasets/processed/
+*.csv
+*.json
+*.xlsx
+*.xls
+*.parquet
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# 大型資料檔案
+# =====================================
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.gz
+*.bz2
+
+# 圖片和音訊檔案 (通常是資料集的一部分)
+# =====================================
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.svg
+*.wav
+*.mp3
+*.mp4
+*.avi
+*.mov
+*.flv
+
+# Python 相關
+# =====================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 虛擬環境
+# =====================================
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+conda-env/
+.conda/
+
+# PyTorch
+# =====================================
+*.pth
+*.pt
+checkpoints/
+runs/
+lightning_logs/
+
+# TensorFlow
+# =====================================
+*.pb
+*.h5
+*.hdf5
+saved_model/
+logs/
+tensorboard_logs/
+
+# Jupyter Notebook
+# =====================================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+*.nbconvert.py
+*.ipynb_backup
+
+# IPython
+# =====================================
+profile_default/
+ipython_config.py
+
+# 環境變數和配置檔案
+# =====================================
+.env
+.env.local
+.env.*.local
+config.ini
+secrets.json
+credentials.json
+
+# Kaggle API 憑證 (敏感資訊)
+# =====================================
+kaggle.json
+.kaggle/
+
+# 作業系統產生的檔案
+# =====================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE 和編輯器檔案
+# =====================================
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/.ropeproject
+.idea/
+*.swp
+*.swo
+*~
+
+# 快取和暫存檔案
+# =====================================
+.cache/
+.pytest_cache/
+.coverage
+.tox/
+.nox/
+htmlcov/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# 模型檔案和權重 (通常很大)
+# =====================================
+*.model
+*.weights
+*.bin
+models/
+weights/
+checkpoints/
+
+# 實驗和結果檔案
+# =====================================
+experiments/
+results/
+outputs/
+plots/
+figures/
+*.log
+*.out
+
+# 暫存和備份檔案
+# =====================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+.#*
+#*#
+
+# 壓縮檔案
+# =====================================
+*.tar
+*.zip
+*.gz
+
+# 剪貼簿記錄 (個人記錄檔案)
+# =====================================
+*.Clipboard_Record.md
+.Clipboard_Record.md
+
+# 範例：如果要保留特定的小型範例資料集，可以使用 !
+# =====================================
+# !datasets/raw/example/small_sample.csv
+
+# 註解：
+# - 原始資料集和處理後資料集由於檔案過大且可重新下載，不納入版本控制
+# - 使用 data_download.py 可以重新下載所有 Kaggle 資料集
+# - 個人的 Kaggle API 憑證檔案包含敏感資訊，絕對不能上傳
+# - 模型檔案和實驗結果通常檔案很大，建議使用 Git LFS 或其他方式管理 

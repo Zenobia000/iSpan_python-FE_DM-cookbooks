@@ -1,0 +1,6 @@
+name: data-mining
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pandas=2.0.0
