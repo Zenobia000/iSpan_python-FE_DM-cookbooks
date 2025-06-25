@@ -12,6 +12,61 @@
  
 --- 
  
+## Windows CMD 操作指引
+
+* **啟動命令提示字元**：按下 `Win` + `R`，輸入 `cmd`，然後按 `Enter`。
+* **切換目錄**：使用 `cd`，例如 `cd C:\path\to\project`。
+* **列出檔案與資料夾**：使用 `dir`。
+* **建立資料夾**：使用 `mkdir 資料夾名稱`。
+* **刪除檔案**：使用 `del 檔案名稱`。
+* **刪除資料夾**：使用 `rmdir /S /Q 資料夾名稱`（包含子目錄且不提示）。
+* **複製檔案**：使用 `copy 來源 目的地`。
+* **移動檔案／資料夾**：使用 `move 來源 目的地`。
+* **執行 Python 腳本**：使用 `python script.py` 或 `py script.py`。
+* **串接多重指令**：
+
+  * 使用 `&&` 僅當前一指令成功時才執行下一指令，例如：
+
+    ```bat
+    mkdir test && cd test
+    ```
+  * 使用 `||` 僅當前一指令失敗時執行下一指令，例如：
+
+    ```bat
+    type missing.txt || echo File not found
+    ```
+  * 使用 `&` 不論前一指令成功或失敗都執行下一指令，例如：
+
+    ```bat
+    echo step1 & echo step2
+    ```
+
+---
+
+## Windows PowerShell 操作指引
+
+PowerShell 為 Windows 上進階的殼層（shell）與指令腳本環境，與 Linux shell（bash/zsh）在語法與物件模型上有以下主要差異：
+
+* **物件導向管線**：PowerShell 的管線傳遞物件，而非純文字。例如：
+
+  ```powershell
+  Get-Process | Where-Object { $_.CPU -gt 100 }
+  ```
+* **指令（cmdlet）命名慣例**：多為 `動詞-名詞` 格式，如 `Get-ChildItem`、`Set-Location`，對應 Linux 的 `ls`、`cd`。
+* **變數宣告**：變數前需加 `$`，且不需顯式宣告類型，例如：
+
+  ```powershell
+  $files = Get-ChildItem -Path . -Filter *.txt
+  ```
+* **切換目錄**：使用 `Set-Location`（別名 `cd`）、`Push-Location` / `Pop-Location` 管理位置堆疊。
+* **列出檔案**：使用 `Get-ChildItem`（別名 `ls`, `dir`）、可搭配 `-Recurse` 深度搜尋。
+* **建立資料夾**：使用 `New-Item -ItemType Directory -Name 資料夾名稱`。
+* **刪除檔案／資料夾**：使用 `Remove-Item 路徑`；加 `-Recurse` 刪除子目錄，加 `-Force` 忽略提示。
+* **複製檔案**：使用 `Copy-Item來源 -Destination 目的地`。
+* **移動檔案／資料夾**：使用 `Move-Item 來源 -Destination 目的地`。
+* **執行 Python 腳本**：與 CMD 相同，使用 `python script.py`，但可在同一行中搭配 PowerShell 參數。
+* **執行腳本設定**：預設禁止執行腳本，可透過 `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` 設定執行策略。
+
 ## 一、基本指示 (Instructions) 
  
 - **可重用資訊記錄**   
