@@ -102,16 +102,12 @@ def get_datasets_info():
         {
             "module": "模組六",
             "topic": "特徵創造",
-            "name": "NYC Taxi Trip Duration",
-            "method": "direct",
-            "direct_url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet",
+            "name": "NYC Yellow Taxi Trip Data",
+            "type": "dataset",
+            "method": "kaggle_cli",
+            "dataset_id": "elemento/nyc-yellow-taxi-trip-data",
             "folder": "nyc_taxi",
-            "description": "NYC Yellow Taxi Trip Records (2024年1月) - 官方 TLC 資料源",
-            "backup_urls": [
-                "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-12.parquet",
-                "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-11.parquet",
-                "https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_2024-01.parquet"
-            ]
+            "description": "NYC Yellow Taxi Trip Data - Kaggle 資料集"
         },
         {
             "module": "模組七",
@@ -145,7 +141,7 @@ def get_datasets_info():
             "topic": "多模態特徵工程",
             "name": "Dogs vs Cats",
             "type": "competition",
-            "method": "kaggle_cli",
+            "method": "kagglehub_only",
             "competition_id": "dogs-vs-cats",
             "folder": "dogs_vs_cats"
         },
@@ -242,24 +238,112 @@ def download_with_kaggle_cli(dataset, target_folder):
             print(f"📁 目錄中的檔案: {files}")
             return True
         else:
-            error_msg = stderr_decoded.strip() if stderr_decoded else "未知錯誤"
-            if "403 Forbidden" in error_msg:
+            # 檢查 stderr 和 stdout 中的錯誤信息
+            error_msg = stderr_decoded.strip() if stderr_decoded else ""
+            output_msg = stdout_decoded.strip() if stdout_decoded else ""
+            combined_msg = f"{error_msg} {output_msg}".strip()
+            
+            if not combined_msg:
+                combined_msg = "未知錯誤"
+            
+            if "401" in combined_msg or "Unauthorized" in combined_msg:
+                print(f"❌ CLI 下載失敗 (401 Unauthorized): 請先到 Kaggle 網站接受該競賽/資料集的使用條款。")
+                if dataset.get('type') == "competition":
+                    print(f"🔗 競賽條款連結: https://www.kaggle.com/c/{dataset.get('competition_id', 'unknown')}")
+                else:
+                    print(f"🔗 資料集連結: https://www.kaggle.com/datasets/{dataset.get('dataset_id', 'unknown')}")
+            elif "403" in combined_msg or "Forbidden" in combined_msg:
                 print(f"❌ CLI 下載失敗 (403 Forbidden): 請先到 Kaggle 網站接受該競賽/資料集的使用條款。")
-            elif "404 Not Found" in error_msg:
+            elif "404" in combined_msg or "Not Found" in combined_msg:
                 print(f"❌ CLI 下載失敗 (404 Not Found): 找不到該資料集，請檢查 ID 是否正確。")
             else:
-                 print(f"❌ 原生 CLI 下載失敗: {error_msg}")
+                print(f"❌ 原生 CLI 下載失敗: {combined_msg}")
             return False
             
     except Exception as e:
         print(f"❌ 原生 CLI 下載發生未知錯誤: {str(e)}")
         return False
 
+# KaggleHub 下載方法（改進版 - 基於 simple_download.py 的驗證方法）
+def download_with_kagglehub(dataset, target_folder):
+    """使用 KaggleHub 下載資料集到指定資料夾"""
+    if not KAGGLEHUB_AVAILABLE:
+        print("❌ KaggleHub 未安裝")
+        return False
+    
+    try:
+        from pathlib import Path
+        
+        is_competition = dataset.get("type") == "competition"
+        
+        if is_competition:
+            # 競賽下載
+            entity_id = dataset["competition_id"]
+            print(f"   📋 使用 KaggleHub 下載競賽: {entity_id}")
+            cache_path = kagglehub.competition_download(entity_id)
+        else:
+            # 資料集下載
+            entity_id = dataset["dataset_id"]
+            print(f"   📋 使用 KaggleHub 下載資料集: {entity_id}")
+            cache_path = kagglehub.dataset_download(entity_id)
+        
+        print(f"✅ KaggleHub 下載成功，緩存路徑: {cache_path}")
+        
+        # 創建目標資料夾
+        target_path = Path(target_folder)
+        target_path.mkdir(parents=True, exist_ok=True)
+        
+        # 複製檔案到目標資料夾
+        print(f"   📁 複製檔案到目標目錄: {target_folder}")
+        
+        # 如果目標資料夾已存在且不為空，先清空
+        if target_path.exists() and any(target_path.iterdir()):
+            import shutil
+            shutil.rmtree(target_path)
+            target_path.mkdir(parents=True, exist_ok=True)
+        
+        # 複製所有檔案
+        cache_path_obj = Path(cache_path)
+        if cache_path_obj.is_file():
+            # 如果是單個檔案
+            import shutil
+            shutil.copy2(cache_path, target_path / cache_path_obj.name)
+        else:
+            # 如果是資料夾，複製所有內容
+            import shutil
+            for item in cache_path_obj.iterdir():
+                if item.is_file():
+                    shutil.copy2(item, target_path / item.name)
+                elif item.is_dir():
+                    shutil.copytree(item, target_path / item.name)
+        
+        print(f"   ✅ 複製完成")
+        
+        # 顯示下載的檔案
+        files = list(target_path.glob('*'))
+        print(f"   📄 資料夾中的檔案: {[f.name for f in files]}")
+        
+        return True
+        
+    except Exception as e:
+        error_msg = str(e)
+        if "401" in error_msg or "permission" in error_msg.lower():
+            print(f"❌ KaggleHub 下載失敗 (401 Unauthorized): 請先到 Kaggle 網站接受該競賽/資料集的使用條款。")
+            if is_competition:
+                print(f"🔗 競賽條款連結: https://www.kaggle.com/c/{entity_id}")
+            else:
+                print(f"🔗 資料集連結: https://www.kaggle.com/datasets/{entity_id}")
+        else:
+            print(f"❌ KaggleHub 下載失敗: {error_msg}")
+        return False
+
 # 全域導入 kagglehub，避免重複導入
 try:
     import kagglehub
+    KAGGLEHUB_AVAILABLE = True
 except ImportError:
     kagglehub = None
+    KAGGLEHUB_AVAILABLE = False
 
 # 下載資料集
 def download_dataset(dataset, base_dir):
@@ -276,7 +360,11 @@ def download_dataset(dataset, base_dir):
     print(f"📦 {dataset['name']}")
     print(f"📂 模組: {dataset.get('module', 'N/A')} - {dataset.get('topic', 'N/A')}")
     
-    method_map = {'kaggle_cli': '💻 Kaggle CLI', 'direct': '🌐 直接下載'}
+    method_map = {
+        'kaggle_cli': '💻 Kaggle CLI', 
+        'direct': '🌐 直接下載',
+        'kagglehub_only': '🤗 KaggleHub'
+    }
     print(f"🔧 使用方法: {method_map.get(method, '未知')}")
     print(f"📁 目標資料夾: {target_folder}")
     
@@ -342,7 +430,23 @@ def download_dataset(dataset, base_dir):
                 pbar.set_description("✅ CLI 下載完成"); pbar.update(80)
                 success = True
             else:
-                pbar.set_description("❌ CLI 下載失敗"); pbar.update(80)
+                pbar.set_description("🔄 嘗試 KaggleHub 備用方法"); pbar.update(40)
+                if KAGGLEHUB_AVAILABLE and download_with_kagglehub(dataset, target_folder):
+                    pbar.set_description("✅ KaggleHub 下載完成"); pbar.update(40)
+                    success = True
+                else:
+                    pbar.set_description("❌ 所有方法都失敗"); pbar.update(20)
+                    success = False
+    
+    # --- KaggleHub Only Method ---
+    elif method == 'kagglehub_only':
+        with tqdm(total=100, desc="🤗 KaggleHub", bar_format='{l_bar}{bar}| {percentage:3.0f}%') as pbar:
+            pbar.set_description("🔧 準備 KaggleHub..."); pbar.update(20)
+            if download_with_kagglehub(dataset, target_folder):
+                pbar.set_description("✅ KaggleHub 下載完成"); pbar.update(80)
+                success = True
+            else:
+                pbar.set_description("❌ KaggleHub 下載失敗"); pbar.update(80)
                 success = False
     
     else:
@@ -401,12 +505,23 @@ def main():
     
     for i, dataset in enumerate(datasets, 1):
         method = dataset.get("method", "kaggle_cli")
-        method_map = {'kaggle_cli': '(CLI)', 'direct': '(Direct)'}
+        method_map = {
+            'kaggle_cli': '(CLI+Hub)', 
+            'direct': '(Direct)', 
+            'kagglehub_only': '(Hub Only)'
+        }
         method_tag = method_map.get(method, '')
 
         if method == "direct":
             dataset_type_icon = "🌐"
             cmd_info = f"直接下載: {dataset['direct_url']}"
+        elif method == "kagglehub_only":
+            if dataset["type"] == "competition":
+                dataset_type_icon = "🤗"
+                cmd_info = f"kagglehub.competition_download('{dataset['competition_id']}')"
+            else:  # dataset
+                dataset_type_icon = "🤗"
+                cmd_info = f"kagglehub.dataset_download('{dataset['dataset_id']}')"
         else:  # kaggle_cli
             if dataset["type"] == "competition":
                 dataset_type_icon = "🏆"
@@ -421,8 +536,8 @@ def main():
         print()
     
     print("📌 圖標與標籤說明:")
-    print("   🏆 = Kaggle 競賽, 📊 = Kaggle 資料集, 🌐 = 直接下載")
-    print("   (CLI) = Kaggle CLI, (Direct) = 直接 HTTP 下載")
+    print("   🏆 = Kaggle 競賽(CLI), 📊 = Kaggle 資料集(CLI), 🌐 = 直接下載, 🤗 = KaggleHub")
+    print("   (CLI+Hub) = Kaggle CLI + KaggleHub 備用, (Direct) = 直接 HTTP 下載, (Hub Only) = 僅 KaggleHub")
     print("=" * 80)
     
     # 提供選項
