@@ -45,11 +45,12 @@ if __name__ == '__main__':
     # 1. 輸入的 PDF 檔案名稱
     # 請確保此 PDF 檔案與這個 Python 程式放在同一個資料夾下，
     # 或者提供完整的檔案路徑。
-    pdf_file = r'D:\github\iSpan_python-FE_DM-cookbooks\course_slides\特徵工程系統化分析指南.pdf' 
+    pdf_file = r'D:\download\MLOps 平台比較分析與建議_.pdf' 
 
     # 2. 輸出的 Word 檔案名稱
     # 轉換後的 .docx 檔案將會以此名稱儲存。
-    docx_file = r'D:\github\iSpan_python-FE_DM-cookbooks\course_slides\特徵工程系統化分析指南.docx'
+    docx_file = r'D:\github\iSpan_python-FE_DM-cookbooks\course_slides\MLOps_平台比較分析與建議.docx'
+
     
     # --- 修改結束 ---
     
