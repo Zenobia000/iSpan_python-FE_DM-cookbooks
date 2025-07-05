@@ -55,20 +55,23 @@ import spacy
 import warnings
 warnings.filterwarnings("ignore") # 忽略一些不必要的警告信息
 
-# 加載預訓練的 spaCy 模型 (en_core_web_sm)
+# 加載預訓練的 spaCy 模型 (en_core_web_md)
 # 如果模型未安裝，會嘗試下載。這是必要的，因為 spaCy 模型不隨庫直接提供。
-print("正在嘗試載入 spaCy 模型 'en_core_web_sm'...")
+# 注意：en_core_web_sm 不包含詞向量，我們使用 en_core_web_md 以獲得詞嵌入功能
+print("正在嘗試載入 spaCy 模型 'en_core_web_md'...")
 try:
-    nlp = spacy.load("en_core_web_sm")
-    print("spaCy 模型 'en_core_web_sm' 載入成功！")
+    nlp = spacy.load("en_core_web_md")
+    print("spaCy 模型 'en_core_web_md' 載入成功！")
+    print(f"詞向量表大小: {nlp.vocab.vectors.shape}")
 except OSError:
-    print("spaCy 模型 'en_core_web_sm' 未安裝或載入失敗。正在嘗試下載...")
+    print("spaCy 模型 'en_core_web_md' 未安裝或載入失敗。正在嘗試下載...")
     try:
-        spacy.cli.download("en_core_web_sm")
-        nlp = spacy.load("en_core_web_sm")
-        print("spaCy 模型 'en_core_web_sm' 下載並載入成功！")
+        spacy.cli.download("en_core_web_md")
+        nlp = spacy.load("en_core_web_md")
+        print("spaCy 模型 'en_core_web_md' 下載並載入成功！")
+        print(f"詞向量表大小: {nlp.vocab.vectors.shape}")
     except Exception as e:
-        print(f"下載或載入 spaCy 模型時發生錯誤: {e}. 請手動運行 `python -m spacy download en_core_web_sm`")
+        print(f"下載或載入 spaCy 模型時發生錯誤: {e}. 請手動運行 `python -m spacy download en_core_web_md`")
         print("無法載入模型，將創建一個空的 spaCy 對象以避免程式碼錯誤。")
         # 創建一個空的 spaCy 對象，以便後續程式碼即使無模型也能運行（但向量會是零向量）
         nlp = spacy.blank("en")
@@ -160,13 +163,41 @@ if nlp and nlp.vocab.vectors.shape[0] > 0:
     result_vector = king_vec - man_vec + woman_vec
 
     # 在 spaCy 的詞彙表中尋找最接近結果向量的詞語
-    # nlp.vocab.vectors.most_similar 返回的是一個包含 (詞語ID, 相似度) 的列表
-    similar_words = nlp.vocab.vectors.most_similar(np.array([result_vector]), n=5) # 尋找最相似的前5個詞
-
-    print("向量運算結果最相似的詞語：")
-    for word_id, similarity in similar_words[0][0]:
-        word = nlp.vocab.strings[word_id] # 將詞語ID轉換回文本
-        print(f"- {word} (相似度: {similarity:.4f})")
+    # nlp.vocab.vectors.most_similar 返回的是一個包含 (keys, distances) 的元組
+    try:
+        keys, distances = nlp.vocab.vectors.most_similar(np.array([result_vector]), n=5)
+        
+        print("向量運算結果最相似的詞語：")
+        # keys[0] 包含最相似詞語的 ID，distances[0] 包含對應的距離（距離越小越相似）
+        for word_id, distance in zip(keys[0], distances[0]):
+            word = nlp.vocab.strings[word_id] # 將詞語ID轉換回文本
+            similarity = 1 - distance  # 將距離轉換為相似度（距離越小，相似度越高）
+            print(f"- {word} (相似度: {similarity:.4f}, 距離: {distance:.4f})")
+    except Exception as e:
+        print(f"向量類比運算發生錯誤: {e}")
+        print("嘗試使用替代方法...")
+        
+        # 替代方法：手動計算相似度
+        print("使用手動計算相似度的方法：")
+        test_words = ["queen", "woman", "king", "royal", "monarchy", "princess", "female"]
+        similarities = []
+        
+        for word in test_words:
+            try:
+                word_token = nlp(word)
+                if word_token.has_vector:
+                    # 計算餘弦相似度
+                    similarity = np.dot(result_vector, word_token.vector) / (
+                        np.linalg.norm(result_vector) * np.linalg.norm(word_token.vector)
+                    )
+                    similarities.append((word, similarity))
+            except:
+                continue
+        
+        # 按相似度排序並顯示結果
+        similarities.sort(key=lambda x: x[1], reverse=True)
+        for word, similarity in similarities[:5]:
+            print(f"- {word} (相似度: {similarity:.4f})")
 else:
     print("無法執行向量類比，spaCy 模型未成功載入或詞彙表無向量。")
 
