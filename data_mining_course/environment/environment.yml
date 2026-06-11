@@ -1,6 +1,17 @@
+# Conda 環境（後備方案）。建議優先使用 uv：
+#   uv sync --extra multimodal --extra train
+# 版本約束以專案根目錄 pyproject.toml 為準。
 name: data-mining
 channels:
   - conda-forge
 dependencies:
-  - python=3.9
-  - pandas=2.0.0
+  - python=3.10
+  - pip>=24.0
+  # 核心由 conda 安裝，其餘（含 PyTorch+HF 多模態棧）交由 pip 依 pyproject 安裝
+  - pandas>=2.0.0
+  - numpy>=1.24.3,<2.1
+  - scikit-learn>=1.3.0
+  - jupyterlab>=4.0
+  - pip:
+      # 多模態前處理核心（M09）+ 下游訓練（M11），依需求選裝
+      - ".[multimodal,train]"

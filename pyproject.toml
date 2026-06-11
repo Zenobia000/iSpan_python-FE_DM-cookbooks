@@ -1,7 +1,7 @@
 [project]
 name = "ispan-fe-dm-cookbooks"
 version = "0.1.0"
-description = "資料探勘與特徵工程教學課程：10 個核心模組、54 個實戰筆記本"
+description = "資料探勘與特徵工程教學課程：11 個核心模組，涵蓋 2026 大模型非結構化資料前處理"
 readme = "README.md"
 requires-python = ">=3.9,<3.13"
 license = { text = "MIT" }
@@ -28,14 +28,38 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# 多模態特徵工程（模組 M09：文字 / 圖像 / 音訊）所需的較重套件，依需求選裝
+# === 多模態前處理核心（M09：文字 / 圖像 / 音訊 / 影片）===
+# 2026 主流大模型資料前處理棧：PyTorch + HuggingFace 生態系
 multimodal = [
-    "tensorflow>=2.13,<2.17",
-    "librosa>=0.10",
+    "torch>=2.2",
+    "torchvision>=0.17",
+    "torchaudio>=2.2",
+    "transformers>=4.40",
+    "datasets>=2.19",
+    "tokenizers>=0.19",
+    "sentence-transformers>=3.0",
+    "timm>=1.0",            # 現代影像模型（ViT 等）
+    "pillow>=10.0",
+    "librosa>=0.10",        # 音訊載入 / log-mel（現代模型輸入仍用）
+    "soundfile>=0.12",
+    "av>=12.0",             # 影片解碼（PyAV，取代維護不佳的 decord）
+    "huggingface-hub>=0.23",
+]
+
+# === 下游訓練 demo（M11）：高效微調 / 評估 ===
+train = [
+    "accelerate>=0.30",
+    "peft>=0.11",           # LoRA / QLoRA 等參數高效微調
+    "trl>=0.9",             # SFT / 偏好對齊
+    "evaluate>=0.4",
+]
+
+# === 經典 / 快速帶過小節用的舊套件（保留教學脈絡，非 2026 主流）===
+classical = [
+    "spacy>=3.7",           # 靜態詞向量（BoW/TF-IDF 之後的快速回顧）
+    "scikit-image>=0.22",   # HOG 等經典影像特徵
+    "opencv-python>=4.9",   # 色彩直方圖等
     "nltk>=3.8",
-    "opencv-python>=4.8",
-    "scikit-image>=0.21",
-    "spacy>=3.6",
 ]
 
 [dependency-groups]
