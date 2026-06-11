@@ -41,6 +41,8 @@ uv sync
 uv sync --extra multimodal
 ```
 
+> 📘 **第一次用 uv？** 完整新手教學見 **[UV_GUIDE.md](UV_GUIDE.md)** —— 安裝、心智模型、指令速查、疑難排解、pip/conda 對照一次到位。
+>
 > 💡 不使用 uv 也可改用 pip：`pip install -r data_mining_course/environment/requirements.txt`
 > （該檔由 `uv export` 自動產生，僅含核心依賴）。
 
