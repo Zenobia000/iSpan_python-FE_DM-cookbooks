@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Course Status](https://img.shields.io/badge/status-Active-brightgreen.svg)](README.md)
 
-> 一套完整的資料探勘與特徵工程實戰課程，從基礎 EDA 到進階多模態特徵工程，涵蓋 10 個核心模組與 54 個實戰案例。
+> 一套完整的資料探勘與特徵工程實戰課程，從基礎 EDA 到 **2026 大模型非結構化資料前處理**，涵蓋 11 個核心模組與 67 個實戰案例。技術棧：傳統 ML（scikit-learn）+ 現代大模型（PyTorch + HuggingFace）。
 
 ## 📋 目錄
 
@@ -37,8 +37,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh   # Linux/Mac
 # 依 lockfile 建立虛擬環境並安裝核心依賴（自動建立 .venv）
 uv sync
 
-# 需要多模態模組 (M09：文字/圖像/音訊) 的較重套件時，加裝 multimodal 選用群組
-uv sync --extra multimodal
+# 多模態前處理 (M09：文字/圖像/音訊/影片) 與下游訓練 (M11) 的 PyTorch+HuggingFace 套件
+uv sync --extra multimodal --extra train
 ```
 
 > 📘 **第一次用 uv？** 完整新手教學見 **[UV_GUIDE.md](UV_GUIDE.md)** —— 安裝、心智模型、指令速查、疑難排解、pip/conda 對照一次到位。
@@ -78,10 +78,11 @@ uv run jupyter lab
 | **M06** | 特徵創造 | 4 | ✅ | 交互特徵, 聚合特徵 |
 | **M07** | 特徵選擇與降維 | 5 | ✅ | 過濾法, 包裹法, PCA |
 | **M08** | 時間序列特徵工程 | 5 | ✅ | 滯後特徵, 滑動窗口 |
-| **M09** | 多模態特徵工程 | 11 | ✅ | 文字, 圖像, 音訊 |
+| **M09** | 多模態特徵工程（2026 大模型前處理） | 18 | ✅ | Tokenizer, ViT/CLIP, Whisper, VideoMAE |
 | **M10** | 資料探勘應用 | 9 | ✅ | 關聯規則, 聚類, 樹模型 |
+| **M11** | 大模型資料前處理後：能訓練什麼模型 | 6 | ✅ | 微調, LoRA/SFT, RAG, 生成/VLM 藍圖 |
 
-**總計**: 54 個實戰筆記本 | 12 個 Kaggle 資料集 | 10+ 小時教學內容
+**總計**: 67 個實戰筆記本 | 12+ 個資料集 | PyTorch + HuggingFace 現代棧
 
 ### 🎯 核心學習主題
 
@@ -100,7 +101,18 @@ uv run jupyter lab
 - **特徵選擇**: 過濾法、包裹法、嵌入法、遞歸特徵消除
 - **降維技術**: PCA、t-SNE、UMAP
 - **時間序列**: 滯後特徵、滑動統計、季節性分解
-- **多模態特徵**: 文字 (TF-IDF, Word2Vec)、圖像 (CNN, HOG)、音訊 (MFCC)
+
+#### 🤖 **2026 大模型非結構化資料前處理（M09）**
+- **文字**: Subword Tokenizer (BPE/WordPiece)、上下文/句嵌入、LLM 資料格式 (chat/JSONL/去重/packing)
+- **圖像**: 影像張量化、ViT/CLIP 通用特徵、`transforms.v2` 增強
+- **聲音**: torchaudio 16k/log-mel、Whisper/wav2vec2 特徵抽取
+- **影片**: 影格抽樣、`(N,T,C,H,W)`、VideoMAE
+- **多模態**: CLIP 圖文配對、VLM 資料格式
+- *（經典 BoW/TF-IDF、HOG、MFCC 保留為「快速回顧」）*
+
+#### 🚀 **下游模型訓練（M11）**
+- **微調**: DistilBERT 分類、ViT/CLIP、Whisper、VideoMAE
+- **大模型**: LoRA/QLoRA 高效微調、SFT 指令微調、RAG、生成式/VLM 訓練藍圖
 
 #### 🎲 **資料探勘應用**
 - **關聯規則挖掘**: Apriori 演算法、購物籃分析
@@ -126,14 +138,16 @@ matplotlib、seaborn、missingno、mlxtend、xgboost、lightgbm、
 jupyterlab、notebook、kaggle
 ```
 
-**選用群組**：
-- `multimodal`（M09 文字/圖像/音訊）：`tensorflow、librosa、nltk、opencv-python、scikit-image、spacy`
+**選用群組**（2026 PyTorch + HuggingFace 棧）：
+- `multimodal`（M09 文字/圖像/音訊/影片）：`torch、torchvision、torchaudio、transformers、datasets、tokenizers、sentence-transformers、timm、librosa、soundfile、av`
+- `train`（M11 下游訓練）：`accelerate、peft、trl、evaluate`
+- `classical`（經典快速回顧小節）：`spacy、scikit-image、opencv-python、nltk`
 - `dev`（維護工具）：`jupytext、pdf2docx`
 
 ```bash
-uv sync                      # 僅核心依賴
-uv sync --extra multimodal   # 加裝多模態套件
-uv sync --all-extras --dev   # 全部裝齊
+uv sync                                  # 僅核心依賴（M01–M08、M10）
+uv sync --extra multimodal --extra train # 加裝 M09 前處理 + M11 訓練
+uv sync --all-extras --dev               # 全部裝齊
 ```
 
 ### 🐳 Docker 支援
@@ -194,13 +208,13 @@ graph LR
     D --> E[實戰項目: House Prices]
 ```
 
-### 🎯 **專家路徑** (6-8 週)
+### 🎯 **專家路徑 / 大模型方向** (6-8 週)
 ```mermaid
 graph LR
-    A[M09: 多模態特徵] --> B[文字特徵工程]
-    B --> C[圖像特徵提取]
-    C --> D[音訊信號處理]
-    D --> E[M10: 端到端流程]
+    A[M09: 文字/圖像/音訊/影片 前處理] --> B[資料結構設計]
+    B --> C[Tokenizer / ViT / CLIP / Whisper]
+    C --> D[M11: 下游微調與 LoRA/SFT]
+    D --> E[生成式 / 多模態藍圖]
 ```
 
 ## 💡 特色功能
@@ -231,7 +245,7 @@ graph LR
 │   ├── 📂 modules/                  # 教學模組（每個案例皆為 .ipynb 筆記本）
 │   │   ├── 📂 module_01_eda_intro/
 │   │   ├── 📂 module_02_data_cleaning/
-│   │   └── ...                      # 共 10 個模組、54 個筆記本
+│   │   └── ...                      # 共 11 個模組、67 個筆記本
 │   ├── 📂 datasets/                 # 資料集目錄
 │   │   ├── 📂 raw/                  # 原始資料
 │   │   └── 📂 processed/            # 處理後資料

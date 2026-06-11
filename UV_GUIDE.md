@@ -102,12 +102,14 @@ uv run jupyter lab
 | 層級 | 內容 | 何時需要 | 指令 |
 | :--- | :--- | :--- | :--- |
 | **核心** | pandas、numpy、scikit-learn、matplotlib、xgboost、lightgbm、jupyterlab… | 模組 **M01–M08、M10** | `uv sync` |
-| **multimodal**（選用） | tensorflow、librosa、nltk、opencv-python、scikit-image、spacy | 模組 **M09**（文字／圖像／音訊，套件較重） | `uv sync --extra multimodal` |
+| **multimodal**（選用） | torch、torchvision、torchaudio、transformers、datasets、tokenizers、sentence-transformers、timm、librosa、av | 模組 **M09**（文字／圖像／音訊／影片，PyTorch+HF，較重） | `uv sync --extra multimodal` |
+| **train**（選用） | accelerate、peft、trl、evaluate | 模組 **M11**（下游微調 / LoRA / SFT） | `uv sync --extra train` |
+| **classical**（選用） | spacy、scikit-image、opencv-python、nltk | M09「經典快速回顧」小節 | `uv sync --extra classical` |
 | **dev**（預設裝） | jupytext、pdf2docx | 維護課程、轉檔時 | 預設隨 `uv sync` 一起裝 |
 
 ```bash
 uv sync                      # 只裝核心（最輕，先跑 M01–M08/M10 夠用）
-uv sync --extra multimodal   # 要做 M09 多模態時再加
+uv sync --extra multimodal --extra train   # 要做 M09 前處理 + M11 訓練時加
 uv sync --all-extras         # 一次全部裝齊
 uv sync --no-dev             # 不要 dev 維護工具
 ```
@@ -154,11 +156,12 @@ uv sync                    # 用新版本重建環境
 </details>
 
 <details>
-<summary><b>Q：M09 的 tensorflow / opencv 裝失敗？</b></summary>
+<summary><b>Q：M09/M11 的 torch / transformers 裝失敗或下載很慢？</b></summary>
 
-1. 先確認 Python 是 **3.9–3.12**（這些套件對版本敏感）。
-2. 先別裝 multimodal，用 `uv sync` 把核心跑起來，確認 M01–M08 沒問題。
-3. 再單獨 `uv sync --extra multimodal`，看是哪個套件報錯。
+1. 先確認 Python 是 **3.9–3.12**（這些套件對版本敏感；3.11/3.12 最穩）。
+2. 先別裝 extra，用 `uv sync` 把核心跑起來，確認 M01–M08 沒問題。
+3. 再 `uv sync --extra multimodal --extra train`，看是哪個套件報錯。
+4. torch 體積大；CPU 版即可跑教學 demo，不需 GPU。各 notebook 皆有離線後備與 try/except 降級。
 </details>
 
 <details>

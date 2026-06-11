@@ -117,3 +117,27 @@
 102. 4. Choose Appropriate Visual Encodings - Designing Data Visualizations [Book] - O'Reilly, [https://www.oreilly.com/library/view/designing-data-visualizations/9781449314774/ch04.html](https://www.oreilly.com/library/view/designing-data-visualizations/9781449314774/ch04.html)
 103. Data visualization: basic principles - Peter Aldhous, [https://peteraldhous.com/ucb/2016/dataviz/week2.html](https://peteraldhous.com/ucb/2016/dataviz/week2.html)
 104. Misleading Data Visualization - What to Avoid | Coupler.io Blog, [https://blog.coupler.io/misleading-data-visualization-examples/](https://blog.coupler.io/misleading-data-visualization-examples/)
+
+## 大模型非結構化資料前處理與下游訓練 (M09–M11)
+
+### 官方文件（2026 主流工具）
+- **HuggingFace Transformers**: [https://huggingface.co/docs/transformers](https://huggingface.co/docs/transformers)
+- **HuggingFace Datasets**: [https://huggingface.co/docs/datasets](https://huggingface.co/docs/datasets)
+- **HuggingFace Tokenizers**: [https://huggingface.co/docs/tokenizers](https://huggingface.co/docs/tokenizers)
+- **PEFT（LoRA/QLoRA）**: [https://huggingface.co/docs/peft](https://huggingface.co/docs/peft)
+- **TRL（SFT/DPO）**: [https://huggingface.co/docs/trl](https://huggingface.co/docs/trl)
+- **PyTorch / torchvision / torchaudio**: [https://pytorch.org/docs](https://pytorch.org/docs)
+- **timm（PyTorch Image Models）**: [https://huggingface.co/docs/timm](https://huggingface.co/docs/timm)
+- **sentence-transformers**: [https://www.sbert.net/](https://www.sbert.net/)
+
+### 關鍵論文
+- Vaswani et al. (2017). *Attention Is All You Need*（Transformer）. [arXiv:1706.03762](https://arxiv.org/abs/1706.03762)
+- Devlin et al. (2018). *BERT*. [arXiv:1810.04805](https://arxiv.org/abs/1810.04805)
+- Sennrich et al. (2016). *Neural Machine Translation of Rare Words with Subword Units*（BPE）. [arXiv:1508.07909](https://arxiv.org/abs/1508.07909)
+- Dosovitskiy et al. (2020). *An Image is Worth 16x16 Words*（ViT）. [arXiv:2010.11929](https://arxiv.org/abs/2010.11929)
+- Radford et al. (2021). *Learning Transferable Visual Models From Natural Language Supervision*（CLIP）. [arXiv:2103.00020](https://arxiv.org/abs/2103.00020)
+- Radford et al. (2022). *Robust Speech Recognition via Large-Scale Weak Supervision*（Whisper）. [arXiv:2212.04356](https://arxiv.org/abs/2212.04356)
+- Baevski et al. (2020). *wav2vec 2.0*. [arXiv:2006.11477](https://arxiv.org/abs/2006.11477)
+- Tong et al. (2022). *VideoMAE*. [arXiv:2203.12602](https://arxiv.org/abs/2203.12602)
+- Hu et al. (2021). *LoRA: Low-Rank Adaptation of Large Language Models*. [arXiv:2106.09685](https://arxiv.org/abs/2106.09685)
+- Rafailov et al. (2023). *Direct Preference Optimization (DPO)*. [arXiv:2305.18290](https://arxiv.org/abs/2305.18290)
