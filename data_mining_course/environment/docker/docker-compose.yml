@@ -1,10 +1,12 @@
-version: '3'
 services:
   jupyter:
-    build: .
+    build:
+      # build context 為 repo 根目錄，才能存取 pyproject.toml / uv.lock
+      context: ../../..
+      dockerfile: data_mining_course/environment/docker/Dockerfile
     ports:
       - "8888:8888"
     volumes:
-      - ../..:/app
+      - ../../..:/app
     environment:
       - JUPYTER_ENABLE_LAB=yes

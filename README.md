@@ -25,17 +25,24 @@ git clone https://github.com/你的用戶名/iSpan_python-FE_DM-cookbooks.git
 cd iSpan_python-FE_DM-cookbooks
 ```
 
-### 2️⃣ 設置環境
-```bash
-# 創建虛擬環境
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# 或
-venv\Scripts\activate     # Windows
+### 2️⃣ 設置環境（使用 [uv](https://docs.astral.sh/uv/)）
 
-# 安裝依賴
-pip install -r data_mining_course/environment/requirements.txt
+本專案以 **uv** 管理依賴與虛擬環境，`pyproject.toml` 為唯一依賴來源、`uv.lock` 鎖定可重現版本。
+
+```bash
+# 安裝 uv（若尚未安裝）
+curl -LsSf https://astral.sh/uv/install.sh | sh   # Linux/Mac
+# Windows: powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# 依 lockfile 建立虛擬環境並安裝核心依賴（自動建立 .venv）
+uv sync
+
+# 需要多模態模組 (M09：文字/圖像/音訊) 的較重套件時，加裝 multimodal 選用群組
+uv sync --extra multimodal
 ```
+
+> 💡 不使用 uv 也可改用 pip：`pip install -r data_mining_course/environment/requirements.txt`
+> （該檔由 `uv export` 自動產生，僅含核心依賴）。
 
 ### 3️⃣ 配置 Kaggle API
 ```bash
@@ -47,13 +54,12 @@ chmod 600 ~/.kaggle/kaggle.json
 
 ### 4️⃣ 下載資料集
 ```bash
-python data_download.py
+uv run python data_download.py
 ```
 
 ### 5️⃣ 開始學習
 ```bash
-cd data_mining_course
-jupyter notebook
+uv run jupyter lab
 ```
 
 ## 📚 課程內容
@@ -102,28 +108,37 @@ jupyter notebook
 ## 🛠️ 環境設置
 
 ### 系統需求
-- **Python**: 3.8+ 
+- **Python**: 3.9 – 3.12（由 `pyproject.toml` 的 `requires-python` 鎖定）
+- **套件管理**: [uv](https://docs.astral.sh/uv/)（建議）
 - **記憶體**: 8GB+ (推薦 16GB)
 - **硬碟空間**: 10GB+ (含資料集)
 - **Kaggle 帳號**: 用於資料集下載
 
 ### 主要依賴套件
+完整清單與版本鎖定見 [`pyproject.toml`](pyproject.toml) 與 `uv.lock`。
+
+**核心依賴**（模組 M01–M08、M10）：
 ```
-pandas>=1.3.0
-numpy>=1.21.0
-matplotlib>=3.3.0
-seaborn>=0.11.0
-scikit-learn>=1.0.0
-xgboost>=1.5.0
-lightgbm>=3.3.0
-jupyter>=1.0.0
-kaggle>=1.5.0
+pandas、numpy、scikit-learn、scipy、statsmodels、
+matplotlib、seaborn、missingno、mlxtend、xgboost、lightgbm、
+jupyterlab、notebook、kaggle
+```
+
+**選用群組**：
+- `multimodal`（M09 文字/圖像/音訊）：`tensorflow、librosa、nltk、opencv-python、scikit-image、spacy`
+- `dev`（維護工具）：`jupytext、pdf2docx`
+
+```bash
+uv sync                      # 僅核心依賴
+uv sync --extra multimodal   # 加裝多模態套件
+uv sync --all-extras --dev   # 全部裝齊
 ```
 
 ### 🐳 Docker 支援
+Docker 映像同樣以 uv 安裝依賴（見 `environment/docker/Dockerfile`）：
 ```bash
 cd data_mining_course/environment/docker
-docker-compose up -d
+docker compose up -d         # 開啟 http://localhost:8888
 ```
 
 ## 📊 資料集管理
@@ -211,17 +226,19 @@ graph LR
 ```
 📁 iSpan_python-FE_DM-cookbooks/
 ├── 📂 data_mining_course/           # 主課程目錄
-│   ├── 📂 modules/                  # 教學模組
+│   ├── 📂 modules/                  # 教學模組（每個案例皆為 .ipynb 筆記本）
 │   │   ├── 📂 module_01_eda_intro/
 │   │   ├── 📂 module_02_data_cleaning/
-│   │   └── ...
+│   │   └── ...                      # 共 10 個模組、54 個筆記本
 │   ├── 📂 datasets/                 # 資料集目錄
 │   │   ├── 📂 raw/                  # 原始資料
 │   │   └── 📂 processed/            # 處理後資料
 │   ├── 📂 utils/                    # 工具函數
 │   ├── 📂 templates/                # 範本檔案
-│   └── 📂 environment/              # 環境配置
+│   └── 📂 environment/              # 環境配置 (Docker / requirements 匯出)
 ├── 📂 course_slides/                # 課程簡報
+├── 📄 pyproject.toml                # 依賴與專案設定（uv 管理）
+├── 📄 uv.lock                       # 鎖定的依賴版本
 ├── 📄 data_download.py              # 資料下載腳本
 ├── 📄 .gitignore                    # Git 忽略檔案
 └── 📄 README.md                     # 專案說明

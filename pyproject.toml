@@ -1,0 +1,50 @@
+[project]
+name = "ispan-fe-dm-cookbooks"
+version = "0.1.0"
+description = "資料探勘與特徵工程教學課程：10 個核心模組、54 個實戰筆記本"
+readme = "README.md"
+requires-python = ">=3.9,<3.13"
+license = { text = "MIT" }
+
+# 核心依賴：模組 M01–M08、M10 的筆記本所需（資料處理、視覺化、傳統 ML）
+dependencies = [
+    "pandas>=2.0.0",
+    "numpy>=1.24.3,<2.1",
+    "scikit-learn>=1.3.0",
+    "scipy>=1.10",
+    "statsmodels>=0.14",
+    "matplotlib>=3.7.1",
+    "seaborn>=0.12.2",
+    "missingno>=0.5.2",
+    "mlxtend>=0.22",
+    "xgboost>=1.7",
+    "lightgbm>=4.0",
+    "tqdm>=4.65",
+    "ipython>=8.10",
+    "jupyterlab>=4.0",
+    "notebook>=7.0",
+    "nbformat>=5.9",
+    "kaggle>=1.5.16",
+]
+
+[project.optional-dependencies]
+# 多模態特徵工程（模組 M09：文字 / 圖像 / 音訊）所需的較重套件，依需求選裝
+multimodal = [
+    "tensorflow>=2.13,<2.17",
+    "librosa>=0.10",
+    "nltk>=3.8",
+    "opencv-python>=4.8",
+    "scikit-image>=0.21",
+    "spacy>=3.6",
+]
+
+[dependency-groups]
+# 開發 / 維護工具：筆記本格式轉換、簡報轉檔
+dev = [
+    "jupytext>=1.15",
+    "pdf2docx>=0.5",
+]
+
+[tool.uv]
+# 本專案是教學課程（notebook 集合），非可安裝套件
+package = false
