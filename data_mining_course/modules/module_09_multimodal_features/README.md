@@ -1,14 +1,74 @@
-# Module 9: Multimodal Feature Engineering
+# Module 9：多模態特徵工程 — 非結構化資料的 2026 大模型前處理
 
-## Module Objective
+## 模組目標
 
-Welcome to Module 9, where we delve into the exciting realm of **Multimodal Feature Engineering**. In the era of big data, information rarely comes in a single, neat numerical table. Instead, it often spans across various modalities: text, images, audio, and more. This module is dedicated to equipping you with the specialized techniques required to extract meaningful, predictive features from these diverse data types, enabling you to build powerful models that understand and learn from the rich tapestry of multimodal information.
+在大模型時代，資訊很少是乾淨的數值表格，而是**文字、圖像、聲音、影片**等非結構化資料。
+本模組教你用 **2026 主流技術棧（PyTorch + HuggingFace）**，把這四種模態正確地轉換成
+大模型可訓練的**張量與資料集格式**。
 
-### What You Will Learn:
+貫穿全模組的主軸是一句話：**「資料結構怎麼設計」**——
+每個模態小節都先講清楚「輸入/輸出的張量 shape、標籤格式、儲存格式」，再進入現代前處理管線。
 
--   **Text Feature Engineering**: Explore methods to transform unstructured text into numerical features, including Bag-of-Words, TF-IDF, and advanced Word Embeddings. You'll apply these to sentiment analysis tasks.
--   **Image Feature Engineering**: Learn how to extract visual features from images, from traditional techniques like Color Histograms and HOG features to leveraging deep learning with CNN Feature Extraction. Practical application will involve image classification.
--   **Audio Feature Engineering**: Discover methods to process raw audio signals into relevant features like MFCCs (Mel-frequency cepstral coefficients) and Spectral Features, enabling tasks such as sound event classification.
--   **Case Studies**: Apply these multimodal feature engineering skills to real-world datasets for IMDB movie reviews, Dogs vs. Cats image classification, and Urban Sound classification.
+> **經典技術的定位**：BoW/TF-IDF、Color Histogram/HOG、MFCC 等手工特徵屬於
+> 2013–2018 的主流，今天仍是理解的基礎，因此各模態保留一節「**經典快速回顧**」帶過、
+> 點出限制，主體則放在 2026 的現代管線。
 
-By the end of this module, you will be able to approach complex problems involving diverse data types, confident in your ability to transform them into a unified, rich feature set for advanced machine learning applications. 
+## 框架說明
+
+本模組已全面改用 **PyTorch + HuggingFace** 生態系（`transformers` / `datasets` /
+`tokenizers` / `torchvision` / `torchaudio` / `timm` / `sentence-transformers`）。
+舊版的 TensorFlow/Keras（VGG16）已改寫為 PyTorch 的 ViT/CLIP。
+
+安裝：`uv sync --extra multimodal`（經典快速回顧小節另需 `--extra classical`）
+
+## 課程結構（18 個筆記本）
+
+### 1. 文字 `01_text_features/`（5）
+| # | 筆記本 | 重點 |
+|:--|:--|:--|
+| 01 | classical_text_representations | BoW / TF-IDF / 靜態詞向量（快速回顧 + 限制） |
+| 02 | tokenization | BPE/WordPiece/SentencePiece、`AutoTokenizer`、`input_ids/attention_mask (B,L)` |
+| 03 | contextual_embeddings | BERT 上下文嵌入、`sentence-transformers`、語意檢索（RAG 積木） |
+| 04 | llm_data_formats | pretrain/SFT/偏好對齊資料格式、chat template、JSONL、去重/品質/packing |
+| 05 | imdb_case | 案例：TF-IDF vs 句向量情感分類 |
+
+### 2. 圖像 `02_image_features/`（5）
+| # | 筆記本 | 重點 |
+|:--|:--|:--|
+| 01 | classical_image_features | Color Histogram / HOG（快速帶過） |
+| 02 | image_to_tensor | decode/resize/normalize、`AutoImageProcessor`、`(N,C,H,W)` vs `(N,H,W,C)`、標籤格式 |
+| 03 | modern_image_representations | timm ViT 抽特徵 + CLIP zero-shot（取代 VGG16） |
+| 04 | augmentation_and_datasets | `transforms.v2` 增強、ImageFolder / HF datasets / WebDataset |
+| 05 | dogs_cats_case | 案例：CLIP zero-shot 與 凍結 ViT + LogReg |
+
+### 3. 聲音 `03_audio_features/`（4）
+| # | 筆記本 | 重點 |
+|:--|:--|:--|
+| 01 | classical_audio_features | MFCC / 手工頻譜特徵（快速帶過） |
+| 02 | audio_to_tensor | torchaudio 重採樣 16k/單聲道/正規化、log-mel `(N,n_mels,T)` |
+| 03 | modern_audio_representations | `AutoFeatureExtractor` → Whisper / wav2vec2 輸入與嵌入 |
+| 04 | urban_sound_case | 案例：MFCC vs wav2vec2 嵌入分類 |
+
+### 4. 影片 `04_video_features/`（3，全新）
+| # | 筆記本 | 重點 |
+|:--|:--|:--|
+| 01 | video_to_tensor | 影格序列、`(N,T,C,H,W)`、PyAV/torchvision 解碼、標籤格式 |
+| 02 | frame_sampling | 均勻/密集/分段抽樣、VideoMAE processor、clip vs frame-level |
+| 03 | video_case | 案例：VideoMAE 動作辨識推論 |
+
+### 5. 多模態 `05_multimodal/`（1，全新）
+| # | 筆記本 | 重點 |
+|:--|:--|:--|
+| 01 | image_text_pairs | CLIP 圖文對齊、VLM「帶圖 chat」資料格式 |
+
+## 與 Module 11 的銜接
+
+本模組把資料**前處理**好之後，**Module 11「大模型資料前處理後：能訓練什麼模型」**
+接著示範各模態的下游訓練（分類微調、LLM LoRA/SFT、ViT/CLIP、Whisper、VideoMAE、
+以及生成式/多模態藍圖）。
+
+## 執行說明（CPU 友善）
+
+- 各模態的**經典快速回顧**與**資料結構**小節多為 numpy/sklearn，**CPU 即可執行**。
+- 現代管線與案例首次執行會**下載對應預訓練模型**；皆設計為**小樣本、CPU 可跑**，
+  並含**離線後備**，確保在無 GPU/弱網路時仍能跑通流程。
