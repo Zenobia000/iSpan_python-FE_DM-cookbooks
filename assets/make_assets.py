@@ -83,18 +83,30 @@ def compose_banner(W, H, title_y, t1_sz, t2_sz, sub_sz, pill_sz):
     d.text((fx + 6, y), "→  大模型", font=fpill, fill=WHITE + (255,))
     return base, d, y
 
+def draw_pills(base, items, sf, x0, y0, ph, padx=17):
+    """半透明膠囊畫在透明圖層後 alpha_composite（正確混色），文字再以不透明白疊上。
+    修正原本在 RGBA 圖上直接畫半透明白、convert RGB 後變實心白塊、白字看不到的 bug。"""
+    measure = ImageDraw.Draw(base)
+    layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    ld = ImageDraw.Draw(layer)
+    pos, x = [], x0
+    for s in items:
+        w = text_w(measure, s, sf) + padx * 2
+        ld.rounded_rectangle([x, y0, x + w, y0 + ph], radius=ph // 2,
+                             fill=(255, 255, 255, 32), outline=(255, 255, 255, 130), width=1)
+        pos.append(x); x += w + 16
+    base.alpha_composite(layer)
+    td = ImageDraw.Draw(base)
+    ty = y0 + (ph - sf.size) // 2 - 1
+    for x, s in zip(pos, items):
+        td.text((x + padx, ty), s, font=sf, fill=WHITE + (255,))
+
 # ---------- HERO 1280x460 ----------
 W, H = 1280, 460
 hero, d, y = compose_banner(W, H, title_y=64, t1_sz=62, t2_sz=58, sub_sz=27, pill_sz=30)
 # 底部統計列（膠囊）
 stats = ["11 模組", "67 實戰筆記本", "PyTorch + HuggingFace", "真實資料 · CPU 可跑"]
-sf = font(24, bold=False); sx = 73; sy = H - 66
-for s in stats:
-    tw = text_w(d, s, sf)
-    d.rounded_rectangle([sx, sy, sx + tw + 34, sy + 42], radius=21,
-                        fill=(255, 255, 255, 18), outline=(255, 255, 255, 60), width=1)
-    d.text((sx + 17, sy + 8), s, font=sf, fill=WHITE + (230,))
-    sx += tw + 34 + 14
+draw_pills(hero, stats, font(24, bold=False), 73, H - 66, 42)
 hero.convert("RGB").save(f"{ASSETS}/hero.png")
 print("✓ assets/hero.png", hero.size)
 
@@ -102,13 +114,7 @@ print("✓ assets/hero.png", hero.size)
 W, H = 1280, 640
 og, d, y = compose_banner(W, H, title_y=150, t1_sz=72, t2_sz=66, sub_sz=30, pill_sz=34)
 stats = ["11 模組", "67 實戰筆記本", "PyTorch + HuggingFace"]
-sf = font(27, bold=False); sx = 73; sy = H - 96
-for s in stats:
-    tw = text_w(d, s, sf)
-    d.rounded_rectangle([sx, sy, sx + tw + 38, sy + 48], radius=24,
-                        fill=(255, 255, 255, 18), outline=(255, 255, 255, 60), width=1)
-    d.text((sx + 19, sy + 9), s, font=sf, fill=WHITE + (230,))
-    sx += tw + 38 + 16
+draw_pills(og, stats, font(27, bold=False), 73, H - 96, 48, padx=19)
 og.convert("RGB").save(f"{ASSETS}/og-cover.png")
 print("✓ assets/og-cover.png", og.size)
 
