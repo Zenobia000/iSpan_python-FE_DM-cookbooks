@@ -209,4 +209,10 @@ figures/
 # README 行銷視覺資產（Hero / 社群圖 / GIF / 底圖 / 生成腳本）
 # 覆蓋上方 *.png / *.gif 等萬用忽略，讓 assets/ 隨 repo 一起發佈
 !assets/
-!assets/** 
+!assets/**
+
+# 概念示意圖（嵌入教學 notebook 用，需隨 repo 一起發佈）
+# =====================================
+# 覆蓋上方 *.png 萬用忽略：只把各 notebook 的 concept_images/ 圖檔重新納入版控
+!**/concept_images/
+!**/concept_images/*.png
