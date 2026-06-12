@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/hero.png" alt="資料探勘與特徵工程 · 2026 大模型實戰" width="100%">
+</p>
+
 # 🎯 資料探勘與特徵工程教學課程
 
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
@@ -5,6 +9,10 @@
 [![Course Status](https://img.shields.io/badge/status-Active-brightgreen.svg)](README.md)
 
 > 一套完整的資料探勘與特徵工程實戰課程，從基礎 EDA 到 **2026 大模型非結構化資料前處理**，涵蓋 11 個核心模組與 67 個實戰案例。技術棧：傳統 ML（scikit-learn）+ 現代大模型（PyTorch + HuggingFace）。
+
+<p align="center">
+  <img src="assets/showcase.gif" alt="文字 · 圖像 · 聲音 · 影片 → 訓練大模型" width="90%">
+</p>
 
 ## 📋 目錄
 

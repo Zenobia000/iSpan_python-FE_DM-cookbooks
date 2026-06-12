@@ -204,4 +204,9 @@ figures/
 # - 原始資料集和處理後資料集由於檔案過大且可重新下載，不納入版本控制
 # - 使用 data_download.py 可以重新下載所有 Kaggle 資料集
 # - 個人的 Kaggle API 憑證檔案包含敏感資訊，絕對不能上傳
-# - 模型檔案和實驗結果通常檔案很大，建議使用 Git LFS 或其他方式管理 
+# - 模型檔案和實驗結果通常檔案很大，建議使用 Git LFS 或其他方式管理
+
+# README 行銷視覺資產（Hero / 社群圖 / GIF / 底圖 / 生成腳本）
+# 覆蓋上方 *.png / *.gif 等萬用忽略，讓 assets/ 隨 repo 一起發佈
+!assets/
+!assets/** 
