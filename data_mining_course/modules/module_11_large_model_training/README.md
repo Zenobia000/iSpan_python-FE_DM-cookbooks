@@ -1,5 +1,13 @@
 # Module 11：大模型資料前處理後 — 能訓練什麼模型？
 
+## 這堂怎麼上
+
+| | |
+|---|---|
+| 角色 | **上課（進階／AI 前處理線）**。資料怎麼導入、能接什麼訓練，可以教。 |
+| 講義 | [`slides/M11_Large_Model_Training_Fundamentals.md`](slides/M11_Large_Model_Training_Fundamentals.md) |
+| LoRA／影片下游 | **可教**。`modules/extension/lora_llm_training/` 是複本。 |
+
 ## 模組目標
 
 Module 9 把文字/圖像/聲音/影片整理成了規整的張量與資料集。本模組回答學生最關心的下一個問題：
@@ -16,16 +24,18 @@ Module 9 把文字/圖像/聲音/影片整理成了規整的張量與資料集�
 
 安裝：`uv sync --extra multimodal --extra train`
 
-## 課程結構（6 個筆記本）
+## 課程結構
 
 | # | 筆記本 | 重點 |
 |:--|:--|:--|
-| 01 | data_to_model_map | 「資料結構 → 模型家族 → 任務」總地圖；三種訓練範式與 LoRA/QLoRA |
-| 02 | text_downstream | DistilBERT 分類微調(CPU demo) + LLM LoRA/SFT 資料格式與設定 + RAG 檢索 demo |
+| 01 | data_to_model_map | 「資料結構 → 模型家族 → 任務」總地圖 |
+| 02 | text_downstream | 文字下游／LoRA 最小設定（可教） |
 | 03 | image_downstream | ViT 微調最小設定 + CLIP zero-shot |
 | 04 | audio_downstream | Whisper ASR 推論 + wav2vec2 分類微調設定 |
-| 05 | video_downstream | VideoMAE 動作辨識推論 + 微調設定 |
-| 06 | generative_and_multimodal_blueprint | LLM 三階段(pretrain→SFT→偏好對齊)、Diffusion、VLM；全課程收束 |
+| 05 | video_downstream | 影片下游（可教） |
+| 06 | generative_and_multimodal_blueprint | 生成式與多模態訓練藍圖（可教） |
+
+複本也在 [`../extension/lora_llm_training/`](../extension/lora_llm_training/)、[`../extension/video_training/`](../extension/video_training/)。
 
 ## 核心觀念
 

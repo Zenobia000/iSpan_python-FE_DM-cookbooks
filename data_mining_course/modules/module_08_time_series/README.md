@@ -1,5 +1,14 @@
 # Module 8: Time Series Feature Engineering
 
+## 這堂怎麼上
+
+| | |
+|---|---|
+| 角色 | **上課**（主線：lag、rolling、時間切分） |
+| 講義 | [`slides/M8_Time_Series_Feature_Engineering.md`](slides/M8_Time_Series_Feature_Engineering.md) |
+| 資料 | 電力消耗繞回（`05`） |
+| 不要跟誰重複 | **日曆拆欄已在 M6。** `03_date_time_features` 標自學複習／只留接窗特徵所需的最小時間欄。 |
+
 Welcome to Module 8. In this module, we will dive into the specialized world of feature engineering for time series data. Time series data has unique characteristics, such as temporal dependence, trends, and seasonality, which require specific techniques to handle effectively.
 
 ## Learning Objectives

@@ -1,8 +1,14 @@
 # 模組九講義：多模態特徵工程——非結構化資料的 2026 大模型前處理
 
+## 2026 × AI 工具
+
+AI 可以幫你呼叫 tokenizer／CLIP／Whisper。人必須先看懂檔案與取樣，並能說向量代表什麼。預訓練模型是抽取器，不是這堂訓練課。
+
+**留下的那句話：** 換模態不換腦袋：理解 → 清理 → 特徵 → 接回某一層 Why。
+
 > 把**文字、圖像、聲音、影片**正確轉成大模型可訓練的**張量與資料集格式**。
-> 技術棧：**PyTorch + HuggingFace**（`transformers`/`datasets`/`tokenizers`/`torchvision`/`torchaudio`/`timm`）。
-> 全模組使用**真實資料集**示範（非合成 mock）。
+> 技術棧：**PyTorch + HuggingFace**。
+> 全模組使用**真實資料集**示範。
 
 ---
 

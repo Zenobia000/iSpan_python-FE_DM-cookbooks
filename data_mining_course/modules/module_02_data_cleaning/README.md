@@ -1,5 +1,13 @@
 # Module 2: Data Cleaning and Preprocessing Review
 
+## 這堂怎麼上
+
+| | |
+|---|---|
+| 角色 | **前情自學複習** |
+| 講義 | overview：清理工具箱 |
+| 資料 | 各本自己的示範檔；Titanic 若出現只當「大檔／列操作」材料，不重做 EDA |
+
 ## Learning Objectives
 
 This module provides a review of essential data cleaning and preprocessing techniques, which are foundational steps in any data science project. By the end of this module, you will be able to:

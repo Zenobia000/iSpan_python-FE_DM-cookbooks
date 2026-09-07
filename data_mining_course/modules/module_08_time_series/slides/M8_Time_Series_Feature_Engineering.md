@@ -1,5 +1,11 @@
 # 模組八講義：時間序列特徵工程 (Time Series Feature Engineering)
 
+## 2026 × AI 工具
+
+AI 會寫 `shift`／`rolling`。人必須按時間切分，不准洗牌、不准用未來。日曆拆欄見 Module 6；本堂主線是窗。
+
+**留下的那句話：** lag、rolling；測試集必須是時間軸上較晚的一段。
+
 ---
 
 ## 1. 本章學習框架 (Learning Framework)

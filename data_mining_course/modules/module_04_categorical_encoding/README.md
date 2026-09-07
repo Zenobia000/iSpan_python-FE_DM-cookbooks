@@ -1,5 +1,13 @@
 # Module 4: Categorical Variable Encoding
 
+## 這堂怎麼上
+
+| | |
+|---|---|
+| 角色 | **上課**（Label／One-hot 多半見過；Target encoding 洩漏是重點） |
+| 講義 | [`slides/M4_Categorical_Encoding_Fundamentals.md`](slides/M4_Categorical_Encoding_Fundamentals.md)（含四法對照表） |
+| 資料 | `01`–`04` 各一本一技法；**同一份 Titanic 多編碼走完只在 `05`** |
+
 ## Learning Objectives
 
 Categorical variables are prevalent in datasets, but most machine learning models require numerical input. This module provides a comprehensive overview of various techniques to encode categorical variables into a numerical format, a critical step in feature engineering. By the end of this module, you will:

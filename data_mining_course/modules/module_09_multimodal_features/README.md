@@ -1,5 +1,14 @@
 # Module 9：多模態特徵工程 — 非結構化資料的 2026 大模型前處理
 
+## 這堂怎麼上
+
+| | |
+|---|---|
+| 角色 | **上課（進階／AI 前處理線）**。可以教：理解檔案 → 清理 → 導入成張量。 |
+| 講義 | [`slides/M9_Multimodal_Features_Fundamentals.md`](slides/M9_Multimodal_Features_Fundamentals.md) |
+| 資料 | 文／圖／聲／影各模態自己的案例本；不要跟表格 FE 混成一本 |
+| 影片 | `04_video_features/` **可教**。`modules/extension/video_training/` 是複本。 |
+
 ## 模組目標
 
 在大模型時代，資訊很少是乾淨的數值表格，而是**文字、圖像、聲音、影片**等非結構化資料。
@@ -21,7 +30,7 @@
 
 安裝：`uv sync --extra multimodal`（經典快速回顧小節另需 `--extra classical`）
 
-## 課程結構（18 個筆記本）
+## 課程結構
 
 ### 1. 文字 `01_text_features/`（5）
 | # | 筆記本 | 重點 |
@@ -49,12 +58,9 @@
 | 03 | modern_audio_representations | `AutoFeatureExtractor` → Whisper / wav2vec2 輸入與嵌入 |
 | 04 | urban_sound_case | 案例：MFCC vs wav2vec2 嵌入分類 |
 
-### 4. 影片 `04_video_features/`（3，全新）
-| # | 筆記本 | 重點 |
-|:--|:--|:--|
-| 01 | video_to_tensor | 影格序列、`(N,T,C,H,W)`、PyAV/torchvision 解碼、標籤格式 |
-| 02 | frame_sampling | 均勻/密集/分段抽樣、VideoMAE processor、clip vs frame-level |
-| 03 | video_case | 案例：VideoMAE 動作辨識推論 |
+### 4. 影片 `04_video_features/`（可教）
+
+本模組路徑與 [`../extension/video_training/`](../extension/video_training/) 若同時存在，以上課用本模組為準。
 
 ### 5. 多模態 `05_multimodal/`（1，全新）
 | # | 筆記本 | 重點 |
@@ -63,9 +69,7 @@
 
 ## 與 Module 11 的銜接
 
-本模組把資料**前處理**好之後，**Module 11「大模型資料前處理後：能訓練什麼模型」**
-接著示範各模態的下游訓練（分類微調、LLM LoRA/SFT、ViT/CLIP、Whisper、VideoMAE、
-以及生成式/多模態藍圖）。
+本模組把資料**前處理**好之後，**Module 11** 示範下游與 LoRA 最小 demo。影片前處理在本模組第 4 節。
 
 ## 執行說明（CPU 友善）
 

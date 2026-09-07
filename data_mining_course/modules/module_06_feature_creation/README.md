@@ -1,5 +1,14 @@
 # Module 6: Feature Creation
 
+## 這堂怎麼上
+
+| | |
+|---|---|
+| 角色 | **上課** |
+| 講義 | [`slides/M6_Feature_Creation_Fundamentals.md`](slides/M6_Feature_Creation_Fundamentals.md) |
+| 資料 | 技法本各繞自己的示範；繞回本 **NYC Taxi**（`04`） |
+| 日曆特徵 | **主角在 `03_time_derivatives`**。M8 不重講一套拆欄。 |
+
 ## Learning Objectives
 
 This module transitions from preprocessing existing features to creatively engineering new ones. Feature creation is often where domain knowledge and analytical creativity can lead to the biggest gains in model performance. By the end of this module, you will:

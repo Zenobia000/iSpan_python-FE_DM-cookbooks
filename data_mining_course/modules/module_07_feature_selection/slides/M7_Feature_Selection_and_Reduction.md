@@ -1,5 +1,11 @@
 # 模組七講義：特徵選擇與降維 (Feature Selection and Dimensionality Reduction)
 
+## 2026 × AI 工具
+
+AI 可以跑相關性與重要性。人必須把高分特徵對回 Why；對不回就當可疑（洩漏或無意義編碼）。
+
+**留下的那句話：** 用相關性與樹重要性當驗收，不是用包裹法尋寶。
+
 ---
 
 ## 1. 本章學習框架 (Learning Framework)

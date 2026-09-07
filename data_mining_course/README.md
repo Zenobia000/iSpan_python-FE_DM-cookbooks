@@ -1,6 +1,15 @@
 # 資料探勘與特徵工程課程
 
-本課程專注於資料探勘與特徵工程技術，從基礎EDA到進階特徵工程，旨在提供一套系統化的實戰方法論。
+上課順序：**先模組工具，後心法總整。** 示範用真實資料。
+
+- [docs/course_charter.md](docs/course_charter.md) 宗旨
+- [docs/lecture_map.md](docs/lecture_map.md) 上課地圖
+- [docs/syllabus.md](docs/syllabus.md) 課綱
+- [docs/schedule.md](docs/schedule.md) 進度
+- [modules/](modules/) 上課主線
+- [capstone/capstone_used_car.ipynb](capstone/capstone_used_car.ipynb) 最後總整（英國二手車）
+
+M1／M2 預設前情自學。多模態與訓練前處理（M9／M11）可教。
 
 ## 課程模組進度
 
@@ -17,5 +26,3 @@
 | 9 | 多模態特徵工程（2026 大模型非結構化資料前處理） | ✅ 完成 | 18/18 |
 | 10 | 資料探勘應用 | ✅ 完成 | 9/9 |
 | 11 | 大模型資料前處理後：能訓練什麼模型 | ✅ 完成 | 6/6 |
-
-

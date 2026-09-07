@@ -1,5 +1,13 @@
 # Module 1: Course Introduction and EDA Review
 
+## 這堂怎麼上
+
+| | |
+|---|---|
+| 角色 | **前情自學複習**（已會 Python／ML 可自己看） |
+| 講義 | overview：系統化 EDA，不當實戰專案開張 |
+| 資料 | Titanic。**全課 Titanic 掃描只在 `03` 當主角一次** |
+
 ## Learning Objectives
 
 This module serves as a foundational introduction to the data mining course and a refresher on the essential concepts of Exploratory Data Analysis (EDA). By the end of this module, you will be able to:

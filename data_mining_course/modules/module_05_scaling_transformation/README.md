@@ -1,5 +1,14 @@
 # Module 5: Feature Scaling and Variable Transformation
 
+## 這堂怎麼上
+
+| | |
+|---|---|
+| 角色 | **上課**（樹通常不用縮放：ML 已見過的補 FE 決策） |
+| 講義 | [`slides/M5_Scaling_and_Transformation_Fundamentals.md`](slides/M5_Scaling_and_Transformation_Fundamentals.md) |
+| 資料 | 縮放／冪轉換各自示範；繞回本 **Insurance**（`04`） |
+| 不要跟誰重複 | `03_outliers_impact` **不重做 IQR 專章**；偵測見 M3 |
+
 ## Learning Objectives
 
 After encoding categorical variables, the next crucial step in preprocessing is to handle numerical features. This module covers essential techniques for scaling features to a common range and transforming their distributions. By the end of this module, you will:

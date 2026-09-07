@@ -1,5 +1,13 @@
 # Module 7: Feature Selection & Dimensionality Reduction
 
+## 這堂怎麼上
+
+| | |
+|---|---|
+| 角色 | **上課**（包裹法／PCA 可當加碼；時間不夠標自學） |
+| 講義 | [`slides/M7_Feature_Selection_and_Reduction.md`](slides/M7_Feature_Selection_and_Reduction.md) |
+| 資料 | Filter 若用 Titanic：**略過 EDA 掃描，接 Module 1**；繞回本 Breast Cancer |
+
 ## Module Objective
 
 Welcome to Module 7. In the world of machine learning, having a large number of features is not always a good thing. It can lead to overfitting, increased computational cost, and decreased model interpretability. This module focuses on the crucial step of **Feature Selection** and **Dimensionality Reduction**, teaching you how to select the most relevant features and create more compact, powerful feature representations.

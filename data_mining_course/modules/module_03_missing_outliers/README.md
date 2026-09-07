@@ -1,5 +1,14 @@
 # Module 3: Missing Data and Outlier Handling
 
+## 這堂怎麼上
+
+| | |
+|---|---|
+| 角色 | **上課**（ML 可能見過插補；這裡補 FE 決策：缺值可以是訊號、參數只看訓練集） |
+| 講義 | [`slides/M3_Missing_and_Outliers_Fundamentals.md`](slides/M3_Missing_and_Outliers_Fundamentals.md) |
+| 資料 | 技法本各自示範；繞回本 **House Prices**（`04`） |
+| 不要跟誰重複 | 異常值**偵測／處置**以本模組為準；M5 只講對縮放的影響 |
+
 ## Learning Objectives
 
 This module dives deep into two of the most common and critical data quality challenges: missing values and outliers. Mastering these topics is essential for building robust and reliable machine learning models. By the end of this module, you will be able to:
