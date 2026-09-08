@@ -14,8 +14,18 @@
 
 改版的動機寫在 commit `35f0d54` 的訊息裡。
 
-## 這本跑不起來
+## 要重跑的話
 
-第一個 cell 讀 `Automobile_data.csv`（UCI Automobile 資料集），那份資料不在這個 repo，
-`car_data/` 只有英國二手車的 13 個檔案。保留的是**輸出**——26 個 code cell 的圖表都還在，
-直接看 GitHub 的 notebook 預覽即可，不需要重跑。檔案 11 MB 也大多是這些內嵌圖表。
+它讀三個檔案，全部用相對路徑，且都在**上一層** `projects/project/`：
+
+| 讀取路徑 | 實際位置 |
+| :--- | :--- |
+| `Automobile_data.csv` | `../Automobile_data.csv`（UCI Automobile，205 列） |
+| `car_data/audi.csv` | `../car_data/audi.csv` |
+| `car_data/ford.csv` | `../car_data/ford.csv` |
+
+所以直接在 `legacy/` 開會找不到檔案——Jupyter 的工作目錄是 notebook 自己的目錄。
+要重跑就把它複製回上一層再開，或在第一格加 `%cd ..`。
+
+不過多數情況不需要重跑：26 個 code cell 的輸出都還在，GitHub 的 notebook 預覽
+直接看得到那些 Altair 圖表，檔案 11 MB 也大多是這些內嵌輸出。
