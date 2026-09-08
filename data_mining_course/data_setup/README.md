@@ -69,7 +69,7 @@ uv run python data_mining_course/data_setup/data_download.py
 | 模組十 | Instacart Market Basket | `psparks/instacart-market-basket-analysis` | `instacart/` |
 | 模組十 | Mall Customers | `vjchoudhary7/customer-segmentation-tutorial-in-python` | `mall_customers/` |
 | 模組十 | Telco Customer Churn | `blastchar/telco-customer-churn` | `telco_churn/` |
-| 專案 / 總整 | 100,000 UK Used Car | `adityadesai13/used-car-dataset-ford-and-mercedes` | ⚠️ 見下 |
+| 專案 / 總整 | 100,000 UK Used Car | `adityadesai13/used-car-dataset-ford-and-mercedes` | 已附上，批次下載跳過 |
 
 ---
 
@@ -83,7 +83,9 @@ clone 完就能直接跑 `projects/project/car_market_eda.ipynb` 與 `capstone/c
 資料授權為 **CC0-1.0（Public Domain）**，可自由散布；
 來源為 Kaggle API `datasets metadata` 回報的 `licenses` 欄位。
 
-上表仍列著它，是為了資料遺失時能重新取得——重跑腳本會把檔案放回
+**批次下載會自動跳過它**（選項 1「下載所有」與選項 2「依模組」都不含這一筆），
+以免覆蓋掉版控裡的檔案。清單上仍看得到它並標著〔已隨 repo 附上〕，
+是為了資料毀損時能用選項 3「下載單一資料集」重新取得——那時檔案會放回
 `projects/project/car_data/`（而不是 `datasets/raw/`），因為 notebook 只認那個位置。
 
 ---
