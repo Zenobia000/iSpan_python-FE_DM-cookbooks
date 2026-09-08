@@ -78,22 +78,26 @@ def check_and_install_packages():
 def get_datasets_info():
     """獲取所有需要下載的資料集資訊"""
     datasets = [
+        # 這兩筆原本走 competition API，但那條路需要帳號具備競賽資格，
+        # 一般 API token 會收到 401 Unauthenticated（連列出競賽都不行），
+        # 且無法靠「接受條款」解決，學生等於沒有自救路徑。
+        # 改用內容相同的 dataset 鏡像，檔名與課程 notebook 期望的一致。
         {
             "module": "模組三",
             "topic": "缺失值與異常值處理",
             "name": "House Prices",
-            "type": "competition",
+            "type": "dataset",
             "method": "kaggle_cli",
-            "competition_id": "house-prices-advanced-regression-techniques",
+            "dataset_id": "lespin/house-prices-dataset",
             "folder": "house_prices"
         },
         {
             "module": "模組四",
             "topic": "類別變數編碼",
             "name": "Titanic",
-            "type": "competition",
+            "type": "dataset",
             "method": "kaggle_cli",
-            "competition_id": "titanic",
+            "dataset_id": "yasserh/titanic-dataset",
             "folder": "titanic"
         },
         {
@@ -141,15 +145,6 @@ def get_datasets_info():
             "method": "kaggle_cli",
             "dataset_id": "lakshmi25npathi/imdb-dataset-of-50k-movie-reviews",
             "folder": "imdb_reviews"
-        },
-        {
-            "module": "模組九",
-            "topic": "多模態特徵工程",
-            "name": "Dogs vs Cats",
-            "type": "competition",
-            "method": "kagglehub_only",
-            "competition_id": "dogs-vs-cats",
-            "folder": "dogs_vs_cats"
         },
         {
             "module": "模組九",

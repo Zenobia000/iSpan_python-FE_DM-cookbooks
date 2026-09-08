@@ -34,8 +34,9 @@ Windows 放在 `C:\Users\<你的帳號>\.kaggle\kaggle.json`。
 > 但更好的作法是根本不要複製到專案目錄裡。若不慎提交過，去 Kaggle 頁面
 > **Expire Token** 後重新產一份。
 
-> **競賽資料集要先按同意條款。** House Prices、Titanic、Dogs vs Cats 屬於 competition，
-> 必須先到該競賽頁面點一次 *I Understand and Accept*，否則下載會回 403。
+> **清單裡沒有 competition 類資料集，這是刻意的。** Kaggle 的競賽 API 需要帳號具備競賽資格，
+> 一般 API token 會收到 `401 Unauthenticated`——連列出競賽都不行，而且**接受條款也解決不了**。
+> House Prices 與 Titanic 因此改用內容相同的 dataset 鏡像，檔名與 notebook 期望的一致。
 
 ---
 
@@ -57,15 +58,14 @@ uv run python data_mining_course/data_setup/data_download.py
 
 | 模組 | 資料集 | Kaggle ID | 落點 `datasets/raw/` |
 | :--- | :--- | :--- | :--- |
-| 模組三 | House Prices | `house-prices-advanced-regression-techniques` | `house_prices/` |
-| 模組四 | Titanic | `titanic` | `titanic/` |
+| 模組三 | House Prices | `lespin/house-prices-dataset` | `house_prices/` |
+| 模組四 | Titanic | `yasserh/titanic-dataset` | `titanic/` |
 | 模組五 | Medical Cost Personal | `mirichoi0218/insurance` | `insurance/` |
 | 模組六 | NYC Yellow Taxi Trip | `elemento/nyc-yellow-taxi-trip-data` | `nyc_taxi/` |
 | 模組七 | Breast Cancer Wisconsin | `uciml/breast-cancer-wisconsin-data` | `breast_cancer/` |
 | 模組八 | Electric Power Consumption | `uciml/electric-power-consumption-data-set` | `power_consumption/` |
 | 模組九 | IMDB 50K Movie Reviews | `lakshmi25npathi/imdb-dataset-of-50k-movie-reviews` | `imdb_reviews/` |
-| 模組九 | Dogs vs Cats | `dogs-vs-cats` | `dogs_vs_cats/` |
-| 模組九 | UrbanSound8K | `rupakroy/urban-sound-8k` | `urban_sound/` |
+| 模組九 | UrbanSound8K | `rupakroy/urban-sound-8k` | `urban_sound/` (6.7 GB) |
 | 模組十 | Instacart Market Basket | `psparks/instacart-market-basket-analysis` | `instacart/` |
 | 模組十 | Mall Customers | `vjchoudhary7/customer-segmentation-tutorial-in-python` | `mall_customers/` |
 | 模組十 | Telco Customer Churn | `blastchar/telco-customer-churn` | `telco_churn/` |
@@ -95,10 +95,19 @@ clone 完就能直接跑 `projects/project/car_market_eda.ipynb` 與 `capstone/c
 | 症狀 | 原因與處理 |
 | :--- | :--- |
 | `OSError: Could not find kaggle.json` | 憑證沒放好，回第 1 節 |
-| `403 Forbidden` | competition 類資料集沒按同意條款，去該競賽頁面接受一次 |
+| `401 Unauthenticated` | 打到了競賽 API。清單裡已無 competition 類資料集，若你自行加了一筆，改找 dataset 鏡像 |
 | `KeyError: 'username'` | `kaggle.json` 內容毀損，重新下載一份 token |
 | 下載完 notebook 還是說找不到檔案 | 確認落點是 `data_mining_course/datasets/raw/`；`capstone/load_course_data.py` 也接受 repo 根目錄下的 `datasets/raw/`（舊版本的落點） |
 | 網路斷在半路 | 直接重跑，已完成的資料集會被跳過 |
 
 `capstone/load_course_data.py` 的所有 loader 在找不到檔案時都會退回可重現的合成資料並印出說明，
 所以沒下載資料也能跑完整本 notebook，只是數字不是真實資料。
+
+## 6. 不透過本腳本取得的資料
+
+M09 的圖像與文字模態直接在 notebook 裡用 HuggingFace `load_dataset()` 抓
+（`microsoft/cats_vs_dogs`、`stanfordnlp/imdb`），不需要 Kaggle 憑證，也不在上表。
+清單裡曾有一筆 Dogs vs Cats 競賽資料，是改用 HuggingFace 之前的殘留，已移除。
+
+磁碟空間提醒：全部下載約 14.5 GB，其中 `nyc_taxi` 6.9 GB、`urban_sound` 6.7 GB 就佔了絕大部分。
+只上前八個模組的話這兩個可以不下載。
