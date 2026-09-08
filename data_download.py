@@ -180,6 +180,18 @@ def get_datasets_info():
             "method": "kaggle_cli",
             "dataset_id": "blastchar/telco-customer-churn",
             "folder": "telco_churn"
+        },
+        {
+            # 專案與總整共用同一份原始資料，且兩本 notebook 都以相對路徑 car_data/
+            # 讀取，因此不落在 datasets/raw/ 而是直接放進專案目錄（見 target_dir）。
+            "module": "專案 / 總整",
+            "topic": "英國二手車市場 EDA 與定價",
+            "name": "100,000 UK Used Car Data set",
+            "type": "dataset",
+            "method": "kaggle_cli",
+            "dataset_id": "adityadesai13/used-car-dataset-ford-and-mercedes",
+            "folder": "used_cars",
+            "target_dir": os.path.join("data_mining_course", "projects", "project", "car_data")
         }
     ]
     return datasets
@@ -350,7 +362,9 @@ def download_dataset(dataset, base_dir):
     """下載單個資料集到指定目錄，根據預設方法"""
     from tqdm import tqdm
     
-    target_folder = os.path.join(base_dir, "raw", dataset["folder"])
+    # target_dir 讓少數資料集（如二手車）落在 notebook 旁邊而非 datasets/raw/
+    target_dir = dataset.get("target_dir")
+    target_folder = os.path.abspath(target_dir) if target_dir else os.path.join(base_dir, "raw", dataset["folder"])
     os.makedirs(target_folder, exist_ok=True)
     
     method = dataset.get("method", "kaggle_cli")

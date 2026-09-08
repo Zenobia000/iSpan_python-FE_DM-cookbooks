@@ -33,22 +33,24 @@ COURSE_DIR = TRACK_DIR.parent
 REPO_DIR = COURSE_DIR.parent
 
 CAR_DIR = COURSE_DIR / "projects" / "project" / "car_data"
+# data_download.py 以「執行時的工作目錄」為根建立 datasets/，所以同一份資料可能
+# 落在 repo 根目錄或 data_mining_course/ 底下（看使用者在哪裡執行）。兩處都列入候選，
+# 避免明明下載過卻走進合成資料的後備路徑。
+_DATASET_ROOTS = [COURSE_DIR / "datasets" / "raw", REPO_DIR / "datasets" / "raw"]
+
+
+def _dataset_candidates(*parts: str) -> list[Path]:
+    return [root.joinpath(*parts) for root in _DATASET_ROOTS]
+
+
 TELCO_CANDIDATES = [
     COURSE_DIR / "modules" / "module_10_data_mining_applications" / "datasets" / "raw" / "telco_churn" / "WA_Fn-UseC_-Telco-Customer-Churn.csv",
-    COURSE_DIR / "datasets" / "raw" / "telco_churn" / "WA_Fn-UseC_-Telco-Customer-Churn.csv",
+    *_dataset_candidates("telco_churn", "WA_Fn-UseC_-Telco-Customer-Churn.csv"),
 ]
-HOUSE_CANDIDATES = [
-    COURSE_DIR / "datasets" / "raw" / "house_prices" / "train.csv",
-]
-INSURANCE_CANDIDATES = [
-    COURSE_DIR / "datasets" / "raw" / "insurance" / "insurance.csv",
-]
-TAXI_CANDIDATES = [
-    COURSE_DIR / "datasets" / "raw" / "nyc_taxi" / "train.csv",
-]
-POWER_CANDIDATES = [
-    COURSE_DIR / "datasets" / "raw" / "power_consumption" / "power_consumption.csv",
-]
+HOUSE_CANDIDATES = _dataset_candidates("house_prices", "train.csv")
+INSURANCE_CANDIDATES = _dataset_candidates("insurance", "insurance.csv")
+TAXI_CANDIDATES = _dataset_candidates("nyc_taxi", "train.csv")
+POWER_CANDIDATES = _dataset_candidates("power_consumption", "power_consumption.csv")
 
 BRAND_FILES = {
     "audi": "Audi",
