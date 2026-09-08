@@ -12,6 +12,12 @@ import time
 import shutil
 import sys
 import zipfile
+from pathlib import Path
+
+# 以本檔位置定錨，讓下載結果不受「在哪個目錄執行」影響：
+# data_mining_course/data_setup/data_download.py -> COURSE_DIR = data_mining_course/
+SCRIPT_DIR = Path(__file__).resolve().parent
+COURSE_DIR = SCRIPT_DIR.parent
 
 # 確保 Kaggle API 憑證存在
 def check_kaggle_api():
@@ -191,7 +197,7 @@ def get_datasets_info():
             "method": "kaggle_cli",
             "dataset_id": "adityadesai13/used-car-dataset-ford-and-mercedes",
             "folder": "used_cars",
-            "target_dir": os.path.join("data_mining_course", "projects", "project", "car_data")
+            "target_dir": str(COURSE_DIR / "projects" / "project" / "car_data")
         }
     ]
     return datasets
@@ -502,7 +508,7 @@ def main():
     check_kaggle_api()
     
     # 設置資料目錄
-    base_dir = os.path.join(os.getcwd(), "datasets")
+    base_dir = str(COURSE_DIR / "datasets")
     raw_dir = os.path.join(base_dir, "raw")
     processed_dir = os.path.join(base_dir, "processed")
     

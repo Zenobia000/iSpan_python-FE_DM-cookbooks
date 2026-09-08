@@ -33,8 +33,8 @@ COURSE_DIR = TRACK_DIR.parent
 REPO_DIR = COURSE_DIR.parent
 
 CAR_DIR = COURSE_DIR / "projects" / "project" / "car_data"
-# data_download.py 以「執行時的工作目錄」為根建立 datasets/，所以同一份資料可能
-# 落在 repo 根目錄或 data_mining_course/ 底下（看使用者在哪裡執行）。兩處都列入候選，
+# data_setup/data_download.py 現在以檔案位置定錨，資料一律落在 data_mining_course/datasets/，
+# 但舊版是以「執行時的工作目錄」為根，既有的下載可能還留在 repo 根目錄。兩處都列入候選，
 # 避免明明下載過卻走進合成資料的後備路徑。
 _DATASET_ROOTS = [COURSE_DIR / "datasets" / "raw", REPO_DIR / "datasets" / "raw"]
 

@@ -40,7 +40,7 @@
 | 🏗️ **裝好/還原環境** | `uv sync` |
 | ▶️ **在環境裡跑東西** | `uv run <任何指令>` |
 
-例如：`uv run jupyter lab`、`uv run python data_download.py`。
+例如：`uv run jupyter lab`、`uv run python data_mining_course/data_setup/data_download.py`。
 `uv run` 每次都會先確認環境跟 `uv.lock` 一致，再執行 —— 所以你永遠跑在對的環境裡，**不會忘記 activate**。
 
 > 💡 真的想進傳統的 activate 模式也行：`source .venv/bin/activate`（Windows：`.venv\Scripts\activate`）。但課程一律建議用 `uv run`，少一個出錯點。
@@ -91,7 +91,7 @@ uv run jupyter lab
 2. 在專案資料夾建立 `.venv/`。
 3. 照 `uv.lock` 把套件**精確還原**。
 
-> 📦 下載課程資料集需要先設定 Kaggle API，步驟見 [README → 配置 Kaggle API](README.md#3️⃣-配置-kaggle-api)，之後 `uv run python data_download.py`。
+> 📦 下載課程資料集需要先設定 Kaggle API，步驟見 [README → 配置 Kaggle API](README.md#3️⃣-配置-kaggle-api)，之後 `uv run python data_mining_course/data_setup/data_download.py`。
 
 ---
 

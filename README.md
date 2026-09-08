@@ -64,7 +64,7 @@ chmod 600 ~/.kaggle/kaggle.json
 
 ### 4️⃣ 下載資料集
 ```bash
-uv run python data_download.py
+uv run python data_mining_course/data_setup/data_download.py
 ```
 
 ### 5️⃣ 開始學習
@@ -168,10 +168,10 @@ docker compose up -d         # 開啟 http://localhost:8888
 ## 📊 資料集管理
 
 ### 🎯 智能下載系統
-本專案採用 **零資料集上傳** 策略，所有資料集通過 `data_download.py` 自動下載：
+本專案採用 **零資料集上傳** 策略（二手車資料除外，見 `data_mining_course/data_setup/README.md`），資料集通過 `data_setup/data_download.py` 下載：
 
 ```bash
-python data_download.py
+python data_mining_course/data_setup/data_download.py
 ```
 
 #### 互動式選單
@@ -254,16 +254,18 @@ graph LR
 │   │   ├── 📂 module_01_eda_intro/
 │   │   ├── 📂 module_02_data_cleaning/
 │   │   └── ...                      # 共 11 個模組、67 個筆記本
-│   ├── 📂 datasets/                 # 資料集目錄
+│   ├── 📂 data_setup/               # 資料集下載腳本與說明（先讀這裡的 README）
+│   ├── 📂 datasets/                 # 資料集目錄（下載後產生，不進版控）
 │   │   ├── 📂 raw/                  # 原始資料
 │   │   └── 📂 processed/            # 處理後資料
+│   ├── 📂 projects/                 # 專案（含二手車 EDA 與隨附的 car_data/）
+│   ├── 📂 capstone/                 # 總整：二手車定價
 │   ├── 📂 utils/                    # 工具函數
 │   ├── 📂 templates/                # 範本檔案
 │   └── 📂 environment/              # 環境配置 (Docker / requirements 匯出)
 ├── 📂 course_slides/                # 課程簡報
 ├── 📄 pyproject.toml                # 依賴與專案設定（uv 管理）
 ├── 📄 uv.lock                       # 鎖定的依賴版本
-├── 📄 data_download.py              # 資料下載腳本
 ├── 📄 .gitignore                    # Git 忽略檔案
 └── 📄 README.md                     # 專案說明
 ```
