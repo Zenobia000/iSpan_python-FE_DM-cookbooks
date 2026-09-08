@@ -9,6 +9,9 @@ datasets/processed/
 data_mining_course/datasets/raw/
 data_mining_course/datasets/processed/
 *.csv
+# 例外：二手車原始資料隨 repo 附上——專案與總整兩本 notebook 都直接讀它，
+# 且 Kaggle 需要帳號憑證，學生不該為了跑第一個範例先去申請 API token。
+!data_mining_course/projects/project/car_data/*.csv
 *.json
 *.xlsx
 *.xls
