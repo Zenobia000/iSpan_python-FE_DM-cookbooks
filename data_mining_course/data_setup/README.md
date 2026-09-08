@@ -18,12 +18,21 @@
 2. 放到家目錄並收緊權限：
 
 ```bash
-mkdir -p ~/.kaggle
-mv ~/Downloads/kaggle.json ~/.kaggle/kaggle.json
-chmod 600 ~/.kaggle/kaggle.json
+mkdir -p ~/.config/kaggle ~/.kaggle
+cp ~/Downloads/kaggle.json ~/.config/kaggle/kaggle.json
+cp ~/Downloads/kaggle.json ~/.kaggle/kaggle.json
+chmod 600 ~/.config/kaggle/kaggle.json ~/.kaggle/kaggle.json
+rm ~/Downloads/kaggle.json
 ```
 
+**兩個位置都放**：新版 kaggle CLI（1.6+）讀 `~/.config/kaggle/`，
+kagglehub 與舊版讀 `~/.kaggle/`，錯誤訊息只會提其中一個，兩邊都備著最省事。
+
 Windows 放在 `C:\Users\<你的帳號>\.kaggle\kaggle.json`。
+
+> **這是憑證，不要放進 repo。** `.gitignore` 已經擋掉 `kaggle.json`，
+> 但更好的作法是根本不要複製到專案目錄裡。若不慎提交過，去 Kaggle 頁面
+> **Expire Token** 後重新產一份。
 
 > **競賽資料集要先按同意條款。** House Prices、Titanic、Dogs vs Cats 屬於 competition，
 > 必須先到該競賽頁面點一次 *I Understand and Accept*，否則下載會回 403。
@@ -71,7 +80,8 @@ clone 完就能直接跑 `projects/project/car_market_eda.ipynb` 與 `capstone/c
 
 它是唯一破例進版控的資料集，理由有兩個：兩本 notebook 用寫死的相對路徑 `car_data/` 讀它，
 而且課程的第一個完整專案不該要求學生先去申請 Kaggle API token。
-資料授權為 **CC0: Public Domain**，可自由散布。
+資料授權為 **CC0-1.0（Public Domain）**，可自由散布；
+來源為 Kaggle API `datasets metadata` 回報的 `licenses` 欄位。
 
 上表仍列著它，是為了資料遺失時能重新取得——重跑腳本會把檔案放回
 `projects/project/car_data/`（而不是 `datasets/raw/`），因為 notebook 只認那個位置。
