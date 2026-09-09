@@ -8,7 +8,17 @@ datasets/raw/
 datasets/processed/
 data_mining_course/datasets/raw/
 data_mining_course/datasets/processed/
+# 下載工具的暫存（HF / KaggleHub），刻意放在課程樹下而非 ~/.cache，匯出完可刪
+datasets/.hf_cache/
+datasets/.kagglehub_cache/
+data_mining_course/datasets/.hf_cache/
+data_mining_course/datasets/.kagglehub_cache/
 *.csv
+# 例外：二手車原始資料隨 repo 附上——專案與總整兩本 notebook 都直接讀它，
+# 且 Kaggle 需要帳號憑證，學生不該為了跑第一個範例先去申請 API token。
+!data_mining_course/projects/project/car_data/*.csv
+# 例外：UCI Automobile 資料集，legacy/ 的舊版視覺化 notebook 讀它（24 KB）
+!data_mining_course/projects/project/Automobile_data.csv
 *.json
 *.xlsx
 *.xls

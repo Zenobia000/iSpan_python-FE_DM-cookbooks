@@ -2,7 +2,7 @@
 
 ## 概述
 
-由於專案中已經有 `data_download.py` 腳本可以自動下載所有需要的 Kaggle 資料集，因此大型資料檔案不需要納入版本控制。
+由於專案中已經有 `data_setup/data_download.py` 腳本可以自動下載所有需要的 Kaggle 資料集，因此大型資料檔案不需要納入版本控制。
 
 ## 不需要上傳的檔案類型
 
@@ -16,7 +16,7 @@ data_mining_course/datasets/processed/
 
 **原因:**
 - 檔案過大，會拖慢 Git 操作
-- 可透過 `data_download.py` 重新下載
+- 可透過 `data_setup/data_download.py` 重新下載
 - Kaggle 資料集會不斷更新
 
 ### 🔴 敏感資訊檔案
@@ -92,7 +92,7 @@ Thumbs.db            # Windows 縮圖快取
 
 2. **執行下載腳本:**
    ```bash
-   python data_download.py
+   python data_mining_course/data_setup/data_download.py
    ```
 
 3. **選擇下載選項:**
@@ -129,13 +129,13 @@ Thumbs.db            # Windows 縮圖快取
 ## 注意事項
 
 1. **初次使用者:** 需要自行設置 Kaggle API 憑證
-2. **資料更新:** 定期執行 `data_download.py` 獲取最新資料
+2. **資料更新:** 定期執行 `data_setup/data_download.py` 獲取最新資料
 3. **大型檔案:** 如需版本控制，考慮使用 Git LFS
 4. **備份:** 重要的處理後資料可考慮其他備份方式
 
 ## 相關檔案
 
 - `.gitignore` - Git 忽略檔案配置
-- `data_download.py` - 資料集下載腳本
+- `data_mining_course/data_setup/` - 資料集下載腳本與使用說明
 - `environment/requirements.txt` - Python 套件清單
 - `README.md` - 專案說明和使用指南 

@@ -12,6 +12,16 @@ import time
 import shutil
 import sys
 import zipfile
+from pathlib import Path
+
+# 以本檔位置定錨，讓下載結果不受「在哪個目錄執行」影響：
+# data_mining_course/data_setup/data_download.py -> COURSE_DIR = data_mining_course/
+SCRIPT_DIR = Path(__file__).resolve().parent
+COURSE_DIR = SCRIPT_DIR.parent
+
+# Kaggle CLI 直接寫進 --path，不經快取；但 KaggleHub 後備路徑會先落到
+# ~/.cache/kagglehub 再複製過來。一併指回課程樹，資料才不會散在家目錄。
+os.environ.setdefault("KAGGLEHUB_CACHE", str(COURSE_DIR / "datasets" / ".kagglehub_cache"))
 
 # 確保 Kaggle API 憑證存在
 def check_kaggle_api():
@@ -72,22 +82,26 @@ def check_and_install_packages():
 def get_datasets_info():
     """獲取所有需要下載的資料集資訊"""
     datasets = [
+        # 這兩筆原本走 competition API，但那條路需要帳號具備競賽資格，
+        # 一般 API token 會收到 401 Unauthenticated（連列出競賽都不行），
+        # 且無法靠「接受條款」解決，學生等於沒有自救路徑。
+        # 改用內容相同的 dataset 鏡像，檔名與課程 notebook 期望的一致。
         {
             "module": "模組三",
             "topic": "缺失值與異常值處理",
             "name": "House Prices",
-            "type": "competition",
+            "type": "dataset",
             "method": "kaggle_cli",
-            "competition_id": "house-prices-advanced-regression-techniques",
+            "dataset_id": "lespin/house-prices-dataset",
             "folder": "house_prices"
         },
         {
             "module": "模組四",
             "topic": "類別變數編碼",
             "name": "Titanic",
-            "type": "competition",
+            "type": "dataset",
             "method": "kaggle_cli",
-            "competition_id": "titanic",
+            "dataset_id": "yasserh/titanic-dataset",
             "folder": "titanic"
         },
         {
@@ -128,6 +142,17 @@ def get_datasets_info():
             "folder": "power_consumption"
         },
         {
+            # M08 五本 notebook 的主資料是 AEP_hourly.csv，來自這一份而非上面那份；
+            # 兩者都落在 power_consumption/，缺了它五本都只會跑降級的示意資料。
+            "module": "模組八",
+            "topic": "時間序列特徵工程",
+            "name": "Hourly Energy Consumption (AEP)",
+            "type": "dataset",
+            "method": "kaggle_cli",
+            "dataset_id": "robikscube/hourly-energy-consumption",
+            "folder": "power_consumption"
+        },
+        {
             "module": "模組九",
             "topic": "多模態特徵工程",
             "name": "IMDB 50K Movie Reviews",
@@ -135,15 +160,6 @@ def get_datasets_info():
             "method": "kaggle_cli",
             "dataset_id": "lakshmi25npathi/imdb-dataset-of-50k-movie-reviews",
             "folder": "imdb_reviews"
-        },
-        {
-            "module": "模組九",
-            "topic": "多模態特徵工程",
-            "name": "Dogs vs Cats",
-            "type": "competition",
-            "method": "kagglehub_only",
-            "competition_id": "dogs-vs-cats",
-            "folder": "dogs_vs_cats"
         },
         {
             "module": "模組九",
@@ -180,6 +196,21 @@ def get_datasets_info():
             "method": "kaggle_cli",
             "dataset_id": "blastchar/telco-customer-churn",
             "folder": "telco_churn"
+        },
+        {
+            # 專案與總整共用同一份原始資料，且兩本 notebook 都以相對路徑 car_data/
+            # 讀取，因此不落在 datasets/raw/ 而是直接放進專案目錄（見 target_dir）。
+            "module": "專案 / 總整",
+            "topic": "英國二手車市場 EDA 與定價",
+            "name": "100,000 UK Used Car Data set",
+            "type": "dataset",
+            "method": "kaggle_cli",
+            "dataset_id": "adityadesai13/used-car-dataset-ford-and-mercedes",
+            "folder": "used_cars",
+            "target_dir": str(COURSE_DIR / "projects" / "project" / "car_data"),
+            # 這份資料已隨 repo 附上，批次下載時跳過，免得覆蓋掉版控裡的檔案。
+            # 仍保留在清單中，資料毀損時可用選項 3 單獨重新取得。
+            "skip_bulk": True
         }
     ]
     return datasets
@@ -350,7 +381,9 @@ def download_dataset(dataset, base_dir):
     """下載單個資料集到指定目錄，根據預設方法"""
     from tqdm import tqdm
     
-    target_folder = os.path.join(base_dir, "raw", dataset["folder"])
+    # target_dir 讓少數資料集（如二手車）落在 notebook 旁邊而非 datasets/raw/
+    target_dir = dataset.get("target_dir")
+    target_folder = os.path.abspath(target_dir) if target_dir else os.path.join(base_dir, "raw", dataset["folder"])
     os.makedirs(target_folder, exist_ok=True)
     
     method = dataset.get("method", "kaggle_cli")
@@ -488,7 +521,7 @@ def main():
     check_kaggle_api()
     
     # 設置資料目錄
-    base_dir = os.path.join(os.getcwd(), "datasets")
+    base_dir = str(COURSE_DIR / "datasets")
     raw_dir = os.path.join(base_dir, "raw")
     processed_dir = os.path.join(base_dir, "processed")
     
@@ -499,8 +532,11 @@ def main():
     # 獲取資料集資訊
     datasets = get_datasets_info()
     
+    # 隨 repo 附上的資料集不列入批次下載，避免覆蓋版控裡的檔案
+    bulk_datasets = [d for d in datasets if not d.get("skip_bulk")]
+
     # 顯示將要下載的資料集
-    print(f"\n📋 可下載的資料集列表 (共 {len(datasets)} 個):")
+    print(f"\n📋 可下載的資料集列表 (共 {len(datasets)} 個，其中 {len(datasets) - len(bulk_datasets)} 個已隨 repo 附上):")
     print("=" * 80)
     
     for i, dataset in enumerate(datasets, 1):
@@ -530,7 +566,8 @@ def main():
                 dataset_type_icon = "📊"
                 cmd_info = f"kaggle datasets download {dataset['dataset_id']}"
         
-        print(f"{i:2d}. {dataset_type_icon} {method_tag} {dataset['name']}")
+        bundled_tag = " 〔已隨 repo 附上，批次下載會跳過〕" if dataset.get("skip_bulk") else ""
+        print(f"{i:2d}. {dataset_type_icon} {method_tag} {dataset['name']}{bundled_tag}")
         print(f"    📂 模組: {dataset['module']} - {dataset['topic']}")
         print(f"    💻 指令: {cmd_info}")
         print()
@@ -551,9 +588,10 @@ def main():
     choice = input("\n請輸入選項 (0-3): ").strip()
     
     if choice == '1':
-        # 下載所有資料集
+        # 下載所有資料集（隨 repo 附上的資料不重複下載）
         from tqdm import tqdm
-        
+
+        datasets = bulk_datasets
         print(f"\n🚀 開始下載所有 {len(datasets)} 個資料集...")
         success_count = 0
         
@@ -581,7 +619,7 @@ def main():
         module_choice = input("\n請選擇模組編號: ").strip()
         if validate_choice(module_choice, len(modules), "模組編號"):
             selected_module = modules[int(module_choice) - 1]
-            module_datasets = [d for d in datasets if d['module'] == selected_module]
+            module_datasets = [d for d in bulk_datasets if d['module'] == selected_module]
             
             print(f"\n將下載 {selected_module} 的以下資料集:")
             for i, dataset in enumerate(module_datasets, 1):
