@@ -291,7 +291,7 @@ graph LR
 
 - **課程討論**: [開啟 Issue](../../issues)
 - **技術問題**: [查看 FAQ](data_mining_course/docs/faq.md)
-- **課程大綱**: [查看詳細說明](data_mining_course/docs/syllabus.md)
+- **課程大綱**: [查看詳細說明](data_mining_course/docs/course_brief.md)
 
 ## 📝 許可證
 
