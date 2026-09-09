@@ -1,4 +1,4 @@
-# 第 6 章　特徵創造：投影片規劃
+# 第 6 章　特徵建構：投影片規劃
 
 9 張，採 `handout_blueprint.md` 的四格骨架（道 1 · 術 3 · 法 3 · 器 2）。
 講義本體 [`M6_Feature_Creation_Fundamentals.md`](../../modules/module_06_feature_creation/slides/M6_Feature_Creation_Fundamentals.md)，產圖提示詞在 [`slides.prompts.md`](slides.prompts.md)，圖檔輸出到 `concept_images/`。

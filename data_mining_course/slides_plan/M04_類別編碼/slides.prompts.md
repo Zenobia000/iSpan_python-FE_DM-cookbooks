@@ -31,7 +31,7 @@ python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景�
 用在第 7 張。目的：用訓練與測試分數的落差說明洩漏。
 
 ```bash
-python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，左右對照。左側標紅色叉，一張資料表中某一列的目標值用箭頭繞回去參與計算自己的編碼值，形成一個迴圈，下方兩個長條顯示『訓練 AUC 0.97』與『測試 AUC 0.61』，落差用紅色標出。右側標綠色勾，資料被切成五個摺，計算某一摺的編碼時其他四摺提供數值、該摺自己被排除，下方兩個長條顯示『訓練 0.86』與『測試 0.84』。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M4_fig3_target_leak --size 1536x1024 --quality low --outdir concept_images
+python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，左右對照。左側標紅色叉，一張資料表中某一列的目標值用箭頭繞回去參與計算自己的編碼值，形成一個迴圈，下方兩個長條顯示『訓練 AUC 0.97』與『測試 AUC 0.61』，落差用紅色標出。右側標綠色勾，資料被切成五個折，計算某一折的編碼時其他四折提供數值、該折自己被排除，下方兩個長條顯示『訓練 0.86』與『測試 0.84』。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M4_fig3_target_leak --size 1536x1024 --quality low --outdir concept_images
 ```
 
 ---

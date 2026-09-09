@@ -12,7 +12,7 @@
 | 3 | 術 | 決策表 | Label／One-hot／Count／Target 四種，比適用模型、維度代價、洩漏風險、`fit` 學到什麼 | `03_target_encoding.ipynb` | 圖 2 |
 | 4 | 術 | 判斷表 | 兩張判斷表：看類別數量怎麼選、看下游模型是樹還是線性怎麼選 | `04_high_cardinality.ipynb` | |
 | 5 | 法 | SOP 五步 | 看基數 → 選方法 → 切分 → 訓練集 `fit` → 對齊測試集欄位 | `05_titanic_case.ipynb` | |
-| 6 | 法 | 驗收三問 | 人話、洩漏、拿掉會怎樣。第二問在這堂最關鍵：Target 與 Count 的統計量是不是只從訓練摺算的 | — | |
+| 6 | 法 | 驗收三問 | 人話、洩漏、拿掉會怎樣。第二問在這堂最關鍵：Target 與 Count 的統計量是不是只從訓練折算的 | — | |
 | 7 | 法 | 反例 | 切分前算全資料的類別均值，訓練 AUC 0.97、測試 0.61。附錯誤程式 | `03_target_encoding.ipynb` | 圖 3 |
 | 8 | 器 | 工具速查 | `OneHotEncoder(handle_unknown='ignore')`、`TargetEncoder`（sklearn 1.3 起內建 out-of-fold） | `02_count_frequency_encoding.ipynb` | |
 | 9 | 器 | 三個陷阱與 notebook 對照 | 陷阱：測試集出現新類別、Target 沒做 out-of-fold、高基數直接 One-hot 爆維度 | 全部 | |

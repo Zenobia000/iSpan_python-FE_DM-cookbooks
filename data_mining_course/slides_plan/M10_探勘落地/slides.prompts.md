@@ -17,7 +17,7 @@ cd data_mining_course/slides_plan/M10_探勘落地
 用在第 1 張。目的：讓學員看見前面八個模組在這裡合流。
 
 ```bash
-python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，一條由左至右的管線，入口是原始資料表。管線上依序掛著標籤『清理』『缺值』『編碼』『縮放』『特徵創造』『特徵選擇』，這些全部被一個大框框起來標註『Pipeline 內，切分之後才 fit』。管線出口分成三個方向，分別是『樹模型預測』『分群』『關聯規則』三個小圖示。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M10_fig1_end_to_end --size 1536x1024 --quality low --outdir concept_images
+python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，一條由左至右的管線，入口是原始資料表。管線上依序掛著標籤『清理』『缺失值』『編碼』『縮放』『特徵建構』『特徵選擇』，這些全部被一個大框框起來標註『Pipeline 內，切分之後才 fit』。管線出口分成三個方向，分別是『樹模型預測』『分群』『關聯規則』三個小圖示。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M10_fig1_end_to_end --size 1536x1024 --quality low --outdir concept_images
 ```
 
 ### 圖 2 · 三種落地方式的選用

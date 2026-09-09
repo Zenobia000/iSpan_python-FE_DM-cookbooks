@@ -19,6 +19,11 @@ data_mining_course/datasets/.kagglehub_cache/
 !data_mining_course/projects/project/car_data/*.csv
 # 例外：UCI Automobile 資料集，legacy/ 的舊版視覺化 notebook 讀它（24 KB）
 !data_mining_course/projects/project/Automobile_data.csv
+
+# 投影片產出（每頁約 3 MB，119 頁約 350 MB）。圖只留在本機，
+# 要隨 repo 走得改用 Git LFS 或外部圖床；重生用 build_slides.py --all 即可。
+data_mining_course/slides_plan/*/_generated/
+data_mining_course/slides_plan/_templates/*.png
 *.json
 *.xlsx
 *.xls

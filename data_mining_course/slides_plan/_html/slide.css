@@ -1,0 +1,63 @@
+/* 版型 M：顧問簡報體例（麥肯錫式）
+   深海軍藍底、白色襯線大標、單一亮藍強調色、細線分隔、左下來源右下頁碼。 */
+:root{
+  --navy:#051C2C;        /* 底 */
+  --navy-2:#0A2A40;      /* 區塊底 */
+  --azure:#00A9F4;       /* 唯一強調色 */
+  --ink:#FFFFFF;
+  --muted:#9FB4C4;       /* 內文次要 */
+  --rule:rgba(255,255,255,.22);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000}
+.slide{
+  width:1536px;height:1024px;position:relative;
+  background:var(--navy);color:var(--ink);
+  padding:74px 88px 64px;
+  font-family:"Noto Sans CJK TC","Noto Sans CJK SC",sans-serif;
+  display:flex;flex-direction:column;
+}
+h1{
+  font-family:"Noto Serif CJK TC",serif;font-weight:700;
+  font-size:52px;line-height:1.28;letter-spacing:.01em;max-width:1180px;
+}
+h1 .hl{color:var(--azure)}
+.rule{height:1px;background:var(--rule);margin:34px 0 46px}
+.cols{display:flex;gap:64px;flex:1}
+.col{flex:1;display:flex;flex-direction:column}
+.icon{
+  width:78px;height:78px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.85);
+  display:flex;align-items:center;justify-content:center;
+  font-size:34px;margin-bottom:26px;
+}
+.kicker{color:var(--azure);font-size:29px;font-weight:700;margin-bottom:6px}
+.kicker-rule{width:64px;height:3px;background:var(--azure);margin-bottom:22px}
+ul{list-style:none}
+li{
+  font-size:25px;line-height:1.62;color:var(--muted);
+  padding-left:22px;position:relative;margin-bottom:12px;
+}
+li::before{
+  content:"";position:absolute;left:0;top:14px;
+  width:7px;height:7px;border-radius:50%;background:var(--azure);
+}
+li b{color:var(--ink);font-weight:600}
+.big{font-size:78px;font-weight:700;color:var(--azure);line-height:1}
+.big-cap{font-size:21px;color:var(--muted);margin-top:8px}
+.foot{
+  position:absolute;left:88px;right:88px;bottom:38px;
+  display:flex;justify-content:space-between;align-items:flex-end;
+  font-size:16px;color:rgba(255,255,255,.42);
+}
+.foot .src{max-width:900px;line-height:1.45}
+/* 四欄比較用 */
+.grid4{display:flex;gap:34px;flex:1}
+.card{flex:1;background:var(--navy-2);border-radius:6px;padding:30px 26px;display:flex;flex-direction:column}
+.card h3{font-size:27px;color:var(--azure);font-weight:700;margin-bottom:18px;letter-spacing:.02em}
+.metric{font-size:15px;color:var(--muted);margin-bottom:6px;letter-spacing:.06em}
+.dots{display:flex;gap:7px;margin:4px 0 18px}
+.dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.18)}
+.dot.on{background:var(--azure)}
+.note{margin-top:auto;font-size:19px;color:var(--ink);line-height:1.5}
+.warn{color:#FF8A5B}

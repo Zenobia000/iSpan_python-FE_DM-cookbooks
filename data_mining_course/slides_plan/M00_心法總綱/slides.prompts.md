@@ -34,11 +34,11 @@ python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景�
 python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，一條由左至右的六格流程帶。六格依序為『1 要決定什麼』『2 挖真因並逆推驗證』『3 SMART 篩選』『4 領域理由』『5 資料對不對得上』『6 選技法』。前五格用同一種柔和藍色並在下方標註『確認方向』，第六格用橘色並標註『才動手寫程式』。第六格下方掛三個小標籤『人話』『洩漏』『拿掉會怎樣』。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M0_fig3_six_steps --size 1536x1024 --quality low --outdir concept_images
 ```
 
-### 圖 4 · 逆推驗證抓出混淆變數
+### 圖 4 · 逆推驗證抓出混淆變項
 用在第 8 張。目的：用二手車 mpg 的例子說明逆推為什麼能攔下錯的因果鏈。
 
 ```bash
-python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，左右對照。左側標紅色叉，一條單鏈『省油』箭頭指向『便宜』，下方寫『倒著唸：省油所以不值錢，唸不通』。右側標綠色勾，一個上游節點『小車』分出兩條箭頭，一條指向『省油』一條指向『便宜』，下方寫『mpg 是混淆變數，不是原因』。中間放一個汽車與油表的小圖示。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M0_fig4_reverse_check --size 1536x1024 --quality low --outdir concept_images
+python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，左右對照。左側標紅色叉，一條單鏈『省油』箭頭指向『便宜』，下方寫『倒著唸：省油所以不值錢，唸不通』。右側標綠色勾，一個上游節點『小車』分出兩條箭頭，一條指向『省油』一條指向『便宜』，下方寫『mpg 是混淆變項，不是原因』。中間放一個汽車與油表的小圖示。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M0_fig4_reverse_check --size 1536x1024 --quality low --outdir concept_images
 ```
 
 ---

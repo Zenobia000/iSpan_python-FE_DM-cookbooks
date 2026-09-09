@@ -17,7 +17,7 @@ cd data_mining_course/slides_plan/M01_EDA
 用在第 1 張。目的：把系統化掃描壓成一張可以照著做的檢查表。
 
 ```bash
-python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，一張由上而下的六格檢查清單，每格左邊一個核取方塊。六格依序為『讀檔與看形狀』『欄位型態與缺值比例』『單變量分佈』『兩變量關係』『異常與重複』『寫下要回答的問題』。最後一格用橘色強調並標註『這才是產出』。右側放一個放大鏡與表格的小圖示。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M1_fig1_eda_checklist --size 1536x1024 --quality low --outdir concept_images
+python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，一張由上而下的六格檢查清單，每格左邊一個核取方塊。六格依序為『讀檔與看形狀』『欄位型態與缺失值比例』『單變量分佈』『兩變量關係』『異常與重複』『寫下要回答的問題』。最後一格用橘色強調並標註『這才是產出』。右側放一個放大鏡與表格的小圖示。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M1_fig1_eda_checklist --size 1536x1024 --quality low --outdir concept_images
 ```
 
 ### 圖 2 · 選圖決策樹
