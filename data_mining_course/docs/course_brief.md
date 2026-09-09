@@ -64,6 +64,7 @@ AI 一次生出八十個交叉項不算成果。
 | 心法本體，第 0 章講義 | `docs/M0_心法總綱.md` |
 | 課程宗旨與涵蓋範圍 | `docs/course_charter.md` |
 | 講義怎麼寫，四格規格 | `docs/handout_blueprint.md` |
+| 投影片規劃與產圖提示詞 | `slides_plan/`，總覽見該資料夾的 README |
 | 上課主線 | `modules/module_01` 到 `module_11`，各模組的 `slides/` 是講義、`notebooks/` 是實作 |
 | 最後總整 | `capstone/capstone_used_car.ipynb` |
 | 環境或路徑出問題 | `docs/faq.md` |
