@@ -1,4 +1,4 @@
-# 概念示意圖提示詞：第 3 章　缺值與異常值
+# 概念示意圖提示詞：第 3 章　缺失值與離群值
 
 > 對應講義：[`M3_Missing_and_Outliers_Fundamentals.md`](../../modules/module_03_missing_outliers/slides/M3_Missing_and_Outliers_Fundamentals.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤
@@ -8,12 +8,12 @@
 > ▶️ 執行前先 `cd` 到本資料夾，圖會輸出到 `./concept_images/`：
 
 ```bash
-cd data_mining_course/slides_plan/M03_缺值與異常
+cd data_mining_course/slides_plan/M03_缺失值與離群值
 ```
 
 ---
 
-### 圖 1 · 缺值可以是訊號
+### 圖 1 · 缺失值可以是訊號
 用在第 1 張。目的：讓學員先分清楚缺失機制，再談補值。
 
 ```bash

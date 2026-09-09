@@ -6,7 +6,7 @@
 
 整門課只有三條鐵律，其他十一個模組都是它們的實例。
 
-1. 先切再轉。所有 `fit()` 只能看訓練集或訓練摺；時間序列的測試集必須是比較晚的那一段。
+1. 先切再轉。所有 `fit()` 只能看訓練集或訓練折；時間序列的測試集必須是比較晚的那一段。
 2. 特徵要能講人話。講不出理由卻拿高分的特徵，先當可疑。
 3. 資料形狀決定你能接哪類模型。張量的 shape 和標籤格式要先設計好，再挑模型。
 
@@ -19,12 +19,12 @@
 | M0 心法總綱 | 三條鐵律加六個步驟 | SCQA、5 Why（含逆推驗證）、KT 的 IS／IS NOT、SMART | 無 | 因果鏈倒著唸通不通 |
 | M1 EDA | 有系統地掃過一遍，不是隨便畫圖 | `info`、`describe`、分佈與相關性、怎麼選圖 | Titanic | 問題有沒有寫清楚 |
 | M2 清理 | 進去是垃圾，出來也是垃圾 | 分塊讀取、重複值、型態轉換、文字清理 | 無 | 切分前就要去重 |
-| M3 缺值與異常 | 缺值本身可能就是訊號 | MCAR／MAR／MNAR、插補、IQR 與 Z-score | House Prices | 中位數只能從訓練集算 |
-| M4 類別編碼 | 編碼要看理由，也要看洩漏 | Label、One-hot、Count、Target、高基數處理 | Titanic | Target 和 Count 只能看訓練摺 |
+| M3 缺失值與離群值 | 缺失值本身可能就是訊號 | MCAR／MAR／MNAR、插補、IQR 與 Z-score | House Prices | 中位數只能從訓練集算 |
+| M4 類別編碼 | 編碼要看理由，也要看洩漏 | Label、One-hot、Count、Target、高基數處理 | Titanic | Target 和 Count 只能看訓練折 |
 | M5 縮放與轉換 | 樹模型通常不用縮放 | Standard／MinMax／Robust、log、Box-Cox、Yeo-Johnson | Insurance | 線性和 KNN 才需要，參數只看訓練集 |
-| M6 特徵創造 | 創造來自真因，不是欄位排列組合 | 交互項、`groupby` 聚合、日期拆欄 | NYC Taxi | 留下的欄位要能一句話解釋 |
+| M6 特徵建構 | 創造來自真因，不是欄位排列組合 | 交互項、`groupby` 聚合、日期拆欄 | NYC Taxi | 留下的欄位要能一句話解釋 |
 | M7 選擇與降維 | 重要性對不回理由就可疑 | 過濾法、包裹法、嵌入法、PCA | Breast Cancer | 不要拿包裹法當尋寶工具 |
-| M8 時間序列 | 按時間切，不准洗牌 | `shift` 做 lag、`rolling` 與 `expanding`、季節分解 | 電力消耗 | 測試集必須是比較晚的一段 |
+| M8 時間序列 | 按時間切，不准洗牌 | `shift` 做 lag、`rolling` 與 `expanding`、季節性分解 | 電力消耗 | 測試集必須是比較晚的一段 |
 | M10 探勘落地 | 重要性高的特徵要能講人話 | 樹重要性（XGBoost／LightGBM）、端到端 `Pipeline`、分群，關聯規則帶一小段 | Telco、Mall | `customerID` 變重要就是無意義編碼 |
 | M9 多模態前處理 | 換了模態不換腦袋，一樣是理解、清理、導入張量 | tokenizer、ViT／CLIP、Whisper、VideoMAE、圖文配對 | IMDB、貓狗、UrbanSound、影片 | 說得出這個嵌入代表什麼 |
 | M11 下游訓練 | 資料形狀決定能接哪類模型 | `Trainer`、LoRA／QLoRA、SFT、RAG、VLM 藍圖 | 真實小樣本 | 這是最小 demo，不是從零訓練大模型 |

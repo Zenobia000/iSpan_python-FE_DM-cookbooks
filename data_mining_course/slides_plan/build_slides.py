@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""把各章的 slides_content.md 生成投影片 PNG（版型 M，可續跑）。
+"""把各章的 slides_content.md 生成投影片 PNG（版型 W，可續跑）。
 
 一頁一張圖。已經生成過的頁會跳過，所以撞到額度上限時直接重跑即可，
 不會重複計費。失敗的請求 OpenAI 不計費。
@@ -20,17 +20,21 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 DRAW = Path.home()/".claude"/"skills"/"draw"/"draw.py"
 
-STYLE = ("一張 16:9 顧問級商業簡報投影片。深海軍藍純色背景（近乎 #051C2C），無漸層無雜訊。"
-         "左上角白色粗襯線體大標題靠左，標題下方一條細白色水平分隔線橫貫版面。"
-         "內容區用等寬多欄或流程排列，欄與欄之間留白充足。"
-         "只用一個強調色：亮天藍（近乎 #00A9F4），用在小標、數字與重點圖示；其餘一律白色或淺灰。"
-         "圖示一律是白色細線條、畫在細線圓框內，線條簡潔不填色。"
-         "繁體中文字大而清晰，版面乾淨專業。")
+STYLE = ("一張 16:9 教學投影片。純白色背景，乾淨無底紋無漸層。"
+         "所有文字使用正黑體這類無襯線字體，不要使用襯線體。"
+         "主文字為近黑色，次要說明為中灰色，分隔線與線框為淺灰色。"
+         "標題靠左，字重明顯較粗，標題下方一條淺灰色水平細線橫貫內容區寬度。"
+         "強調只用兩種手段：把字加粗，或在字下方加一條粗的黑色底線。"
+         "需要標示錯誤時才用朱紅色，其餘一律黑白灰。"
+         "版面留白充足，元素之間對齊嚴謹，整體像印刷品而不是網頁。"
+         "邊界嚴格：上下各留白約畫面高度的百分之九，左右各留白約畫面寬度的百分之七，"
+         "所有內容的左邊界對齊同一條垂直線，多欄並排時欄距一致、最左欄貼齊左邊界、最右欄貼齊右邊界。")
 
-# 模型會自己補「來源：McKinsey & Company」這種署名，或自行編造百分比。
-# 這段固定接在每頁提示詞尾端，把捏造率壓下來。
-NO_FABRICATION = ("只畫我指定的文字，不要加入任何其他文字。特別是：不要寫來源、不要寫公司名或署名、"
-                  "不要自行加入百分比或統計數字、不要加浮水印。左下角保持空白。")
+# 模型會自己補署名、頁碼與統計數字。這段固定接在每頁提示詞尾端。
+NO_FABRICATION = ("只畫我指定的文字，不要加入任何其他文字。"
+                  "右下角不要頁碼、不要章名標籤、不要任何頁尾。"
+                  "不要寫來源、不要寫公司名或署名、不要加浮水印。"
+                  "不要自行加入百分比或統計數字。不要使用藍色。")
 
 # slides_content.md 的一頁：## 3 · 決策表   後面接內容描述段落
 PAGE = re.compile(r'^##\s+(\d+)\s+·\s+(.+?)\s*$', re.M)
@@ -71,6 +75,8 @@ def parse(chapter_dir: Path) -> tuple[str, list[tuple[int, str, str]]]:
     pages = []
     for i, h in enumerate(hits):
         body = text[h.end(): hits[i+1].start() if i+1 < len(hits) else len(text)].strip()
+        # 「頁型：C 密度」這行只給人看，用來排節奏，不送進提示詞
+        body = re.sub(r'^頁型：.*\n+', '', body).strip()
         pages.append((int(h.group(1)), h.group(2).strip(), body))
     return chapter, pages
 
@@ -87,8 +93,7 @@ def build(chapter_dir: Path, dry_run: bool = False) -> tuple[int, int]:
             skipped += 1
             continue
         prompt = (f"{STYLE}\n\n"
-                  f"左上角白色襯線大標題寫「{title}」。"
-                  f"右下角小字頁碼寫「{chapter} · {num} / {total}」。\n"
+                  f"左上角大標題寫「{title}」。\n"
                   f"頁面內容：{body}\n\n{NO_FABRICATION}")
         cmd = ["python3", str(DRAW), prompt, "--name", name,
                "--size", "1536x1024", "--quality", "low", "--outdir", str(out)]
@@ -111,7 +116,7 @@ def build(chapter_dir: Path, dry_run: bool = False) -> tuple[int, int]:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="生成投影片 PNG（版型 M）")
+    ap = argparse.ArgumentParser(description="生成投影片 PNG（版型 W）")
     ap.add_argument("chapters", nargs="*", help="章資料夾名，例如 M04_類別編碼")
     ap.add_argument("--all", action="store_true", help="跑全部有 slides_content.md 的章")
     ap.add_argument("--dry-run", action="store_true", help="只列出要生哪幾頁，不呼叫 API")

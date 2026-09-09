@@ -31,7 +31,7 @@ python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景�
 用在第 7 張。目的：說明特徵選擇必須放進交叉驗證的每一折內。
 
 ```bash
-python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，上下兩排。上排標紅色叉：『整份資料』→『選出前 20 個欄位』→『交叉驗證』，五個摺的圖示上都蓋著同一組已選欄位，標註『每一折都看過全部資料的答案』，分數 0.94。下排標綠色勾：『交叉驗證』外層先切五折，每一折內部各自執行『選欄位 → 訓練 → 評估』，標註『選擇也在 Pipeline 裡』，分數 0.87。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M7_fig3_selection_leak --size 1536x1024 --quality low --outdir concept_images
+python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，上下兩排。上排標紅色叉：『整份資料』→『選出前 20 個欄位』→『交叉驗證』，五個折的圖示上都蓋著同一組已選欄位，標註『每一折都看過全部資料的答案』，分數 0.94。下排標綠色勾：『交叉驗證』外層先切五折，每一折內部各自執行『選欄位 → 訓練 → 評估』，標註『選擇也在 Pipeline 裡』，分數 0.87。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M7_fig3_selection_leak --size 1536x1024 --quality low --outdir concept_images
 ```
 
 ---
