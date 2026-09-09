@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組3 缺值與異常值
+# 概念示意圖提示詞：第 3 章　缺值與異常值
 
 > 對應講義：[`M3_Missing_and_Outliers_Fundamentals.md`](../../modules/module_03_missing_outliers/slides/M3_Missing_and_Outliers_Fundamentals.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤

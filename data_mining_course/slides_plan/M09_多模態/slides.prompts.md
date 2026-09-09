@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組九 多模態特徵工程
+# 概念示意圖提示詞：第 9 章　多模態特徵工程
 
 > 對應講義：[`M9_Multimodal_Features_Fundamentals.md`](../../modules/module_09_multimodal_features/slides/M9_Multimodal_Features_Fundamentals.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤

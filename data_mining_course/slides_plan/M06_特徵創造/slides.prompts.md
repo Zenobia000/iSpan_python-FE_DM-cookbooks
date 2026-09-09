@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組6 特徵創造
+# 概念示意圖提示詞：第 6 章　特徵創造
 
 > 對應講義：[`M6_Feature_Creation_Fundamentals.md`](../../modules/module_06_feature_creation/slides/M6_Feature_Creation_Fundamentals.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤

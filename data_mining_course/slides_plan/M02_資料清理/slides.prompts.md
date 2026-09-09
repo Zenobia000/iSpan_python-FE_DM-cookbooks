@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組二 資料清理
+# 概念示意圖提示詞：第 2 章　資料清理
 
 > 對應講義：[`M2_Data_Cleaning_Fundamentals.md`](../../modules/module_02_data_cleaning/slides/M2_Data_Cleaning_Fundamentals.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤

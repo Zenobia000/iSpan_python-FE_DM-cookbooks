@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組7 特徵選擇與降維
+# 概念示意圖提示詞：第 7 章　特徵選擇與降維
 
 > 對應講義：[`M7_Feature_Selection_and_Reduction.md`](../../modules/module_07_feature_selection/slides/M7_Feature_Selection_and_Reduction.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤

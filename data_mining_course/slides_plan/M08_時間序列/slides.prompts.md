@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組8 時間序列特徵工程
+# 概念示意圖提示詞：第 8 章　時間序列特徵工程
 
 > 對應講義：[`M8_Time_Series_Feature_Engineering.md`](../../modules/module_08_time_series/slides/M8_Time_Series_Feature_Engineering.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤

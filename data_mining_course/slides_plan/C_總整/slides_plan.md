@@ -1,4 +1,4 @@
-# 總整 英國二手車：投影片規劃
+# 總整章　英國二手車：投影片規劃
 
 6 張。這一章不教新技法，把六步完整走一遍當驗收。
 講義對照 [`C1_宗旨與心智模型.md`](../../capstone/slides/C1_宗旨與心智模型.md) 與 [`C5_二手車總整.md`](../../capstone/slides/C5_二手車總整.md)，實作在 [`capstone_used_car.ipynb`](../../capstone/capstone_used_car.ipynb)。
