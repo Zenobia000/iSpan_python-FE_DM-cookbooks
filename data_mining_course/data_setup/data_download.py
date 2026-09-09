@@ -138,6 +138,17 @@ def get_datasets_info():
             "folder": "power_consumption"
         },
         {
+            # M08 五本 notebook 的主資料是 AEP_hourly.csv，來自這一份而非上面那份；
+            # 兩者都落在 power_consumption/，缺了它五本都只會跑降級的示意資料。
+            "module": "模組八",
+            "topic": "時間序列特徵工程",
+            "name": "Hourly Energy Consumption (AEP)",
+            "type": "dataset",
+            "method": "kaggle_cli",
+            "dataset_id": "robikscube/hourly-energy-consumption",
+            "folder": "power_consumption"
+        },
+        {
             "module": "模組九",
             "topic": "多模態特徵工程",
             "name": "IMDB 50K Movie Reviews",

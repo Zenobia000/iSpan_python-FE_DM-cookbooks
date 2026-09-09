@@ -64,6 +64,7 @@ uv run python data_mining_course/data_setup/data_download.py
 | 模組六 | NYC Yellow Taxi Trip | `elemento/nyc-yellow-taxi-trip-data` | `nyc_taxi/` |
 | 模組七 | Breast Cancer Wisconsin | `uciml/breast-cancer-wisconsin-data` | `breast_cancer/` |
 | 模組八 | Electric Power Consumption | `uciml/electric-power-consumption-data-set` | `power_consumption/` |
+| 模組八 | Hourly Energy Consumption (AEP) | `robikscube/hourly-energy-consumption` | `power_consumption/` |
 | 模組九 | IMDB 50K Movie Reviews | `lakshmi25npathi/imdb-dataset-of-50k-movie-reviews` | `imdb_reviews/` |
 | 模組九 | UrbanSound8K | `rupakroy/urban-sound-8k` | `urban_sound/` (6.7 GB) |
 | 模組十 | Instacart Market Basket | `psparks/instacart-market-basket-analysis` | `instacart/` |
@@ -102,6 +103,10 @@ clone 完就能直接跑 `projects/project/car_market_eda.ipynb` 與 `capstone/c
 
 `capstone/load_course_data.py` 的所有 loader 在找不到檔案時都會退回可重現的合成資料並印出說明，
 所以沒下載資料也能跑完整本 notebook，只是數字不是真實資料。
+
+> **模組八要兩份電力資料。** `AEP_hourly.csv`（來自 hourly-energy-consumption）是五本 notebook 的主資料，
+> `household_power_consumption.txt`（來自 electric-power-consumption-data-set）是其中四本的第二份示範資料。
+> 兩者都落在 `power_consumption/`，缺了前者五本都只會跑降級的示意資料。
 
 ## 6. 不透過本腳本取得的資料
 
