@@ -1,7 +1,7 @@
 # 講義布局規格：道術法器四格
 
 > 對齊 [`course_charter.md`](course_charter.md)。這份規範**講義怎麼排版**，不規範上課順序（那在
-> [`syllabus.md`](syllabus.md)）。第 0 章本體：[`M0_心法總綱.md`](M0_心法總綱.md)。
+> [`course_brief.md`](course_brief.md)）。第 0 章本體：[`M0_心法總綱.md`](M0_心法總綱.md)。
 > 第一份實例：[`M4_Categorical_Encoding_Handout.md`](../modules/module_04_categorical_encoding/slides/M4_Categorical_Encoding_Handout.md)。
 
 ## 為什麼要換格式
@@ -105,7 +105,7 @@ M10 現行 182 行是 M6 的 2.5 倍，內容價值最低——**演算法步驟
 
 ## 七、待確認的前提
 
-**M1／M2 是否真的能自學掉。** `charter` 與 `schedule` 都寫「自學」，本規格照這個前提把
+**M1／M2 是否真的能自學掉。** `charter` 與 `course_brief` 都寫「自學」，本規格照這個前提把
 M1／M2 壓成各 4 頁速查。若實際學員 pandas 手感不足，器層 20% 撐不住，
 M1／M2 要擴回各 10 頁的實作本。
 

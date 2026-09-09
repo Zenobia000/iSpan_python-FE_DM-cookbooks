@@ -50,8 +50,7 @@
 | 宗旨 | 本檔 |
 | 心法總綱（第 0 章） | `docs/M0_心法總綱.md` |
 | 講義布局規格 | `docs/handout_blueprint.md` |
-| 上課地圖 | `docs/lecture_map.md` |
-| 課綱／進度 | `docs/syllabus.md`、`docs/schedule.md` |
+| 章節與內容（一頁） | `docs/course_brief.md` |
 | 上課主線 | `modules/module_01`–`11` |
 | 最後總整 | `capstone/capstone_used_car.ipynb` |
 | 複本／資料檔 | `modules/extension/` |
