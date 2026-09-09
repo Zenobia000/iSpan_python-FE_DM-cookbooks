@@ -36,7 +36,8 @@ STYLE = ("一張 16:9 教學投影片。純白色背景，乾淨無底紋無漸�
 NO_FABRICATION = ("只畫我指定的文字，不要加入任何其他文字。"
                   "右下角不要頁碼、不要章名標籤、不要任何頁尾。"
                   "不要寫來源、不要寫公司名或署名、不要加浮水印。"
-                  "不要自行加入百分比或統計數字。不要使用藍色。")
+                  "不要自行加入百分比或統計數字。不要使用藍色。"
+                  "不要自己補上我沒有指定的標語或結論句，空白處就讓它留白。")
 
 # slides_content.md 的一頁：## 3 · 決策表   後面接內容描述段落
 PAGE = re.compile(r'^##\s+(\d+)\s+·\s+(.+?)\s*$', re.M)
@@ -64,7 +65,7 @@ def to_16x9(png: Path) -> tuple[int, int]:
     return target_w, h
 
 
-def parse(chapter_dir: Path) -> tuple[str, list[tuple[int, str, str]]]:
+def parse(chapter_dir: Path) -> tuple[str, list[tuple[int, str, str, str]]]:
     f = chapter_dir/"slides_content.md"
     if not f.exists():
         sys.exit(f"❌ 找不到 {f}，請先寫該章的 slides_content.md")
@@ -74,12 +75,14 @@ def parse(chapter_dir: Path) -> tuple[str, list[tuple[int, str, str]]]:
         sys.exit(f"❌ {f} 缺少「章名：」那一行")
     chapter = m.group(1).strip()
     hits = list(PAGE.finditer(text))
-    pages = []
+    pages: list[tuple[int, str, str, str]] = []
     for i, h in enumerate(hits):
         body = text[h.end(): hits[i+1].start() if i+1 < len(hits) else len(text)].strip()
-        # 「頁型：C 密度」這行只給人看，用來排節奏，不送進提示詞
+        m = re.match(r'^頁型：\s*([A-G])', body)
+        kind = m.group(1) if m else "G"
+        # 頁型那行只給人看，用來排節奏，不送進提示詞
         body = re.sub(r'^頁型：.*\n+', '', body).strip()
-        pages.append((int(h.group(1)), h.group(2).strip(), body))
+        pages.append((int(h.group(1)), h.group(2).strip(), body, kind))
     return chapter, pages
 
 
@@ -89,14 +92,22 @@ def build(chapter_dir: Path, dry_run: bool = False) -> tuple[int, int]:
     out.mkdir(exist_ok=True)
     total = len(pages)
     made = skipped = 0
-    for num, title, body in pages:
+    for num, title, body, kind in pages:
         name = f"p{num:02d}"
         if list(out.glob(f"{name}_*.png")):
             skipped += 1
             continue
-        prompt = (f"{STYLE}\n\n"
-                  f"左上角大標題寫「{title}」。\n"
-                  f"頁面內容：{body}\n\n{NO_FABRICATION}")
+        if kind in ("A", "B"):
+            # 過場與金句頁：整頁只有這一句，不要左上角標題。
+            # 先前兩處都寫的結果是標題出現兩次，或模型自己在中央編一句新的。
+            prompt = (f"{STYLE}\n\n"
+                      f"整頁只有一句話：「{title}」。這句話置於畫面中央偏左，字級極大，佔滿畫面寬度的三分之二。"
+                      f"不要在左上角另外放標題，不要重複這句話，整頁不得出現第二個句子。\n"
+                      f"其餘配置：{body}\n\n{NO_FABRICATION}")
+        else:
+            prompt = (f"{STYLE}\n\n"
+                      f"左上角大標題寫「{title}」。\n"
+                      f"頁面內容：{body}\n\n{NO_FABRICATION}")
         cmd = ["python3", str(DRAW), prompt, "--name", name,
                "--size", "1536x1024", "--quality", "low", "--outdir", str(out)]
         print(f"  [{num:2d}/{total}] {title}")
