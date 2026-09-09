@@ -3,9 +3,7 @@
 上課順序：**先模組工具，後心法總整。** 示範用真實資料。
 
 - [docs/course_charter.md](docs/course_charter.md) 宗旨
-- [docs/lecture_map.md](docs/lecture_map.md) 上課地圖
-- [docs/syllabus.md](docs/syllabus.md) 課綱
-- [docs/schedule.md](docs/schedule.md) 進度
+- [docs/course_brief.md](docs/course_brief.md) 章節與內容（一頁看完）
 - [modules/](modules/) 上課主線
 - [capstone/capstone_used_car.ipynb](capstone/capstone_used_car.ipynb) 最後總整（英國二手車）
 
