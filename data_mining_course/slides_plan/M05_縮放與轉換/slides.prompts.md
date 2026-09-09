@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組5 特徵縮放與轉換
+# 概念示意圖提示詞：第 5 章　特徵縮放與轉換
 
 > 對應講義：[`M5_Scaling_and_Transformation_Fundamentals.md`](../../modules/module_05_scaling_transformation/slides/M5_Scaling_and_Transformation_Fundamentals.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤

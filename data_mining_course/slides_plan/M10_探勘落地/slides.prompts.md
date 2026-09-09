@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組10 資料探勘應用
+# 概念示意圖提示詞：第 10 章　資料探勘應用
 
 > 對應講義：[`M10_Data_Mining_Applications_Fundamentals.md`](../../modules/module_10_data_mining_applications/slides/M10_Data_Mining_Applications_Fundamentals.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤
@@ -20,7 +20,7 @@ cd data_mining_course/slides_plan/M10_探勘落地
 python3 ~/.claude/skills/draw/draw.py "扁平向量教學插畫，白色背景，一條由左至右的管線，入口是原始資料表。管線上依序掛著標籤『清理』『缺值』『編碼』『縮放』『特徵創造』『特徵選擇』，這些全部被一個大框框起來標註『Pipeline 內，切分之後才 fit』。管線出口分成三個方向，分別是『樹模型預測』『分群』『關聯規則』三個小圖示。柔和粉彩、扁平 infographic、繁體中文標籤清晰。" --name M10_fig1_end_to_end --size 1536x1024 --quality low --outdir concept_images
 ```
 
-### 圖 2 · 三種落地方式怎麼選
+### 圖 2 · 三種落地方式的選用
 用在第 3 張。目的：用問題型態決定方法，取代逐一講演算法步驟。
 
 ```bash

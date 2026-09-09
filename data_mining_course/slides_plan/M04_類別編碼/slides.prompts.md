@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組4 類別變數編碼
+# 概念示意圖提示詞：第 4 章　類別變數編碼
 
 > 對應講義：[`M4_Categorical_Encoding_Handout.md`](../../modules/module_04_categorical_encoding/slides/M4_Categorical_Encoding_Handout.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤

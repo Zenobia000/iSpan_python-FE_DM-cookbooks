@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組一 EDA
+# 概念示意圖提示詞：第 1 章　探索式資料分析
 
 > 對應講義：[`M1_Fundamentals_of_Systematic_EDA.md`](../../modules/module_01_eda_intro/slides/M1_Fundamentals_of_Systematic_EDA.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤

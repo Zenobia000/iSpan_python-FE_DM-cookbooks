@@ -1,4 +1,4 @@
-# 🎨 概念示意圖提示詞 — 模組十一 下游訓練
+# 概念示意圖提示詞：第 11 章　下游訓練
 
 > 對應講義：[`M11_Large_Model_Training_Fundamentals.md`](../../modules/module_11_large_model_training/slides/M11_Large_Model_Training_Fundamentals.md)
 > 生成模型：gpt-image-2（draw skill）｜風格：扁平向量教學插畫、含繁體中文標籤
