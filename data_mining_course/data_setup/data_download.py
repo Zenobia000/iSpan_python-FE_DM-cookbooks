@@ -19,6 +19,10 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 COURSE_DIR = SCRIPT_DIR.parent
 
+# Kaggle CLI 直接寫進 --path，不經快取；但 KaggleHub 後備路徑會先落到
+# ~/.cache/kagglehub 再複製過來。一併指回課程樹，資料才不會散在家目錄。
+os.environ.setdefault("KAGGLEHUB_CACHE", str(COURSE_DIR / "datasets" / ".kagglehub_cache"))
+
 # 確保 Kaggle API 憑證存在
 def check_kaggle_api():
     """檢查 Kaggle API 憑證是否存在，若不存在則引導用戶設置"""

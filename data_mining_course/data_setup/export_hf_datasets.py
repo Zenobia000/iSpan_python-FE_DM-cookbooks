@@ -19,12 +19,18 @@ HuggingFace 則是 notebook 執行時才抓、只存在使用者的 ~/.cache/hug
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 COURSE_DIR = SCRIPT_DIR.parent
 RAW_DIR = COURSE_DIR / "datasets" / "raw"
+
+# 下載過程的暫存也留在課程樹下，不要散到 ~/.cache/huggingface。
+# 匯出完成後 datasets/.hf_cache 可以整個刪掉，notebook 只讀 raw/。
+# 已經有既有快取的人可以自己覆寫：HF_HOME=~/.cache/huggingface 執行，避免重抓。
+os.environ.setdefault("HF_HOME", str(COURSE_DIR / "datasets" / ".hf_cache"))
 
 IMDB_DIR = RAW_DIR / "imdb_hf"
 CATS_DOGS_DIR = RAW_DIR / "dogs_vs_cats"
@@ -112,6 +118,7 @@ def main() -> None:
 
     _require_datasets()
     print(f"📁 目標目錄：{RAW_DIR}")
+    print(f"🗃️  下載暫存：{os.environ['HF_HOME']}（匯出完成後可刪）")
 
     if args.only in (None, "imdb"):
         export_imdb(force=args.force)

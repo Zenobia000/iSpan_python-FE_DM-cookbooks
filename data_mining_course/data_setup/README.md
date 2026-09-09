@@ -7,6 +7,7 @@
 | :--- | :--- |
 | `data_download.py` | 主要下載工具。互動選單，可全部下載或挑單一資料集，失敗時自動改用 KaggleHub |
 | `download_data.ipynb` | 同樣的事情但在 notebook 裡跑，方便逐格觀察下載結果 |
+| `export_hf_datasets.py` | 把 HuggingFace 那兩份資料落地成 `datasets/raw/` 的一般檔案（見第 6 節） |
 
 ---
 
@@ -108,11 +109,65 @@ clone 完就能直接跑 `projects/project/car_market_eda.ipynb` 與 `capstone/c
 > `household_power_consumption.txt`（來自 electric-power-consumption-data-set）是其中四本的第二份示範資料。
 > 兩者都落在 `power_consumption/`，缺了前者五本都只會跑降級的示意資料。
 
-## 6. 不透過本腳本取得的資料
+## 6. HuggingFace 那兩份資料
 
-M09 的圖像與文字模態直接在 notebook 裡用 HuggingFace `load_dataset()` 抓
-（`microsoft/cats_vs_dogs`、`stanfordnlp/imdb`），不需要 Kaggle 憑證，也不在上表。
-清單裡曾有一筆 Dogs vs Cats 競賽資料，是改用 HuggingFace 之前的殘留，已移除。
+M09 與 M11 有五本 notebook 從 HuggingFace 取資料，不經過 Kaggle：
 
-磁碟空間提醒：全部下載約 14.5 GB，其中 `nyc_taxi` 6.9 GB、`urban_sound` 6.7 GB 就佔了絕大部分。
-只上前八個模組的話這兩個可以不下載。
+| 資料集 | 用它的 notebook |
+| :--- | :--- |
+| `microsoft/cats_vs_dogs` | M09 `02_image_features/05_dogs_cats_case`、M11 `03_image_downstream` |
+| `stanfordnlp/imdb` | M09 `01_text_features/05_imdb_case`、M11 `02_text_downstream`、extension `02_text_downstream` |
+
+不處理的話它們只會存在每個人自己的 `~/.cache/huggingface`——上課時等於每個學生現場各下載一次
+（貓狗約 700 MB），教室網路一塞整堂就停擺，而且老師沒辦法事先備好發下去。所以先落地：
+
+```bash
+uv run python data_mining_course/data_setup/export_hf_datasets.py
+```
+
+產生：
+
+```
+datasets/raw/imdb_hf/{train,test}.csv        欄位 text, label
+datasets/raw/dogs_vs_cats/{cat,dog}/*.jpg    imagefolder 版面，cat=0, dog=1
+```
+
+**五本 notebook 都改成優先讀這裡**，找不到才回頭抓 HuggingFace。所以老師跑一次匯出、
+把 `datasets/` 發下去，學生現場零下載。落地檔與 HF 的欄位完全一致
+（`image`/`labels`、`text`/`label`），notebook 其餘程式碼不用改。
+
+只要小樣本先試：
+
+```bash
+uv run python data_mining_course/data_setup/export_hf_datasets.py --per-class 200
+uv run python data_mining_course/data_setup/export_hf_datasets.py --only imdb
+```
+
+> 清單裡曾有一筆 Dogs vs Cats 競賽資料，是改用 HuggingFace 之前的殘留，已移除。
+> `~/.cache/huggingface` 裡的 `ag_news`、`cifar10`、`librispeech_dummy` 同樣沒有任何 notebook 引用。
+
+---
+
+## 7. 資料一律留在課程樹下，不散到家目錄
+
+兩支腳本都把下載暫存指回 `data_mining_course/datasets/` 底下，而不是預設的 `~/.cache`：
+
+| 工具 | 環境變數 | 落點 |
+| :--- | :--- | :--- |
+| HuggingFace `datasets` | `HF_HOME` | `datasets/.hf_cache/` |
+| KaggleHub（CLI 失敗時的後備） | `KAGGLEHUB_CACHE` | `datasets/.kagglehub_cache/` |
+
+Kaggle CLI 本身直接寫進 `--path`，不經過快取。兩個暫存目錄都已被 `.gitignore` 擋住，
+**匯出完成後可以整個刪掉**，notebook 只讀 `raw/`。
+
+已經有既有快取、不想重抓的人可以自己覆寫，例如：
+
+```bash
+HF_HOME=~/.cache/huggingface uv run python data_mining_course/data_setup/export_hf_datasets.py
+```
+
+> 模型權重（DistilBERT、ViT 等）不在此列，仍走 `~/.cache/huggingface/hub`。
+> 那是 `transformers` 的行為，與資料無關；要一起收進課程樹得另外設 `HF_HUB_CACHE`。
+
+磁碟空間提醒：Kaggle 全下載約 14.5 GB，其中 `nyc_taxi` 6.9 GB、`urban_sound` 6.7 GB 佔絕大部分；
+HF 落地再加約 830 MB。只上前八個模組的話那兩個大的可以不下載。
