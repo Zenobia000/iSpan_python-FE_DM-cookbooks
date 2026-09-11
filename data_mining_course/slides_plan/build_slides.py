@@ -94,7 +94,7 @@ def build(chapter_dir: Path, dry_run: bool = False) -> tuple[int, int]:
     made = skipped = 0
     for num, title, body, kind in pages:
         name = f"p{num:02d}"
-        if list(out.glob(f"{name}_*.png")):
+        if (out/f"{name}.png").exists():
             skipped += 1
             continue
         if kind in ("A", "B"):
@@ -116,8 +116,12 @@ def build(chapter_dir: Path, dry_run: bool = False) -> tuple[int, int]:
             continue
         r = subprocess.run(cmd, capture_output=True, text=True)
         if r.returncode == 0:
+            # draw.py 產出的檔名帶時間戳，正規化成 pNN.png：
+            # 圖已進版控，固定檔名才會是覆蓋而不是每次多一份。
             for f in out.glob(f"{name}_*.png"):
-                w, h = to_16x9(f)
+                target = out/f"{name}.png"
+                f.replace(target)
+                w, h = to_16x9(target)
                 print(f"       -> 16:9 {w}x{h}")
         if r.returncode != 0:
             tail = (r.stderr or r.stdout).strip().splitlines()[-1:] or ["未知錯誤"]

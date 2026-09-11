@@ -20,10 +20,10 @@ data_mining_course/datasets/.kagglehub_cache/
 # 例外：UCI Automobile 資料集，legacy/ 的舊版視覺化 notebook 讀它（24 KB）
 !data_mining_course/projects/project/Automobile_data.csv
 
-# 投影片產出（每頁約 3 MB，119 頁約 350 MB）。圖只留在本機，
-# 要隨 repo 走得改用 Git LFS 或外部圖床；重生用 build_slides.py --all 即可。
-data_mining_course/slides_plan/*/_generated/
-data_mining_course/slides_plan/_templates/*.png
+# 投影片產出隨 repo 走：103 頁共 81 MB，檔名固定為 pNN.png，
+# 重生是覆蓋而不是新增，diff 乾淨。用 build_slides.py --all 重建。
+# 聯絡表是衍生物，幾秒就能由 make_contact_sheet.py 重建，不進版控。
+data_mining_course/slides_plan/_contact/
 *.json
 *.xlsx
 *.xls
@@ -231,3 +231,8 @@ figures/
 # 覆蓋上方 *.png 萬用忽略：只把各 notebook 的 concept_images/ 圖檔重新納入版控
 !**/concept_images/
 !**/concept_images/*.png
+
+# 投影片產出（各章 slides_plan/*/_generated/），隨 repo 一起發佈
+# 檔名固定為 pNN.png，重生是覆蓋而不是新增，diff 乾淨
+!**/slides_plan/*/_generated/
+!**/slides_plan/*/_generated/*.png
