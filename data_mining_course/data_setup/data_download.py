@@ -490,6 +490,45 @@ def download_with_hf_export(dataset, target_folder):
     return False
 
 
+def flatten_duplicated_dir(target_folder):
+    """拉平「同名資料夾又包一層」的解壓結果。
+
+    有些 Kaggle zip 內層再包一層同名目錄（UrbanSound8K 就是這樣），解壓後會變成
+    urban_sound/UrbanSound8K/UrbanSound8K/{audio,metadata}/，notebook 得多寫兩層才讀到。
+    這裡把最內層的內容提到 target_folder，讓版面回到官方的 audio/ 與 metadata/。
+
+    外層已存在的同名「檔案」視為 zip 內的重複檔，刪掉內層那份；同名「目錄」則保留不動，
+    並略過整個殼層的刪除，避免誤刪。可重複執行，沒有這種結構時什麼都不做。
+    """
+    base = Path(target_folder)
+    if not base.is_dir():
+        return
+
+    for wrapper in [d for d in base.iterdir() if d.is_dir()]:
+        inner = wrapper / wrapper.name          # 例如 UrbanSound8K/UrbanSound8K
+        if not inner.is_dir():
+            continue
+
+        print(f"   🔧 偵測到重複巢狀目錄，正在拉平 {wrapper.name}/{wrapper.name}/ …")
+        collided = []
+        for item in list(inner.iterdir()):
+            dest = base / item.name
+            if not dest.exists():
+                shutil.move(str(item), str(dest))
+            elif item.is_file():
+                item.unlink()                   # zip 內重複檔，外層那份留著
+            else:
+                collided.append(item.name)      # 同名目錄，不動它
+
+        if collided:
+            print(f"   ⚠️  外層已有同名目錄，保留未移動：{', '.join(collided)}")
+            print(f"   ⚠️  {wrapper} 未刪除，請手動確認。")
+            continue
+
+        shutil.rmtree(wrapper, ignore_errors=True)
+        print(f"   ✅ 已拉平到 {base}")
+
+
 # 下載資料集
 def download_dataset(dataset, base_dir):
     """下載單個資料集到指定目錄，根據預設方法"""
@@ -611,6 +650,10 @@ def download_dataset(dataset, base_dir):
     else:
         print(f"\n❌ 未知的下載方法: {method}")
         success = False
+
+    if success:
+        # 解壓結果若多包一層同名目錄，就地拉平，讓 notebook 的相對路徑不必多算兩層
+        flatten_duplicated_dir(target_folder)
 
     if not success:
         print(f"\n❌ {dataset['name']} 下載失敗。")
