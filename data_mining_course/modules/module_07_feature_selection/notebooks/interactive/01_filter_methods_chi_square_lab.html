@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡方檢定實驗台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<style>
+:root{
+  --ground:#edf0f2;
+  --paper:#ffffff;
+  --panel:#f6f8f9;
+  --line:#d3dade;
+  --line-soft:#e3e9ec;
+  --ink:#16202a;
+  --ink-2:#3c4a55;
+  --muted:#66757f;
+  --exp:#1f7a6e;
+  --exp-soft:#dceeea;
+  --obs:#5a4ac7;
+  --obs-soft:#e5e2f8;
+  --alert:#b03a2e;
+  --alert-soft:#f7e2df;
+  --ok:#1f7a6e;
+  --shadow:0 1px 2px rgba(22,32,42,.06), 0 8px 24px -16px rgba(22,32,42,.35);
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0f161c;
+    --paper:#18222b;
+    --panel:#141d25;
+    --line:#2b3945;
+    --line-soft:#222e38;
+    --ink:#e7eef3;
+    --ink-2:#c0cdd6;
+    --muted:#8b9aa5;
+    --exp:#54c8b5;
+    --exp-soft:#15332f;
+    --obs:#9e92f7;
+    --obs-soft:#221f43;
+    --alert:#e8705f;
+    --alert-soft:#3a201c;
+    --ok:#54c8b5;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -18px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0f161c;
+  --paper:#18222b;
+  --panel:#141d25;
+  --line:#2b3945;
+  --line-soft:#222e38;
+  --ink:#e7eef3;
+  --ink-2:#c0cdd6;
+  --muted:#8b9aa5;
+  --exp:#54c8b5;
+  --exp-soft:#15332f;
+  --obs:#9e92f7;
+  --obs-soft:#221f43;
+  --alert:#e8705f;
+  --alert-soft:#3a201c;
+  --ok:#54c8b5;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -18px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.8;
+  padding-inline:20px;
+  margin:0;
+  padding-block:0 72px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:52px}
+h1,h2,h3{font-family:var(--serif);font-weight:700;text-wrap:balance;line-height:1.35;margin:0}
+p{margin:0}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ---------- header ---------- */
+header{padding-block:56px 0;display:flex;flex-direction:column;gap:18px}
+.eyebrow{
+  font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.eyebrow::after{content:"";flex:1;min-width:24px;height:1px;background:var(--line)}
+h1{font-size:clamp(34px,6.5vw,52px);letter-spacing:.01em}
+.lead{font-size:18px;color:var(--ink-2);max-width:62ch}
+.thesis{
+  border-left:3px solid var(--obs);
+  padding:4px 0 4px 18px;
+  font-size:17px;
+  color:var(--ink);
+}
+.thesis b{color:var(--obs)}
+
+/* ---------- sections ---------- */
+section{display:flex;flex-direction:column;gap:20px}
+.sec-head{display:flex;flex-direction:column;gap:6px}
+.sec-no{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--muted)}
+h2{font-size:clamp(22px,3.6vw,28px)}
+.body{font-size:16.5px;color:var(--ink-2);max-width:64ch;display:flex;flex-direction:column;gap:14px}
+.body b{color:var(--ink);font-weight:700}
+
+/* ---------- small tables in prose ---------- */
+.tbl-scroll{overflow-x:auto}
+table.plain{border-collapse:collapse;font-size:15px;min-width:320px}
+table.plain th,table.plain td{border-bottom:1px solid var(--line-soft);padding:9px 16px;text-align:right}
+table.plain th:first-child,table.plain td:first-child{text-align:left;color:var(--muted);font-weight:500}
+table.plain thead th{color:var(--muted);font-weight:500;border-bottom:1px solid var(--line)}
+table.plain td{font-family:var(--mono);font-variant-numeric:tabular-nums}
+table.plain tr.total td,table.plain tr.total th{color:var(--muted)}
+
+/* ---------- the lab panel ---------- */
+.lab{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:4px;
+  box-shadow:var(--shadow);
+  display:flex;flex-direction:column;
+}
+.lab-bar{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  padding:14px 18px;border-bottom:1px solid var(--line-soft);
+}
+.lab-bar .label{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+button{font-family:inherit;font-size:14px;color:var(--ink);cursor:pointer}
+.chip{
+  background:transparent;border:1px solid var(--line);border-radius:2px;
+  padding:5px 11px;line-height:1.5;transition:border-color .15s,background .15s,color .15s;
+}
+.chip:hover{border-color:var(--obs);color:var(--obs)}
+.chip[aria-pressed="true"]{background:var(--obs);border-color:var(--obs);color:#fff}
+.chip.ghost{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em}
+.lab-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
+.pane{padding:22px 18px;display:flex;flex-direction:column;gap:16px}
+.pane + .pane{border-left:1px solid var(--line-soft)}
+.pane-title{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+}
+.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.dot.obs{background:var(--obs)}
+.dot.exp{background:var(--exp)}
+.pane-title.obs{color:var(--obs)}
+.pane-title.exp{color:var(--exp)}
+.pane-note{font-size:13.5px;color:var(--muted);line-height:1.65}
+
+/* matrix */
+.matrix{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:6px;align-items:center}
+.m-head{font-size:13px;color:var(--muted);text-align:center;padding-bottom:2px}
+.m-row{font-size:13px;color:var(--muted);padding-right:4px;white-space:nowrap}
+.m-sum{font-family:var(--mono);font-size:13px;color:var(--muted);text-align:right;padding-left:4px;font-variant-numeric:tabular-nums}
+.cell-in{
+  width:100%;font-family:var(--mono);font-size:19px;font-weight:600;
+  text-align:center;padding:9px 2px;
+  color:var(--obs);background:var(--obs-soft);
+  border:1px solid transparent;border-radius:3px;
+  font-variant-numeric:tabular-nums;
+}
+.cell-in:focus{outline:2px solid var(--obs);outline-offset:1px}
+.cell-exp{
+  font-family:var(--mono);font-size:19px;font-weight:600;text-align:center;padding:9px 2px;
+  color:var(--exp);background:var(--exp-soft);border-radius:3px;font-variant-numeric:tabular-nums;
+}
+.cell-exp.warn{box-shadow:inset 0 0 0 1px var(--alert)}
+
+/* contributions */
+.contrib{display:flex;flex-direction:column;gap:9px}
+.c-row{display:grid;grid-template-columns:minmax(86px,auto) 1fr minmax(58px,auto);gap:10px;align-items:center;font-size:13.5px}
+.c-name{color:var(--ink-2);white-space:nowrap}
+.c-track{height:9px;background:var(--line-soft);border-radius:2px;overflow:hidden}
+.c-fill{height:100%;background:var(--obs);border-radius:2px;transition:width .25s ease}
+.c-val{font-family:var(--mono);text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* readout */
+.readout{
+  border-top:1px solid var(--line-soft);
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.stat{padding:18px;display:flex;flex-direction:column;gap:3px}
+.stat + .stat{border-left:1px solid var(--line-soft)}
+.stat-k{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.stat-v{font-family:var(--mono);font-size:27px;font-weight:600;line-height:1.25;font-variant-numeric:tabular-nums}
+.stat-sub{font-size:12.5px;color:var(--muted)}
+.verdict{
+  padding:14px 18px;border-top:1px solid var(--line-soft);
+  display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font-size:15px;
+}
+.pill{
+  font-family:var(--mono);font-size:12px;letter-spacing:.06em;
+  padding:3px 9px;border-radius:2px;white-space:nowrap;
+}
+.pill.reject{background:var(--alert-soft);color:var(--alert)}
+.pill.keep{background:var(--line-soft);color:var(--muted)}
+.verdict-txt{color:var(--ink-2)}
+.warnbar{
+  display:none;gap:9px;align-items:flex-start;
+  padding:12px 18px;border-top:1px solid var(--line-soft);
+  background:var(--alert-soft);color:var(--alert);font-size:13.5px;line-height:1.6;
+}
+.warnbar.on{display:flex}
+.warnbar .mk{font-family:var(--mono);flex:none}
+
+/* charts */
+.chart-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:4px;box-shadow:var(--shadow);
+  padding:20px 18px;display:flex;flex-direction:column;gap:14px;
+}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+.chart-title{font-size:15px;font-weight:700}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);font-family:var(--mono)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+svg{display:block;width:100%;height:auto;max-width:100%}
+.sim-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.sim-out{font-size:14px;color:var(--ink-2)}
+.sim-out b{font-family:var(--mono);color:var(--obs);font-variant-numeric:tabular-nums}
+
+/* chain */
+.chain{display:flex;flex-direction:column;gap:0;margin-top:4px}
+.step{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start}
+.step-rail{display:flex;flex-direction:column;align-items:center;gap:4px;align-self:stretch}
+.step-n{
+  font-family:var(--mono);font-size:11px;width:24px;height:24px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:50%;color:var(--muted);background:var(--paper);
+}
+.step-line{width:1px;flex:1;background:var(--line);min-height:14px}
+.step:last-child .step-line{background:transparent}
+.step-body{padding-bottom:16px;display:flex;flex-direction:column;gap:2px}
+.step-t{font-weight:700;font-size:15.5px}
+.step-d{font-size:14.5px;color:var(--muted);line-height:1.7}
+.step.hot .step-n{border-color:var(--obs);color:var(--obs)}
+
+/* code */
+pre{
+  font-family:var(--mono);font-size:13.5px;line-height:1.75;
+  background:var(--panel);border:1px solid var(--line-soft);border-radius:3px;
+  padding:14px 16px;overflow-x:auto;margin:0;color:var(--ink-2);
+}
+pre .cm{color:var(--muted)}
+pre .kw{color:var(--obs)}
+
+/* closing */
+.closing{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.note{display:flex;flex-direction:column;gap:8px;padding-top:16px;border-top:2px solid var(--ink)}
+.note h3{font-size:16px}
+.note p,.note li{font-size:14.5px;color:var(--ink-2);line-height:1.75}
+.note ol{margin:0;padding-left:20px}
+.note ol li::marker{font-family:var(--mono);color:var(--muted)}
+.caveat{
+  border-left:3px solid var(--alert);padding:2px 0 2px 18px;
+  font-size:15.5px;color:var(--ink-2);
+}
+.caveat b{color:var(--alert)}
+footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;line-height:1.8}
+
+@media (max-width:720px){
+  .lab-grid{grid-template-columns:1fr}
+  .pane + .pane{border-left:none;border-top:1px solid var(--line-soft)}
+  .readout{grid-template-columns:1fr}
+  .stat + .stat{border-left:none;border-top:1px solid var(--line-soft)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">特徵選擇 · Filter Methods</div>
+  <h1>卡方檢定實驗台</h1>
+  <p class="lead">卡方檢定在問一件很單純的事：<b>實際看到的人數分布</b>，跟<b>「如果兩件事完全沒關係」時理論上該有的人數分布</b>，到底差多遠。下面的表格可以直接改，每一個數字都會即時重算。</p>
+  <p class="thesis"><b>χ²</b> 量「差多遠」，<b>p-value</b> 判斷「這麼大的差距有多不像巧合」。</p>
+</header>
+
+<section>
+  <div class="sec-head">
+    <div class="sec-no">場景</div>
+    <h2>性別跟飲料偏好有關係嗎？</h2>
+  </div>
+  <div class="body">
+    <p>調查 100 個人，男女各 50，喜歡咖啡與喜歡茶的也剛好各 50。我們想問的是：<b>性別跟飲料偏好有關嗎？</b></p>
+    <p>先假設虛無假設 H₀：「性別跟飲料偏好完全沒關係。」如果真的沒關係，男女在咖啡／茶上的比例應該跟整體一樣 —— 也就是四格各 25 人。這 25 就是 <b>預期值（Expected）</b>，由「列總和 × 欄總和 ÷ 總人數」算出來，不是猜的。</p>
+  </div>
+  <div class="tbl-scroll">
+    <table class="plain">
+      <thead><tr><th>實際觀察</th><th>喜歡咖啡</th><th>喜歡茶</th><th>合計</th></tr></thead>
+      <tbody>
+        <tr><th>男生</th><td>40</td><td>10</td><td>50</td></tr>
+        <tr><th>女生</th><td>10</td><td>40</td><td>50</td></tr>
+        <tr class="total"><th>合計</th><td>50</td><td>50</td><td>100</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="body">
+    <p>四格的預期值都是 25，實際卻是 40 / 10 / 10 / 40 —— 差得非常遠。卡方統計量做的事，就是把這些差距<b>全部平方、除以預期值，再累加起來</b>。</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="sec-no">實驗台</div>
+    <h2>動手改數字，看 χ² 怎麼變</h2>
+  </div>
+
+  <div class="lab">
+    <div class="lab-bar">
+      <span class="label">情境</span>
+      <button class="chip" type="button" data-preset="0">咖啡與茶</button>
+      <button class="chip" type="button" data-preset="1">幾乎沒關係</button>
+      <button class="chip" type="button" data-preset="2">小樣本警戒</button>
+      <button class="chip" type="button" data-preset="3">Titanic：Sex × Survived</button>
+      <span style="flex:1"></span>
+      <button class="chip ghost" type="button" id="btn-x2" title="比例不變，人數加倍">樣本 ×2</button>
+      <button class="chip ghost" type="button" id="btn-d2" title="比例不變，人數減半">÷2</button>
+    </div>
+
+    <div class="lab-grid">
+      <div class="pane">
+        <div class="pane-title obs"><span class="dot obs"></span>實際觀察 Observed</div>
+        <div class="matrix" id="obs-matrix">
+          <div></div>
+          <div class="m-head" id="lab-c0">喜歡咖啡</div>
+          <div class="m-head" id="lab-c1">喜歡茶</div>
+          <div class="m-head">列和</div>
+
+          <div class="m-row" id="lab-r0">男生</div>
+          <div><input class="cell-in num" id="in-a" type="number" min="0" max="99999" step="1" value="40" inputmode="numeric" aria-label="第一列第一欄人數"></div>
+          <div><input class="cell-in num" id="in-b" type="number" min="0" max="99999" step="1" value="10" inputmode="numeric" aria-label="第一列第二欄人數"></div>
+          <div class="m-sum" id="sum-r0">50</div>
+
+          <div class="m-row" id="lab-r1">女生</div>
+          <div><input class="cell-in num" id="in-c" type="number" min="0" max="99999" step="1" value="10" inputmode="numeric" aria-label="第二列第一欄人數"></div>
+          <div><input class="cell-in num" id="in-d" type="number" min="0" max="99999" step="1" value="40" inputmode="numeric" aria-label="第二列第二欄人數"></div>
+          <div class="m-sum" id="sum-r1">50</div>
+
+          <div class="m-row">欄和</div>
+          <div class="m-sum" style="text-align:center" id="sum-c0">50</div>
+          <div class="m-sum" style="text-align:center" id="sum-c1">50</div>
+          <div class="m-sum" id="sum-n">100</div>
+        </div>
+        <p class="pane-note">直接輸入人數。四個格子是你手上的原始交叉表（crosstab）。</p>
+      </div>
+
+      <div class="pane">
+        <div class="pane-title exp"><span class="dot exp"></span>沒關係的世界 Expected</div>
+        <div class="matrix" id="exp-matrix">
+          <div></div>
+          <div class="m-head" id="lab2-c0">喜歡咖啡</div>
+          <div class="m-head" id="lab2-c1">喜歡茶</div>
+          <div></div>
+
+          <div class="m-row" id="lab2-r0">男生</div>
+          <div class="cell-exp num" id="ex-a">25.0</div>
+          <div class="cell-exp num" id="ex-b">25.0</div>
+          <div></div>
+
+          <div class="m-row" id="lab2-r1">女生</div>
+          <div class="cell-exp num" id="ex-c">25.0</div>
+          <div class="cell-exp num" id="ex-d">25.0</div>
+          <div></div>
+        </div>
+        <p class="pane-note">E<sub>ij</sub> = 列和 × 欄和 ÷ 總數。這是 H₀ 為真時「該有的樣子」，邊際人數與實際完全一致。</p>
+
+        <div class="contrib" id="contrib">
+          <div class="pane-title" style="color:var(--muted)">逐格差距 (O−E)²/E</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="readout">
+      <div class="stat">
+        <div class="stat-k">χ² 統計量</div>
+        <div class="stat-v" id="out-chi" style="color:var(--obs)">36.00</div>
+        <div class="stat-sub" id="out-chi-sub">四格差距的總和</div>
+      </div>
+      <div class="stat">
+        <div class="stat-k">自由度 df</div>
+        <div class="stat-v">1</div>
+        <div class="stat-sub">(2−1) × (2−1)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-k">p-value</div>
+        <div class="stat-v" id="out-p">&lt;0.001</div>
+        <div class="stat-sub">H₀ 為真時，出現這麼大差距的機率</div>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <span class="pill reject" id="out-pill">拒絕 H₀</span>
+      <span class="verdict-txt" id="out-verdict">在 α = 0.05 下，兩個變數存在統計上顯著的關聯。</span>
+    </div>
+
+    <div class="warnbar" id="warn">
+      <span class="mk">!</span>
+      <span id="warn-txt"></span>
+    </div>
+  </div>
+
+  <div class="body">
+    <p>試著把四格改成 <span class="num">25 / 25 / 25 / 25</span>：χ² 會掉到 0，p-value 變成 1 —— 實際跟「沒關係的世界」一模一樣，完全沒有證據。再按「樣本 ×2」看看：<b>比例完全不變，χ² 卻加倍、p-value 變更小</b>。這是卡方檢定最容易踩的坑：樣本越大，再小的差距也會變顯著，所以顯著不等於差距重要。</p>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-head">
+      <div class="chart-title">χ² 分配（df = 1）與右尾機率</div>
+      <div class="legend">
+        <span><i style="background:var(--obs)"></i>你的 χ²</span>
+        <span><i style="background:var(--alert);opacity:.35"></i>p-value 的面積</span>
+        <span><i style="background:var(--muted);opacity:.6"></i>α=.05 臨界值 3.84</span>
+      </div>
+    </div>
+    <svg id="dist" viewBox="0 0 640 250" role="img" aria-label="卡方分配曲線，右尾陰影面積即為 p-value"></svg>
+    <p class="pane-note">曲線是「H₀ 為真時，χ² 會長什麼樣」。你的統計量落得越右邊，右尾陰影（p-value）就越小。χ² 超過 <span class="num">3.84</span> 就跨過 α = 0.05 的門檻。</p>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-head">
+      <div class="chart-title">直接模擬「沒關係的世界」</div>
+      <div class="legend"><span id="sim-note">固定四邊的總人數，隨機重新配對每個人的兩個標籤</span></div>
+    </div>
+    <svg id="sim" viewBox="0 0 640 200" role="img" aria-label="模擬虛無假設下的卡方統計量分布直方圖"></svg>
+    <div class="sim-row">
+      <button class="chip" type="button" id="btn-sim">模擬 600 次</button>
+      <span class="sim-out" id="sim-out">按一下：把你的資料打散 600 次，看看純靠運氣有幾次能達到你的 χ²。</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="sec-no">推論鏈</div>
+    <h2>從假設走到結論的六步</h2>
+  </div>
+  <div class="chain">
+    <div class="step"><div class="step-rail"><div class="step-n">1</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-t">先假設「沒關係」</div><div class="step-d">H₀：性別與飲料偏好互相獨立。所有計算都建立在這個假設成立的前提上。</div></div></div>
+    <div class="step"><div class="step-rail"><div class="step-n">2</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-t">算出「應該幾人」</div><div class="step-d">E = 列和 × 欄和 ÷ 總數。四格得到 25 / 25 / 25 / 25。</div></div></div>
+    <div class="step"><div class="step-rail"><div class="step-n">3</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-t">跟實際資料比較</div><div class="step-d">實際是 40 / 10 / 10 / 40，每一格都偏離 15 人。</div></div></div>
+    <div class="step hot"><div class="step-rail"><div class="step-n">4</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-t">用 χ² 量差距</div><div class="step-d">Σ (O−E)² / E ＝ 36：四格各差 15 人，15²/25 = 9，四格加起來 36。除以 E 是為了讓「在 5 人裡差 3 人」比「在 500 人裡差 3 人」更嚴重。</div></div></div>
+    <div class="step"><div class="step-rail"><div class="step-n">5</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-t">換算 p-value</div><div class="step-d">查 df = 1 的 χ² 分配右尾：χ² 越大 → p 越小 → 越不像巧合。</div></div></div>
+    <div class="step"><div class="step-rail"><div class="step-n">6</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-t">下判斷</div><div class="step-d">p &lt; 0.05 就拒絕「沒關係」，認定兩者存在統計關聯 —— 注意，是<b>關聯</b>，不是原因。</div></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="sec-no">實例</div>
+    <h2>Titanic：Sex 與 Survived</h2>
+  </div>
+  <div class="body">
+    <p>把 Titanic 訓練集的 <span class="num">Sex</span> 與 <span class="num">Survived</span> 做交叉表（按上面的「Titanic」情境即可載入）：891 位乘客中，男性 577 人只有 109 人生還，女性 314 人卻有 233 人生還。</p>
+    <p>卡方檢定問的是：如果「性別與生還完全無關」，男女的生還比例應該跟整體的 38.4% 差不多；但實際差這麼多，是普通的隨機波動，還是真的存在關聯？結果 χ² ≈ <span class="num">263.1</span>，p 小到電腦印出 <span class="num">1e−58</span> 等級 —— 這不是運氣能解釋的。（<span class="num">scipy.stats.chi2_contingency</span> 對 2×2 表預設會套用 Yates 連續性校正，印出的是 <span class="num">260.7</span>，兩者結論一致。）</p>
+  </div>
+  <pre><span class="cm"># 交叉表 → 卡方獨立性檢定</span>
+<span class="kw">from</span> scipy.stats <span class="kw">import</span> chi2_contingency
+ct = pd.crosstab(df[<span class="num">"Sex"</span>], df[<span class="num">"Survived"</span>])
+chi2, p, dof, expected = chi2_contingency(ct)
+
+<span class="cm"># 特徵選擇：一次評分所有類別特徵（需非負值）</span>
+<span class="kw">from</span> sklearn.feature_selection <span class="kw">import</span> chi2, SelectKBest
+selector = SelectKBest(score_func=chi2, k=<span class="num">10</span>).fit(X_encoded, y)</pre>
+  <div class="body">
+    <p><b>在特徵選擇裡怎麼用：</b>把每個類別特徵與目標變數各做一次卡方檢定，χ² 分數高（p 小）的排前面，作為 Filter 階段的篩選依據。它便宜、不需訓練模型，但它只看<b>單一特徵與目標</b>的關聯，看不到特徵之間的交互作用與共線性 —— 所以是初篩，不是最終答案。</p>
+  </div>
+  <p class="caveat"><b>三個必記的但書：</b>① 有任何一格的<b>預期值 &lt; 5</b> 時卡方近似會失準，改用 Fisher 精確檢定。② 樣本數會放大 χ²，顯著≠效果大，要另外看 Cramér's V。③ <b>關聯（association）不等於因果（causation）</b>：不能說「性別造成了生還」，實際上背後是「婦孺優先」的救生艇規則。</p>
+</section>
+
+<section>
+  <div class="closing">
+    <div class="note">
+      <h3>心法</h3>
+      <p>老師說四個盒子應該差不多平均裝糖果，結果打開卻發現兩盒爆滿、兩盒很少；差得越誇張，就越難相信只是剛好。</p>
+    </div>
+    <div class="note">
+      <h3>口訣</h3>
+      <ol>
+        <li>先算「應該幾人」</li>
+        <li>卡方量實際差距</li>
+        <li>小 p 判定有關聯</li>
+      </ol>
+    </div>
+  </div>
+  <footer>χ² = Σ (O − E)² / E　·　df = (列數−1)(欄數−1)　·　p-value 取自 χ² 分配右尾面積。頁面中的 p 值以 df=1 的解析式 erfc(√(χ²/2)) 計算。</footer>
+</section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var PRESETS = [
+    {name:["男生","女生"], col:["喜歡咖啡","喜歡茶"], v:[40,10,10,40]},
+    {name:["男生","女生"], col:["喜歡咖啡","喜歡茶"], v:[26,24,23,27]},
+    {name:["男生","女生"], col:["喜歡咖啡","喜歡茶"], v:[7,2,2,6]},
+    {name:["男性","女性"], col:["未生還","生還"], v:[468,109,81,233]}
+  ];
+
+  var ids = ["a","b","c","d"];
+  var inputs = {}, exps = {};
+  ids.forEach(function(k){
+    inputs[k] = document.getElementById("in-" + k);
+    exps[k]  = document.getElementById("ex-" + k);
+  });
+  var $ = function(id){ return document.getElementById(id); };
+  var yates = false;
+  var state = {rows:["男生","女生"], cols:["喜歡咖啡","喜歡茶"]};
+
+  /* ---------- math ---------- */
+  function erfc(x){ /* Numerical Recipes erfcc, |err| < 1.2e-7 */
+    var z = Math.abs(x), t = 2/(2+z);
+    var ty = 4*t - 2;
+    var cof = [-1.3026537197817094,6.4196979235649026e-1,1.9476473204185836e-2,
+      -9.561514786808631e-3,-9.46595344482036e-4,3.66839497852761e-4,4.2523324806907e-5,
+      -2.0278578112534e-5,-1.624290004647e-6,1.303655835580e-6,1.5626441722e-8,-8.5238095915e-8,
+      6.529054439e-9,5.059343495e-9,-9.91364156e-10,-2.27365122e-10,9.6467911e-11,2.394038e-12,
+      -6.886027e-12,8.94487e-13,3.13092e-13,-1.12708e-13,3.81e-16,7.106e-15];
+    var d = 0, dd = 0, tmp;
+    for (var j = cof.length - 1; j > 0; j--){ tmp = d; d = ty*d - dd + cof[j]; dd = tmp; }
+    var ans = t * Math.exp(-z*z + 0.5*(cof[0] + ty*d) - dd);
+    return x >= 0 ? ans : 2 - ans;
+  }
+  function pFromChi(x){ // df = 1
+    if (!(x > 0)) return 1;
+    if (x > 1400) return 0;
+    return Math.max(0, Math.min(1, erfc(Math.sqrt(x/2))));
+  }
+  function density(x){ // chi-square df=1 pdf
+    if (x <= 0) return 0;
+    return Math.exp(-x/2) / Math.sqrt(2*Math.PI*x);
+  }
+  function compute(o){
+    var r0 = o.a + o.b, r1 = o.c + o.d, c0 = o.a + o.c, c1 = o.b + o.d;
+    var n = r0 + r1;
+    var res = {r0:r0, r1:r1, c0:c0, c1:c1, n:n, ok:false, chi:0, p:1, e:{}, term:{}, minE:Infinity};
+    if (n <= 0 || r0 === 0 || r1 === 0 || c0 === 0 || c1 === 0) return res;
+    res.ok = true;
+    res.e = {a:r0*c0/n, b:r0*c1/n, c:r1*c0/n, d:r1*c1/n};
+    var chi = 0;
+    ids.forEach(function(k){
+      var diff = Math.abs(o[k] - res.e[k]);
+      if (yates) diff = Math.max(0, diff - 0.5);
+      var t = diff*diff / res.e[k];
+      res.term[k] = t;
+      chi += t;
+      if (res.e[k] < res.minE) res.minE = res.e[k];
+    });
+    res.chi = chi;
+    res.p = pFromChi(chi);
+    return res;
+  }
+  function fmtP(p){
+    if (p >= 0.9995) return "1.000";
+    if (p < 1e-15) return "< 1e−15";
+    if (p < 0.001){
+      var s = p.toExponential(1).replace("e-", "e−");
+      return s;
+    }
+    return p.toFixed(3);
+  }
+  function fmtChi(x){
+    if (x >= 1000) return x.toFixed(0);
+    if (x >= 100) return x.toFixed(1);
+    return x.toFixed(2);
+  }
+
+  /* ---------- read / render ---------- */
+  function readObs(){
+    var o = {};
+    ids.forEach(function(k){
+      var v = parseInt(inputs[k].value, 10);
+      if (!isFinite(v) || v < 0) v = 0;
+      if (v > 99999) v = 99999;
+      o[k] = v;
+    });
+    return o;
+  }
+
+  var contribBox = $("contrib");
+  var contribRows = {};
+  (function buildContrib(){
+    var order = [["a",0,0],["b",0,1],["c",1,0],["d",1,1]];
+    order.forEach(function(t){
+      var row = document.createElement("div");
+      row.className = "c-row";
+      var name = document.createElement("div"); name.className = "c-name";
+      var track = document.createElement("div"); track.className = "c-track";
+      var fill = document.createElement("div"); fill.className = "c-fill"; fill.style.width = "0%";
+      track.appendChild(fill);
+      var val = document.createElement("div"); val.className = "c-val";
+      row.appendChild(name); row.appendChild(track); row.appendChild(val);
+      contribBox.appendChild(row);
+      contribRows[t[0]] = {name:name, fill:fill, val:val, ri:t[1], ci:t[2]};
+    });
+  })();
+
+  function render(){
+    var o = readObs(), r = compute(o);
+
+    $("sum-r0").textContent = r.r0;
+    $("sum-r1").textContent = r.r1;
+    $("sum-c0").textContent = r.c0;
+    $("sum-c1").textContent = r.c1;
+    $("sum-n").textContent  = r.n;
+
+    var maxT = 0;
+    ids.forEach(function(k){ if (r.ok && r.term[k] > maxT) maxT = r.term[k]; });
+
+    ids.forEach(function(k){
+      exps[k].textContent = r.ok ? r.e[k].toFixed(1) : "—";
+      exps[k].classList.toggle("warn", r.ok && r.e[k] < 5);
+      var cr = contribRows[k];
+      cr.name.textContent = state.rows[cr.ri] + " · " + state.cols[cr.ci];
+      cr.val.textContent = r.ok ? r.term[k].toFixed(2) : "—";
+      cr.fill.style.width = (r.ok && maxT > 0 ? (r.term[k]/maxT*100) : 0) + "%";
+    });
+
+    $("out-chi").textContent = r.ok ? fmtChi(r.chi) : "—";
+    $("out-chi-sub").textContent = yates ? "已套用 Yates 連續性校正" : "四格差距的總和";
+    $("out-p").textContent = r.ok ? fmtP(r.p) : "—";
+
+    var pill = $("out-pill"), txt = $("out-verdict");
+    if (!r.ok){
+      pill.className = "pill keep"; pill.textContent = "無法計算";
+      txt.textContent = "有一整列或一整欄是 0，算不出預期值 —— 先補齊資料。";
+    } else if (r.p < 0.001){
+      pill.className = "pill reject"; pill.textContent = "拒絕 H₀";
+      txt.textContent = "證據非常強：這種差距在「沒關係」的世界裡幾乎不會出現。";
+    } else if (r.p < 0.05){
+      pill.className = "pill reject"; pill.textContent = "拒絕 H₀";
+      txt.textContent = "在 α = 0.05 下，兩個變數存在統計上顯著的關聯。";
+    } else if (r.p < 0.1){
+      pill.className = "pill keep"; pill.textContent = "不拒絕 H₀";
+      txt.textContent = "差距接近門檻但還不夠：資料不足以宣稱有關聯，可考慮加大樣本。";
+    } else {
+      pill.className = "pill keep"; pill.textContent = "不拒絕 H₀";
+      txt.textContent = "實際分布很像「沒關係」的世界，沒有證據支持兩者有關聯。";
+    }
+
+    var warn = $("warn");
+    if (r.ok && r.minE < 5){
+      $("warn-txt").innerHTML = "最小預期值只有 <span class=\"num\">" + r.minE.toFixed(1) +
+        "</span>（< 5），卡方近似在這裡不可靠。改用 Fisher 精確檢定，或合併類別、增加樣本。";
+      warn.classList.add("on");
+    } else {
+      warn.classList.remove("on");
+    }
+
+    drawDist(r);
+    clearSim();
+    return r;
+  }
+
+  /* ---------- distribution chart ---------- */
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs){
+    var n = document.createElementNS(SVGNS, tag);
+    for (var k in attrs){
+      var v = attrs[k];
+      // presentation attributes don't resolve var(); route those through inline style
+      if (typeof v === "string" && v.indexOf("var(") !== -1) n.style.setProperty(k, v);
+      else n.setAttribute(k, v);
+    }
+    return n;
+  }
+  function drawDist(r){
+    var svg = $("dist");
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var W = 640, H = 250, L = 44, R = 18, T = 18, B = 40;
+    var xmax = 10;
+    if (r.ok && r.chi > 7) xmax = Math.min(20, r.chi * 1.35);
+    var ymax = 0.55;
+    var X = function(v){ return L + (v/xmax)*(W-L-R); };
+    var Y = function(v){ return H - B - Math.min(v, ymax)/ymax*(H-T-B); };
+
+    // grid + x ticks
+    var step = xmax <= 10 ? 2 : (xmax <= 16 ? 4 : 5);
+    for (var t = 0; t <= xmax + 1e-9; t += step){
+      svg.appendChild(el("line", {x1:X(t), y1:T, x2:X(t), y2:H-B, stroke:"var(--line-soft)", "stroke-width":1}));
+      var lb = el("text", {x:X(t), y:H-B+20, fill:"var(--muted)", "font-size":11.5, "font-family":"var(--mono)", "text-anchor":"middle"});
+      lb.textContent = t.toFixed(0);
+      svg.appendChild(lb);
+    }
+    var xt = el("text", {x:W-R, y:H-B+36, fill:"var(--muted)", "font-size":11.5, "font-family":"var(--mono)", "text-anchor":"end"});
+    xt.textContent = "χ² 值";
+    svg.appendChild(xt);
+
+    // curve points
+    var pts = [], N = 260, x0 = 0.045;
+    for (var i = 0; i <= N; i++){
+      var x = x0 + (xmax - x0) * i / N;
+      pts.push([x, density(x)]);
+    }
+    function pathFrom(from){
+      var d = "";
+      var started = false;
+      for (var i = 0; i < pts.length; i++){
+        if (pts[i][0] < from) continue;
+        d += (started ? "L" : "M") + X(pts[i][0]).toFixed(2) + " " + Y(pts[i][1]).toFixed(2) + " ";
+        started = true;
+      }
+      return d;
+    }
+
+    // p-value tail shading
+    if (r.ok && r.chi < xmax){
+      var tail = pathFrom(r.chi);
+      if (tail){
+        var area = tail + "L" + X(xmax).toFixed(2) + " " + (H-B) + " L" + X(r.chi).toFixed(2) + " " + (H-B) + " Z";
+        svg.appendChild(el("path", {d:area, fill:"var(--alert)", opacity:.3, stroke:"none"}));
+      }
+    } else if (r.ok){
+      svg.appendChild(el("rect", {x:X(xmax)-2, y:T, width:2, height:H-T-B, fill:"var(--alert)", opacity:.3}));
+    }
+
+    // baseline + curve
+    svg.appendChild(el("line", {x1:L, y1:H-B, x2:W-R, y2:H-B, stroke:"var(--line)", "stroke-width":1}));
+    svg.appendChild(el("path", {d:pathFrom(0), fill:"none", stroke:"var(--exp)", "stroke-width":2, "stroke-linejoin":"round"}));
+
+    // critical value 3.841
+    if (3.841 < xmax){
+      svg.appendChild(el("line", {x1:X(3.841), y1:T+6, x2:X(3.841), y2:H-B, stroke:"var(--muted)", "stroke-width":1, "stroke-dasharray":"3 3"}));
+      var cl = el("text", {x:X(3.841)+6, y:T+16, fill:"var(--muted)", "font-size":11.5, "font-family":"var(--mono)"});
+      cl.textContent = "3.84";
+      svg.appendChild(cl);
+    }
+
+    // observed marker
+    if (r.ok){
+      var inside = r.chi <= xmax;
+      var mx = inside ? X(r.chi) : X(xmax);
+      svg.appendChild(el("line", {x1:mx, y1:T, x2:mx, y2:H-B, stroke:"var(--obs)", "stroke-width":2}));
+      svg.appendChild(el("circle", {cx:mx, cy:H-B, r:4, fill:"var(--obs)"}));
+      var anchor = mx > W - 130 ? "end" : "start";
+      var dx = anchor === "end" ? -8 : 8;
+      var t1 = el("text", {x:mx+dx, y:T+14, fill:"var(--obs)", "font-size":12.5, "font-family":"var(--mono)", "font-weight":600, "text-anchor":anchor});
+      t1.textContent = "χ² = " + fmtChi(r.chi) + (inside ? "" : " →");
+      svg.appendChild(t1);
+      var t2 = el("text", {x:mx+dx, y:T+30, fill:"var(--muted)", "font-size":11.5, "font-family":"var(--mono)", "text-anchor":anchor});
+      t2.textContent = inside ? "p = " + fmtP(r.p) : "遠在圖表之外，p = " + fmtP(r.p);
+      svg.appendChild(t2);
+    }
+
+    // y label
+    var yl = el("text", {x:L-10, y:T+10, fill:"var(--muted)", "font-size":11.5, "font-family":"var(--mono)", "text-anchor":"end"});
+    yl.textContent = "密度";
+    svg.appendChild(yl);
+  }
+
+  /* ---------- null-world simulation ---------- */
+  function clearSim(){
+    var svg = $("sim");
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var W = 640, H = 200;
+    var hint = el("text", {x:W/2, y:H/2, fill:"var(--muted)", "font-size":13, "font-family":"var(--sans)", "text-anchor":"middle"});
+    hint.textContent = "尚未模擬";
+    svg.appendChild(hint);
+    $("sim-out").textContent = "按一下：把你的資料打散 600 次，看看純靠運氣有幾次能達到你的 χ²。";
+  }
+
+  function simulate(){
+    var o = readObs(), r = compute(o);
+    if (!r.ok){ $("sim-out").textContent = "資料不完整，無法模擬。"; return; }
+    var RUNS = 600, vals = [], hit = 0;
+    var n = r.n, rowA = r.r0, colA = r.c0;
+    for (var s = 0; s < RUNS; s++){
+      var remaining = n, coffee = colA, a = 0;
+      for (var i = 0; i < rowA; i++){
+        if (Math.random() * remaining < coffee){ a++; coffee--; }
+        remaining--;
+      }
+      var sim = compute({a:a, b:rowA-a, c:colA-a, d:n-rowA-(colA-a)});
+      var v = sim.ok ? sim.chi : 0;
+      vals.push(v);
+      if (v >= r.chi - 1e-9) hit++;
+    }
+    drawSim(vals, r, hit, RUNS);
+  }
+
+  function drawSim(vals, r, hit, runs){
+    var svg = $("sim");
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var W = 640, H = 200, L = 44, R = 18, T = 16, B = 34;
+    var maxV = 0;
+    for (var i = 0; i < vals.length; i++) if (vals[i] > maxV) maxV = vals[i];
+    var xmax = Math.max(6, Math.min(maxV * 1.1, 14));
+    var inside = r.chi <= xmax;
+    var BINS = 28, counts = new Array(BINS).fill(0);
+    for (i = 0; i < vals.length; i++){
+      var b = Math.floor(vals[i] / xmax * BINS);
+      if (b >= BINS) b = BINS - 1;
+      if (b < 0) b = 0;
+      counts[b]++;
+    }
+    var maxC = Math.max.apply(null, counts);
+    var X = function(v){ return L + (v/xmax)*(W-L-R); };
+    var bw = (W-L-R)/BINS;
+
+    for (i = 0; i < BINS; i++){
+      if (!counts[i]) continue;
+      var h = counts[i]/maxC*(H-T-B);
+      var binLeft = i/BINS*xmax;
+      var over = binLeft >= r.chi - 1e-9;
+      svg.appendChild(el("rect", {
+        x:(L + i*bw + 0.6).toFixed(2), y:(H-B-h).toFixed(2),
+        width:Math.max(1, bw-1.2).toFixed(2), height:h.toFixed(2),
+        fill: over ? "var(--alert)" : "var(--exp)", opacity: over ? .75 : .45
+      }));
+    }
+    svg.appendChild(el("line", {x1:L, y1:H-B, x2:W-R, y2:H-B, stroke:"var(--line)", "stroke-width":1}));
+
+    var step = xmax <= 8 ? 2 : 4;
+    for (var t = 0; t <= xmax + 1e-9; t += step){
+      var lb = el("text", {x:X(t), y:H-B+19, fill:"var(--muted)", "font-size":11.5, "font-family":"var(--mono)", "text-anchor":"middle"});
+      lb.textContent = t.toFixed(0);
+      svg.appendChild(lb);
+    }
+    var yl = el("text", {x:L-10, y:T+10, fill:"var(--muted)", "font-size":11.5, "font-family":"var(--mono)", "text-anchor":"end"});
+    yl.textContent = "次數";
+    svg.appendChild(yl);
+
+    var mx = inside ? X(r.chi) : W-R;
+    svg.appendChild(el("line", {x1:mx, y1:T, x2:mx, y2:H-B, stroke:"var(--obs)", "stroke-width":2}));
+    var anchor = mx > W - 150 ? "end" : "start";
+    var tx = el("text", {x:mx + (anchor === "end" ? -8 : 8), y:T+12, fill:"var(--obs)", "font-size":12, "font-family":"var(--mono)", "font-weight":600, "text-anchor":anchor});
+    tx.textContent = "你的 χ² = " + fmtChi(r.chi) + (inside ? "" : " →");
+    svg.appendChild(tx);
+
+    var pct = (hit/runs*100);
+    var out = $("sim-out");
+    if (hit === 0){
+      out.innerHTML = runs + " 次隨機打散裡，<b>0</b> 次達到你的 χ² = " + fmtChi(r.chi) +
+        " —— 純靠運氣做不到，這正是 p-value 很小的意思。";
+    } else {
+      out.innerHTML = runs + " 次隨機打散裡，有 <b>" + hit + "</b> 次（" + pct.toFixed(1) +
+        "%）達到你的 χ² = " + fmtChi(r.chi) + "，理論 p-value 是 <b>" + fmtP(r.p) + "</b>。兩者對得上。";
+    }
+  }
+
+  /* ---------- controls ---------- */
+  function applyPreset(i){
+    var p = PRESETS[i];
+    state.rows = p.name.slice();
+    state.cols = p.col.slice();
+    ids.forEach(function(k, j){ inputs[k].value = p.v[j]; });
+    $("lab-r0").textContent = $("lab2-r0").textContent = p.name[0];
+    $("lab-r1").textContent = $("lab2-r1").textContent = p.name[1];
+    $("lab-c0").textContent = $("lab2-c0").textContent = p.col[0];
+    $("lab-c1").textContent = $("lab2-c1").textContent = p.col[1];
+    document.querySelectorAll("[data-preset]").forEach(function(btn){
+      btn.setAttribute("aria-pressed", String(Number(btn.dataset.preset) === i));
+    });
+    render();
+  }
+
+  document.querySelectorAll("[data-preset]").forEach(function(btn){
+    btn.setAttribute("aria-pressed", "false");
+    btn.addEventListener("click", function(){ applyPreset(Number(btn.dataset.preset)); });
+  });
+
+  ids.forEach(function(k){
+    inputs[k].addEventListener("input", function(){
+      document.querySelectorAll("[data-preset]").forEach(function(b){ b.setAttribute("aria-pressed", "false"); });
+      render();
+    });
+  });
+
+  function scale(f){
+    var o = readObs();
+    ids.forEach(function(k){
+      var v = f > 1 ? o[k] * 2 : Math.round(o[k] / 2);
+      inputs[k].value = Math.min(99999, v);
+    });
+    document.querySelectorAll("[data-preset]").forEach(function(b){ b.setAttribute("aria-pressed", "false"); });
+    render();
+  }
+  $("btn-x2").addEventListener("click", function(){ scale(2); });
+  $("btn-d2").addEventListener("click", function(){ scale(0.5); });
+  $("btn-sim").addEventListener("click", simulate);
+
+  applyPreset(0);
+})();
+</script>
+</body>
+</html>
