@@ -148,6 +148,9 @@ ehthumbs.db
 Thumbs.db
 desktop.ini
 
+# Office 暫存鎖檔（開啟 .docx/.xlsx/.pptx 時產生）
+~$*
+
 # IDE 和編輯器檔案
 # =====================================
 .vscode/settings.json
