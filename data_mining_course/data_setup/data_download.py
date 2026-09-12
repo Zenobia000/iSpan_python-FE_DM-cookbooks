@@ -117,7 +117,7 @@ def check_kaggle_api() -> None:
 # 檢查並安裝必要的套件
 def check_and_install_packages():
     """檢查並安裝必要的套件"""
-    required_packages = ['kagglehub', 'requests', 'tqdm']
+    required_packages = ['kagglehub', 'requests', 'tqdm', 'datasets']
     
     for package in required_packages:
         try:
@@ -223,6 +223,30 @@ def get_datasets_info():
             "method": "kaggle_cli",
             "dataset_id": "rupakroy/urban-sound-8k",
             "folder": "urban_sound"
+        },
+        {
+            # M09 / M11 / extension 讀的是 datasets/raw/imdb_hf/{train,test}.csv，
+            # 不是上面那份 Kaggle IMDB 50K（落點 imdb_reviews/）。
+            # 走 HuggingFace 落地，版面與 stanfordnlp/imdb 欄位一致。
+            "module": "模組九 / 模組十一",
+            "topic": "多模態特徵工程 / 大模型訓練",
+            "name": "IMDB (HuggingFace)",
+            "type": "dataset",
+            "method": "hf_export",
+            "hf_export": "imdb",
+            "folder": "imdb_hf"
+        },
+        {
+            # M09 05_dogs_cats_case、M11 03_image_downstream 要的是
+            # datasets/raw/dogs_vs_cats/{cat,dog}/*.jpg。
+            # 不能改回 Kaggle 競賽 zip，版面對不上。
+            "module": "模組九 / 模組十一",
+            "topic": "多模態特徵工程 / 大模型訓練",
+            "name": "Dogs vs Cats (HuggingFace)",
+            "type": "dataset",
+            "method": "hf_export",
+            "hf_export": "cats_vs_dogs",
+            "folder": "dogs_vs_cats"
         },
         {
             "module": "模組十",
@@ -430,6 +454,42 @@ except ImportError:
     kagglehub = None
     KAGGLEHUB_AVAILABLE = False
 
+def download_with_hf_export(dataset, target_folder):
+    """把 HuggingFace 資料落地到 datasets/raw/，版面與 notebook 讀取路徑一致。"""
+    if str(SCRIPT_DIR) not in sys.path:
+        sys.path.insert(0, str(SCRIPT_DIR))
+
+    try:
+        from export_hf_datasets import export_cats_vs_dogs, export_imdb
+    except ImportError as exc:
+        print(f"❌ 找不到 export_hf_datasets.py: {exc}")
+        return False
+
+    kind = dataset.get("hf_export")
+    try:
+        if kind == "imdb":
+            export_imdb()
+            ok = (Path(target_folder) / "train.csv").exists()
+        elif kind == "cats_vs_dogs":
+            export_cats_vs_dogs()
+            ok = any(Path(target_folder).glob("*/*.jpg"))
+        else:
+            print(f"❌ 未知的 HF 匯出種類: {kind}")
+            return False
+    except SystemExit:
+        return False
+    except Exception as exc:
+        print(f"❌ HuggingFace 落地失敗: {exc}")
+        return False
+
+    if ok:
+        print(f"✅ HuggingFace 落地完成：{target_folder}")
+        return True
+
+    print(f"❌ 落地後找不到預期檔案: {target_folder}")
+    return False
+
+
 # 下載資料集
 def download_dataset(dataset, base_dir):
     """下載單個資料集到指定目錄，根據預設方法"""
@@ -450,7 +510,8 @@ def download_dataset(dataset, base_dir):
     method_map = {
         'kaggle_cli': '💻 Kaggle CLI', 
         'direct': '🌐 直接下載',
-        'kagglehub_only': '🤗 KaggleHub'
+        'kagglehub_only': '🤗 KaggleHub',
+        'hf_export': '🤗 HuggingFace 落地',
     }
     print(f"🔧 使用方法: {method_map.get(method, '未知')}")
     print(f"📁 目標資料夾: {target_folder}")
@@ -535,6 +596,17 @@ def download_dataset(dataset, base_dir):
             else:
                 pbar.set_description("❌ KaggleHub 下載失敗"); pbar.update(80)
                 success = False
+
+    # --- HuggingFace 落地（imdb_hf / dogs_vs_cats）---
+    elif method == 'hf_export':
+        with tqdm(total=100, desc="🤗 HuggingFace", bar_format='{l_bar}{bar}| {percentage:3.0f}%') as pbar:
+            pbar.set_description("🔧 準備 HuggingFace 落地..."); pbar.update(20)
+            if download_with_hf_export(dataset, target_folder):
+                pbar.set_description("✅ HuggingFace 落地完成"); pbar.update(80)
+                success = True
+            else:
+                pbar.set_description("❌ HuggingFace 落地失敗"); pbar.update(80)
+                success = False
     
     else:
         print(f"\n❌ 未知的下載方法: {method}")
@@ -598,7 +670,8 @@ def main():
         method_map = {
             'kaggle_cli': '(CLI+Hub)', 
             'direct': '(Direct)', 
-            'kagglehub_only': '(Hub Only)'
+            'kagglehub_only': '(Hub Only)',
+            'hf_export': '(HF Export)',
         }
         method_tag = method_map.get(method, '')
 
@@ -612,6 +685,9 @@ def main():
             else:  # dataset
                 dataset_type_icon = "🤗"
                 cmd_info = f"kagglehub.dataset_download('{dataset['dataset_id']}')"
+        elif method == "hf_export":
+            dataset_type_icon = "🤗"
+            cmd_info = f"export_hf_datasets.py --only {dataset['hf_export']}"
         else:  # kaggle_cli
             if dataset["type"] == "competition":
                 dataset_type_icon = "🏆"
@@ -627,8 +703,8 @@ def main():
         print()
     
     print("📌 圖標與標籤說明:")
-    print("   🏆 = Kaggle 競賽(CLI), 📊 = Kaggle 資料集(CLI), 🌐 = 直接下載, 🤗 = KaggleHub")
-    print("   (CLI+Hub) = Kaggle CLI + KaggleHub 備用, (Direct) = 直接 HTTP 下載, (Hub Only) = 僅 KaggleHub")
+    print("   🏆 = Kaggle 競賽(CLI), 📊 = Kaggle 資料集(CLI), 🌐 = 直接下載, 🤗 = KaggleHub / HuggingFace")
+    print("   (CLI+Hub) = Kaggle CLI + KaggleHub 備用, (Direct) = 直接 HTTP 下載, (Hub Only) = 僅 KaggleHub, (HF Export) = HuggingFace 落地")
     print("=" * 80)
     
     # 提供選項
