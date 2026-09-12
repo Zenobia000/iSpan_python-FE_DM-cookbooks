@@ -23,42 +23,96 @@ COURSE_DIR = SCRIPT_DIR.parent
 # ~/.cache/kagglehub 再複製過來。一併指回課程樹，資料才不會散在家目錄。
 os.environ.setdefault("KAGGLEHUB_CACHE", str(COURSE_DIR / "datasets" / ".kagglehub_cache"))
 
-# 確保 Kaggle API 憑證存在
-def check_kaggle_api():
-    """檢查 Kaggle API 憑證是否存在，若不存在則引導用戶設置"""
-    kaggle_dir = os.path.expanduser('~/.kaggle')
-    kaggle_api_path = os.path.join(kaggle_dir, 'kaggle.json')
-    
-    if not os.path.exists(kaggle_api_path):
-        print("未找到 Kaggle API 憑證。")
-        print("請前往 https://www.kaggle.com/account 獲取 API 憑證")
-        print("下載 kaggle.json 檔案後，將其放置於 ~/.kaggle/kaggle.json")
-        
-        # 嘗試創建目錄
-        if not os.path.exists(kaggle_dir):
-            os.makedirs(kaggle_dir)
-        
-        # 檢查當前目錄是否有 kaggle.json
-        if os.path.exists('kaggle.json'):
-            print("在當前目錄找到 kaggle.json，正在複製到 ~/.kaggle/")
-            shutil.copy('kaggle.json', kaggle_api_path)
-            os.chmod(kaggle_api_path, 0o600)  # 設置適當的權限
-            print(f"已複製 Kaggle API 憑證檔案到: {kaggle_api_path}")
-        else:
-            print("請將 kaggle.json 放置於當前目錄或 ~/.kaggle/ 目錄")
+def check_kaggle_api() -> None:
+    """檢查 Kaggle API Token，統一使用新版 access_token 認證。"""
+    kaggle_dir = Path.home() / ".kaggle"
+    token_path = kaggle_dir / "access_token"
+
+    kaggle_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. 優先使用環境變數
+    env_token = os.environ.get("KAGGLE_API_TOKEN", "").strip()
+
+    if env_token:
+        print("✓ 已從環境變數 KAGGLE_API_TOKEN 取得 Kaggle Token")
+
+    # 2. 使用 ~/.kaggle/access_token
+    elif token_path.exists():
+        token = token_path.read_text(encoding="utf-8").strip()
+
+        if not token:
+            print(f"❌ Kaggle Token 檔案為空: {token_path}")
             sys.exit(1)
-    
-    # 檢查 kaggle 命令是否可用
-    try:
-        subprocess.run(['kaggle', '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    except (subprocess.SubprocessError, FileNotFoundError):
-        print("未安裝 Kaggle CLI。正在嘗試安裝...")
+
+        # 統一注入環境變數，讓 Kaggle CLI / KaggleHub 共用
+        os.environ["KAGGLE_API_TOKEN"] = token
+
         try:
-            subprocess.run(['pip', 'install', 'kaggle'], check=True)
-            print("Kaggle CLI 安裝成功！")
-        except subprocess.SubprocessError:
-            print("安裝 Kaggle CLI 失敗。請手動執行: pip install kaggle")
+            os.chmod(token_path, 0o600)
+        except OSError:
+            # Windows 可能不完整支援 POSIX chmod
+            pass
+
+        print(f"✓ 已載入 Kaggle Token: {token_path}")
+
+    # 3. 如果目前目錄有 access_token，自動搬到 ~/.kaggle/
+    elif Path("access_token").exists():
+        source_token = Path("access_token")
+        token = source_token.read_text(encoding="utf-8").strip()
+
+        if not token:
+            print("❌ 當前目錄的 access_token 是空的")
             sys.exit(1)
+
+        shutil.copy2(source_token, token_path)
+
+        try:
+            os.chmod(token_path, 0o600)
+        except OSError:
+            pass
+
+        os.environ["KAGGLE_API_TOKEN"] = token
+
+        print(f"✓ 已將 access_token 複製到: {token_path}")
+
+    else:
+        print("❌ 未找到 Kaggle API Token")
+        print()
+        print("請前往 Kaggle Settings → API → Generate New Token")
+        print("取得 Token 後，使用以下任一方式：")
+        print()
+        print("方式 1：建立 ~/.kaggle/access_token")
+        print("方式 2：設定環境變數 KAGGLE_API_TOKEN")
+        print("方式 3：將 access_token 放在目前目錄，由程式自動複製")
+        sys.exit(1)
+
+    # 檢查 Kaggle CLI
+    if shutil.which("kaggle") is None:
+        print("未安裝 Kaggle CLI，正在安裝...")
+        try:
+            subprocess.run(
+                [sys.executable, "-m", "pip", "install", "--upgrade", "kaggle"],
+                check=True,
+            )
+            print("✓ Kaggle CLI 安裝成功")
+        except subprocess.SubprocessError:
+            print("❌ Kaggle CLI 安裝失敗")
+            print(f"請手動執行: {sys.executable} -m pip install -U kaggle")
+            sys.exit(1)
+
+    # 驗證 CLI
+    try:
+        result = subprocess.run(
+            ["kaggle", "--version"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        print(f"✓ {result.stdout.strip()}")
+
+    except (subprocess.SubprocessError, FileNotFoundError) as exc:
+        print(f"❌ Kaggle CLI 無法執行: {exc}")
+        sys.exit(1)
 
 # 檢查並安裝必要的套件
 def check_and_install_packages():
