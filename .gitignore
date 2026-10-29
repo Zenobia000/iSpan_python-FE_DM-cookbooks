@@ -1,29 +1,29 @@
 # =====================================
-# 資料探勘課程 .gitignore
+# 決策分析 Harness 與封存教材 .gitignore
 # =====================================
 
 # 資料集檔案 (可通過 data_download.py 重新下載)
 # =====================================
 datasets/raw/
 datasets/processed/
-data_mining_course/datasets/raw/
-data_mining_course/datasets/processed/
+archive/data_mining_course/datasets/raw/
+archive/data_mining_course/datasets/processed/
 # 下載工具的暫存（HF / KaggleHub），刻意放在課程樹下而非 ~/.cache，匯出完可刪
 datasets/.hf_cache/
 datasets/.kagglehub_cache/
-data_mining_course/datasets/.hf_cache/
-data_mining_course/datasets/.kagglehub_cache/
+archive/data_mining_course/datasets/.hf_cache/
+archive/data_mining_course/datasets/.kagglehub_cache/
 *.csv
 # 例外：二手車原始資料隨 repo 附上——專案與總整兩本 notebook 都直接讀它，
 # 且 Kaggle 需要帳號憑證，學生不該為了跑第一個範例先去申請 API token。
-!data_mining_course/projects/project/car_data/*.csv
+!archive/data_mining_course/projects/project/car_data/*.csv
 # 例外：UCI Automobile 資料集，legacy/ 的舊版視覺化 notebook 讀它（24 KB）
-!data_mining_course/projects/project/Automobile_data.csv
+!archive/data_mining_course/projects/project/Automobile_data.csv
 
 # 投影片產出隨 repo 走：103 頁共 81 MB，檔名固定為 pNN.png，
 # 重生是覆蓋而不是新增，diff 乾淨。用 build_slides.py --all 重建。
 # 聯絡表是衍生物，幾秒就能由 make_contact_sheet.py 重建，不進版控。
-data_mining_course/slides_plan/_contact/
+archive/data_mining_course/slides_plan/_contact/
 *.json
 *.xlsx
 *.xls
@@ -225,9 +225,9 @@ figures/
 # - 模型檔案和實驗結果通常檔案很大，建議使用 Git LFS 或其他方式管理
 
 # README 行銷視覺資產（Hero / 社群圖 / GIF / 底圖 / 生成腳本）
-# 覆蓋上方 *.png / *.gif 等萬用忽略，讓 assets/ 隨 repo 一起發佈
-!assets/
-!assets/**
+# 覆蓋上方 *.png / *.gif 等萬用忽略，讓 archive/assets/ 隨 repo 一起發佈
+!archive/assets/
+!archive/assets/**
 
 # 概念示意圖（嵌入教學 notebook 用，需隨 repo 一起發佈）
 # =====================================
@@ -243,3 +243,10 @@ figures/
 # Harness 任務狀態與資料留在本機；範例設定可追蹤
 .decision/
 !examples/factory_analysis/example.config.json
+
+# 封存的本機素材與快取維持不追蹤
+/archive/local/
+
+# 每個分析題目為獨立本機專案，只提交共用說明
+/projects/*
+!/projects/README.md

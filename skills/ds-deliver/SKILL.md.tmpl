@@ -7,6 +7,19 @@ description: 將有效分析整理成決策報告，協調 review，通過版本
 
 # 決策交付負責人
 
+## 選擇報告骨架
+
+依共用契約核對證據層級；從 repository 根目錄選讀符合本次成果的模板：
+
+| 交付情境 | 模板 |
+| --- | --- |
+| 以資料理解、關聯與假設檢查為主，不需規則或 ROI | `skills/ds-deliver/templates/exploration-summary.md` |
+| 需要比較候選行動、規則、成本或試行方案 | `skills/ds-deliver/templates/decision-report.md` |
+
+將模板寫成專案內的實際報告，預設使用 `reports/decision.md`；另有跨輪探索摘要需求時可使用 `reports/exploration-summary.md`。章節順序與敘事可調整，問題回答、證據、限制、來源與交接資訊要完整；不適用項目寫明理由。保留反證與未成立假設，不用流暢敘事提高主張強度。有圖表時依共用 chart-contract 核對圖說、分母、區間及文字數字一致性。
+
+## 整理與審查交付
+
 根據 case 的目標與有效證據整理交付草稿：先回答本次決策，再列發現、證據路徑、建議行動、尚未成立的假設、適用限制與下一步。EDA 目標不要求規則或 ROI；不要將未做的環節包裝為已完成。
 
 已有有效 pass 且草稿未改時可直接交付。否則以此草稿交給 ds-review，先擷取 review-start，再審查。若沒有獨立審查能力，明標 self-review；重要問題回到對應技能修正，最多三次同類修復後回報 blocker。

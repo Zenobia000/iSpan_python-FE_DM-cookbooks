@@ -2,9 +2,9 @@ name: Decision harness
 
 on:
   push:
-    paths: ['skills/**', 'tools/**', 'tests/**', 'docs/harness*', 'evals/**', 'examples/factory_analysis/**', '.agents/skills/**', '.claude/skills/**', 'AGENTS.md', 'CLAUDE.md', 'README.md', '.gitignore', 'pyproject.toml', 'uv.lock', '.github/workflows/harness-checks.yml']
+    paths: ['skills/**', 'tools/**', 'tests/**', 'docs/**', 'evals/**', 'examples/factory_analysis/**', '.agents/skills/**', '.claude/skills/**', 'AGENTS.md', 'CLAUDE.md', 'README.md', '.gitignore', 'pyproject.toml', 'uv.lock', '.github/workflows/harness-checks.yml']
   pull_request:
-    paths: ['skills/**', 'tools/**', 'tests/**', 'docs/harness*', 'evals/**', 'examples/factory_analysis/**', '.agents/skills/**', '.claude/skills/**', 'AGENTS.md', 'CLAUDE.md', 'README.md', '.gitignore', 'pyproject.toml', 'uv.lock', '.github/workflows/harness-checks.yml']
+    paths: ['skills/**', 'tools/**', 'tests/**', 'docs/**', 'evals/**', 'examples/factory_analysis/**', '.agents/skills/**', '.claude/skills/**', 'AGENTS.md', 'CLAUDE.md', 'README.md', '.gitignore', 'pyproject.toml', 'uv.lock', '.github/workflows/harness-checks.yml']
 
 permissions:
   contents: read

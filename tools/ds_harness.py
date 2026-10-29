@@ -6,14 +6,18 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
+import shutil
 import sqlite3
 import sys
 import uuid
 
-STAGES = ("frame", "proxy", "eda", "rules", "impact")
+STAGES = ("frame", "plan", "proxy", "eda", "rules", "impact")
 GOALS = ("eda", "rules", "impact")
-SKILLS = ("decision-analysis",) + tuple("ds-" + stage for stage in STAGES) + ("ds-review", "ds-deliver")
+SKILLS = ("decision-analysis",) + tuple("ds-" + stage for stage in STAGES if stage != "plan") + ("ds-review", "ds-deliver")
 CHECKS = ("scope", "leakage", "statistics", "business")
+PROJECT_TEMPLATE = Path(__file__).resolve().parents[1] / "skills/ds-frame/assets/project"
+PROJECT_DIRS = ("research/confirmations", "data/raw", "data/interim", "data/processed",
+                "analysis", "config", "reports/explorations", "reports/figures", "reports/tables", "artifacts")
 
 
 class HarnessError(Exception):
@@ -44,7 +48,7 @@ def token():
 
 
 def initial_state(goal):
-    return {"version": 1, "goal": goal, "sessions": {}, "stages": {},
+    return {"version": 2, "goal": goal, "sessions": {}, "stages": {}, "confirmations": [],
             "review_starts": {}, "reviews": [], "deliveries": [], "events": []}
 
 
@@ -74,12 +78,17 @@ def state_at(case, write=False):
 def init_case(case, goal):
     case = Path(case)
     require(not case.exists(), "CASE_EXISTS", "任務目錄已存在。", "使用 status 續作，或選擇新的 case 目錄。")
+    require(not any((p / "state.sqlite").is_file() for p in case.resolve().parents),
+            "NESTED_CASE", "不能在另一個分析專案內建立 case。", "使用 projects/ 下另一個同層目錄。")
     case.mkdir(parents=True)
-    (case / "artifacts").mkdir()
+    shutil.copytree(PROJECT_TEMPLATE, case, dirs_exist_ok=True)
+    for relative in PROJECT_DIRS:
+        (case / relative).mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(case / "state.sqlite") as connection:
         connection.execute("CREATE TABLE state (id INTEGER PRIMARY KEY, payload TEXT NOT NULL)")
         connection.execute("INSERT INTO state VALUES (1, ?)", (json.dumps(initial_state(goal)),))
-    return {"status": "DONE", "case": str(case), "goal": goal, "next_skill": "ds-frame"}
+    return {"status": "DONE", "case": str(case), "goal": goal, "next_skill": "ds-frame",
+            "next_action": "define_problem", "directories": list(PROJECT_DIRS)}
 
 
 def session_for(state, session_id, skill):
@@ -98,6 +107,8 @@ def start_session(state, skill, host):
 
 def snapshot_file(case, path, prefix):
     path = Path(path)
+    require(Path(case).resolve() in path.resolve().parents, "OUTSIDE_PROJECT",
+            "證據文件必須位於目前分析專案內。", "先將草稿、報告或確認紀錄保存到本 case，再登錄。")
     content = path.read_bytes()
     require(0 < len(content) <= 2 * 1024 * 1024, "BAD_ARTIFACT", "證據文件須為 1 byte 至 2 MiB。",
             "大型資料用 record --input 引用，文件只保留方法與結果摘要。")
@@ -138,7 +149,9 @@ def stage_states(case, state):
         for item in artifact["inputs"]:
             if not file_valid(item["path"], item["sha256"]):
                 problems.append("input_changed_or_missing:" + item["path"])
-        for dependency, old_id in artifact["dependencies"].items():
+        dependencies = dict.fromkeys((*upstream(stage), *artifact["dependencies"]))
+        for dependency in dependencies:
+            old_id = artifact["dependencies"].get(dependency)
             if old_id != state["stages"].get(dependency, {}).get("id"):
                 problems.append("upstream_revised:" + dependency)
             elif old_id is not None and results[dependency]["state"] != "current":
@@ -148,8 +161,51 @@ def stage_states(case, state):
     return results
 
 
+def frame_confirmation(case, state):
+    frame = state["stages"].get("frame")
+    if frame is None or stage_states(case, state)["frame"]["state"] != "current":
+        return None
+    for receipt in reversed(state.get("confirmations", [])):
+        if (receipt["revision"] == frame["id"] and receipt["frame_sha256"] == frame["sha256"]
+                and file_valid(Path(case) / receipt["path"], receipt["sha256"])):
+            return receipt
+    return None
+
+
+def confirm_frame(case, state, revision, path, session_id):
+    session_for(state, session_id, "ds-frame")
+    frame = state["stages"].get("frame")
+    require(frame is not None and frame["id"] == revision
+            and stage_states(case, state)["frame"]["state"] == "current",
+            "STALE_CONFIRMATION", "確認的問題版本不存在或已失效。", "重新呈現目前問題版本，取得使用者明確確認。")
+    evidence = json.loads(Path(path).read_text(encoding="utf-8"))
+    require(isinstance(evidence, dict) and evidence.get("decision") == "confirmed"
+            and evidence.get("source") in ("user_message", "user_file")
+            and all(isinstance(evidence.get(key), str) and bool(evidence[key].strip())
+                    for key in ("statement", "reference")),
+            "BAD_CONFIRMATION", "確認紀錄需有明確使用者陳述與來源。",
+            "依 docs/research-workflow.md 保存 decision、source、statement、reference；不可代替使用者確認。")
+    receipt = {**snapshot_file(case, path, "confirmation"), "id": token(),
+               "revision": revision, "frame_sha256": frame["sha256"], "session": session_id,
+               "confirmation_origin": "recorded_user_statement", "at": now()}
+    state.setdefault("confirmations", []).append(receipt)
+    state["events"].append({"type": "confirm_frame", **receipt})
+    return {"status": "DONE", "confirmation": receipt, "next_skill": "ds-frame",
+            "next_action": "write_research_plan",
+            "note": "僅驗證來源紀錄與版本綁定，不認證使用者身分或陳述真偽。"}
+
+
+def input_reference(case, path):
+    path = Path(path).resolve()
+    owner = next((p for p in path.parents if (p / "state.sqlite").is_file()), None)
+    require(owner is None or owner == Path(case).resolve(), "CROSS_PROJECT_INPUT",
+            "不能直接引用另一個分析專案的工作檔或資料。",
+            "將經允許的來源快照複製到本專案 data/，記錄來源與版本，再登錄。")
+    return {"path": str(path), "sha256": digest(path)}
+
+
 def record(case, state, stage, path, session_id, inputs):
-    session_for(state, session_id, "ds-" + stage)
+    session_for(state, session_id, "ds-frame" if stage == "plan" else "ds-" + stage)
     statuses = stage_states(case, state)
     needed = [] if stage == "frame" else ["frame"]
     if stage in ("rules", "impact"):
@@ -158,7 +214,13 @@ def record(case, state, stage, path, session_id, inputs):
     needed += [key for key in upstream(stage) if key in state["stages"]]
     require(all(statuses[key]["state"] == "current" for key in needed), "UPSTREAM_NOT_READY",
             "上游證據缺失或已過期。", "先用 status 查看原因，從最早的缺失／過期環節重做並 record。")
-    references = [{"path": str(Path(path).resolve()), "sha256": digest(path)} for path in inputs]
+    if stage != "frame":
+        require(frame_confirmation(case, state) is not None, "FRAME_NOT_CONFIRMED",
+                "研究問題尚未取得目前版本的使用者確認。", "先呈現問題定義並取得明確回覆，再使用 confirm 登錄。")
+    if stage not in ("frame", "plan"):
+        require(statuses["plan"]["state"] == "current", "PLAN_NOT_READY",
+                "分析前需要有效研究計畫。", "由 ds-frame 根據已確認問題完成假設、反證、方法與順序，以 --stage plan 登錄。")
+    references = [input_reference(case, path) for path in inputs]
     artifact = {**snapshot_file(case, path, stage), "id": token(), "stage": stage,
                 "session": session_id, "inputs": references,
                 "dependencies": current_dependencies(state, stage), "recorded_at": now()}
@@ -169,8 +231,9 @@ def record(case, state, stage, path, session_id, inputs):
 
 def candidate(case, state):
     statuses = stage_states(case, state)
-    required = ["frame", state["goal"]]
+    required = ["frame", "plan", state["goal"]]
     require(all(statuses[key]["state"] == "current" for key in required)
+            and frame_confirmation(case, state) is not None
             and all(value["state"] != "stale" for value in statuses.values()),
             "CANDIDATE_NOT_READY", "任務目標尚未完成，或有過期證據。",
             "執行 status，補齊目標並重做過期環節；不需要的環節可保持 missing。")
@@ -259,17 +322,26 @@ def deliver(case, state, path, session_id):
 
 def status(case, state):
     stages = stage_states(case, state)
-    next_stage = next((key for key in STAGES if stages[key]["state"] == "stale"), None)
-    if next_stage is None:
-        next_stage = "frame" if stages["frame"]["state"] == "missing" else (
-            "eda" if stages["eda"]["state"] == "missing" else (
-                state["goal"] if stages[state["goal"]]["state"] == "missing" else None))
+    confirmation = frame_confirmation(case, state)
+    if stages["frame"]["state"] != "current":
+        next_stage, next_action = "frame", "define_problem"
+    elif confirmation is None:
+        next_stage, next_action = "frame", "await_problem_confirmation"
+    elif stages["plan"]["state"] != "current":
+        next_stage, next_action = "frame", "write_research_plan"
+    else:
+        next_stage = next((key for key in STAGES if stages[key]["state"] == "stale"), None)
+        if next_stage is None:
+            next_stage = "eda" if stages["eda"]["state"] == "missing" else (
+                state["goal"] if stages[state["goal"]]["state"] == "missing" else None)
+        next_action = "analyze" if next_stage else "review_and_deliver"
     review = valid_review(case, state)
     latest = state["deliveries"][-1] if state["deliveries"] else None
     delivery_current = bool(latest and review and latest["review_id"] == review["id"]
                             and file_valid(Path(case) / latest["path"], latest["sha256"]))
     return {"status": "DONE", "goal": state["goal"], "stages": stages,
             "review_current": review is not None, "delivery_current": delivery_current,
+            "problem_confirmed": confirmation is not None, "next_action": next_action,
             "next_skill": "ds-" + next_stage if next_stage else "ds-deliver",
             "sessions": state["sessions"], "events": len(state["events"])}
 
@@ -277,7 +349,7 @@ def status(case, state):
 def build_parser():
     parser = argparse.ArgumentParser(description="角色技能共用的本機證據與 review harness；不選擇統計方法。")
     sub = parser.add_subparsers(dest="command", required=True)
-    for command in ("init", "status", "start", "record", "review-start", "review-finish", "deliver"):
+    for command in ("init", "status", "start", "record", "confirm", "review-start", "review-finish", "deliver"):
         item = sub.add_parser(command)
         item.add_argument("--case", required=True, type=Path)
         if command == "init":
@@ -285,13 +357,15 @@ def build_parser():
         elif command == "start":
             item.add_argument("--skill", choices=SKILLS, required=True)
             item.add_argument("--host", choices=("claude", "codex"), required=True)
-        elif command in ("record", "review-start", "deliver"):
+        elif command in ("record", "confirm", "review-start", "deliver"):
             item.add_argument("--session", required=True)
-        if command in ("record", "review-start", "review-finish", "deliver"):
+        if command in ("record", "confirm", "review-start", "review-finish", "deliver"):
             item.add_argument("--file", required=True, type=Path)
         if command == "record":
             item.add_argument("--stage", choices=STAGES, required=True)
             item.add_argument("--input", action="append", default=[], type=Path)
+        if command == "confirm":
+            item.add_argument("--revision", required=True)
         if command == "review-finish":
             item.add_argument("--token", required=True)
             item.add_argument("--verdict", choices=("pass", "revise", "blocked"), required=True)
@@ -311,6 +385,8 @@ def main(argv=None):
                     result = start_session(state, args.skill, args.host)
                 elif args.command == "record":
                     result = record(args.case, state, args.stage, args.file, args.session, args.input)
+                elif args.command == "confirm":
+                    result = confirm_frame(args.case, state, args.revision, args.file, args.session)
                 elif args.command == "review-start":
                     result = review_start(args.case, state, args.session, args.file)
                 elif args.command == "review-finish":

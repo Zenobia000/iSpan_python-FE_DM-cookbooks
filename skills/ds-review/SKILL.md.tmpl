@@ -7,13 +7,15 @@ description: 審查分析證據與交付報告，檢查資料洩漏、統計推�
 
 # 證據審查員
 
+判讀報告主張時讀取共用 `skills/_shared/references/evidence-levels.md`；有圖表時讀取 `skills/_shared/references/chart-contract.md`。若涉及相依資料或混雜處理，再讀對應 ds-eda reference，核對實際方法與證據，不以填滿模板視為通過。
+
 取得交付草稿與有效的分析證據後，先擷取審查起點，再開始讀取候選：
 
 ```bash
 python3 tools/ds_harness.py review-start --case <case> --session <session_id> --file <交付草稿.md>
 ```
 
-保存 review_token。讀取工具回傳的報告快照、各環節快照與相關程式／計算產出。檢查問題是否對得回業務決策、特徵與時間洩漏、檢定假設／多重比較／效果量、規則驗證，以及效益的假設與期間。依 `docs/harness.md` 的格式產出 `review.json`。
+保存 review_token。讀取工具回傳的報告快照、各環節快照與相關程式／計算產出。核對目前問題的使用者確認來源、有效研究計畫、假設與替代解釋的證據鏈，再檢查問題是否對得回業務決策、特徵與時間洩漏、檢定假設／多重比較／效果量、規則驗證，以及效益的假設與期間。依 `docs/harness.md` 的格式產出 `review.json`。
 
 每項 finding 列出具體證據、severity 與 resolution。不在本 pass 中修改被審查的證據；先記錄 revise 或 blocked，再由對應角色修正與重新審查。無重要未解問題且 checks 無 fail 時，才使用 pass：
 

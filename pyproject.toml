@@ -1,12 +1,12 @@
 [project]
 name = "ispan-fe-dm-cookbooks"
 version = "0.1.0"
-description = "資料探勘與特徵工程教學課程：11 個核心模組，涵蓋 2026 大模型非結構化資料前處理"
+description = "Claude Code／Codex 決策分析 Harness：角色技能、可續作證據與版本綁定交付"
 readme = "README.md"
 requires-python = ">=3.9,<3.13"
 license = { text = "MIT" }
 
-# 核心依賴：模組 M01–M08、M10 的筆記本所需（資料處理、視覺化、傳統 ML）
+# 沿用既有鎖定的分析環境，供計算範例與 archive/ 教材使用；Harness runtime 僅需標準函式庫。
 dependencies = [
     "pandas>=2.0.0",
     "numpy>=1.24.3,<2.1",
@@ -70,5 +70,5 @@ dev = [
 ]
 
 [tool.uv]
-# 本專案是教學課程（notebook 集合），非可安裝套件
+# 工具從 repository 根目錄執行，不建置為可安裝套件。
 package = false

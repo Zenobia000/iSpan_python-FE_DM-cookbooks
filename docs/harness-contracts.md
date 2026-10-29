@@ -5,10 +5,15 @@
 | Stage | 必要上游 | 文件需要回答的問題 |
 | --- | --- | --- |
 | frame | 無 | 誰要做什麼決定 指標與比較基準 觀測單位 時間 影響門檻 已知限制與分析計畫 |
-| proxy | frame | 缺少什麼概念 用哪些訊號替代 為何合理 計算與單位 當下可取得性 混雜因素與驗證方式 |
-| eda | frame | 資料品質 方法與假設 效果量 樣本與不確定性 多重比較 有用與不成立的發現 重現命令 |
-| rules | frame eda | 條件與單位 適用範圍 獨立驗證 涵蓋率與錯誤成本 現場處置與試行退出條件 |
-| impact | frame eda | 觀測與假設的來源 成本期間 公式 情境 敏感度 損益兩平與試行評估 |
+| plan | 已確認的 frame | 既有證據與缺口 假設及來源 替代解釋 反證條件 推薦順序 方法與驗證 產出位置 |
+| proxy | frame plan | 缺少什麼概念 用哪些訊號替代 為何合理 計算與單位 當下可取得性 混雜因素與驗證方式 |
+| eda | frame plan | 資料品質 方法與假設 效果量 樣本與不確定性 多重比較 有用與不成立的發現 重現命令 |
+| rules | frame plan eda | 條件與單位 適用範圍 獨立驗證 涵蓋率與錯誤成本 現場處置與試行退出條件 |
+| impact | frame plan eda | 觀測與假設的來源 成本期間 公式 情境 敏感度 損益兩平與試行評估 |
+
+frame 由 ds-frame 登錄並取得使用者對目前版本的確認；plan 同樣由 ds-frame 在確認後登錄。確認來源與計畫流程見 [research-workflow.md](research-workflow.md)。
+
+方法參考與產出骨架見 [skill-resources.md](skill-resources.md)。模板幫助保留必要內容；runtime 不以章節存在判定統計、領域或成本推論正確。
 
 proxy 與 rules 可省略。若存在任一上游，其版本及有效性就會納入後續 stage；runtime 採保守失效策略。
 

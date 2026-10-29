@@ -22,7 +22,7 @@
 
 技能文件引導 agent 如何判斷；runtime 只強制可以機械檢查的條件。把「不要洩漏」寫在指引中，無法等同真正通過洩漏檢查；把 session 宣告為另一個 host，也無法證明已執行跨模型審查。報告需清楚區分這些證據層級。
 
-最小可用路徑為 frame → eda → 草稿 → review → delivery。只有缺少直接訊號才做 proxy，需要現場操作條件才做 rules，需要效益比較才做 impact。對未達資料條件的專案，可以交付清楚的限制與追加量測方案。
+最小可用路徑為 frame → 人類確認 → plan → eda → 草稿 → review → delivery。AI 先綜合資料與來源釐清問題，確認後主動提出假設、替代解釋與推薦分析順序。方法 reference 位於 `skills/ds-frame/references/`，新專案骨架由 `skills/ds-frame/assets/project/` 產生至 `projects/<題目>/`。只有缺少直接訊號才做 proxy，需要現場操作條件才做 rules，需要效益比較才做 impact。對未達資料條件的專案，可以交付清楚的限制與追加量測方案。
 
 ## 參考來源
 

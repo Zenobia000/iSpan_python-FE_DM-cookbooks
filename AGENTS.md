@@ -1,13 +1,15 @@
 # 專案協作指引
 
-本 repository 包含特徵工程教材與決策分析 harness。以繁體中文撰寫教學、決策說明與交接紀錄。
+本 repository 以 Claude Code／Codex 決策分析 Harness 為主。舊教材與歷史素材封存於 `archive/`。以繁體中文撰寫教學、決策說明與交接紀錄。
 
 ## 先讀什麼
 
-- 教材修改：先讀 `data_mining_course/docs/course_charter.md`，需要教學判準時讀 `data_mining_course/docs/M0_心法總綱.md`。
+- 專案入口：先讀 `README.md`，文件地圖見 `docs/README.md`。日常工作以根目錄的現行架構為準。
 - 決策分析：使用 `decision-analysis` 路由，或使用者指定的 `ds-*` 技能。角色契約見 `skills/_shared/session.md`，操作見 `docs/harness.md`。
 - Harness 開發：先讀 `docs/harness-design.md`。`skills/` 為技能單一來源，透過 `tools/render_skills.py` 產生兩個 host 的入口。
-- 四環節的業務定位：`data_mining_course/docs/AI協作決策分析架構.md`。
+- 新分析專案：用 `init --case projects/<題目>` 建立獨立骨架；流程見 `docs/research-workflow.md`。先由 AI 界定問題並取得使用者確認，再擬定與登錄 plan，之後執行分析。
+- 四環節的業務定位：`docs/AI協作決策分析架構.md`；方法參考見 `docs/references/README.md`。
+- 封存資料：只有任務需要時才讀 `archive/`；教材維護另見 `archive/AGENTS.md`，不要將封存規約當成現行 Harness 的指令。
 
 ## 執行方式
 

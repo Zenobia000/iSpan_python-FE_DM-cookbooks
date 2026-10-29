@@ -1,317 +1,101 @@
-<p align="center">
-  <img src="assets/hero.png" alt="資料探勘與特徵工程 · 2026 大模型實戰" width="100%">
-</p>
+# AI 協作決策分析 Harness
 
-# 🎯 資料探勘與特徵工程教學課程
+在 Claude Code／Codex 中，以領域問題驅動資料分析：提出假設、執行計算、核對證據，再形成決策建議。本專案提供角色技能、本機狀態與版本綁定的審查交付；分析方法由 agent 依資料與問題選擇。
 
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Course Status](https://img.shields.io/badge/status-Active-brightgreen.svg)](README.md)
+## 先看哪裡
 
-> 一套完整的資料探勘與特徵工程實戰課程，從基礎 EDA 到 **2026 大模型非結構化資料前處理**，涵蓋 11 個核心模組與 67 個實戰案例。技術棧：傳統 ML（scikit-learn）+ 現代大模型（PyTorch + HuggingFace）。
+| 你想做什麼 | 入口 |
+| --- | --- |
+| 不知道選哪個技能，想看情境與提示範例 | [技能使用指南](.agents/skills/README.md) |
+| 新題目如何確認問題、分開資料與報告？ | [研究流程與專案目錄](docs/research-workflow.md) |
+| 開始分析、接手已有任務 | [Harness 使用說明](docs/harness.md) |
+| 理解整套架構與 gstack 設計取捨 | [架構設計](docs/harness-design.md) |
+| 理解人機分工與分析方法 | [架構白皮書](docs/AI協作決策分析架構.md) |
+| 找特徵工程、EDA 與選圖參考 | [方法參考](docs/references/README.md) |
+| 尋找全部文件 | [文件地圖](docs/README.md) |
+| 查看舊課程與歷史素材 | [封存索引](archive/README.md) |
 
-<p align="center">
-  <img src="assets/showcase.gif" alt="文字 · 圖像 · 聲音 · 影片 → 訓練大模型" width="90%">
-</p>
+## 目錄怎麼看
 
-## 📋 目錄
+日常工作集中在六個目錄：`skills/` 定義方法責任、`tools/` 管理證據、`docs/` 解釋用法、`examples/` 提供計算範例、`tests/` 驗證程式、`evals/` 評估真實 agent 行為。
 
-- [🚀 快速開始](#-快速開始)
-- [📚 課程內容](#-課程內容)
-- [🛠️ 環境設置](#-環境設置)
-- [📊 資料集管理](#-資料集管理)
-- [🎯 學習路徑](#-學習路徑)
-- [💡 特色功能](#-特色功能)
-- [🤝 貢獻指南](#-貢獻指南)
-- [📝 許可證](#-許可證)
+```text
+.
+├── README.md                 專案入口
+├── AGENTS.md                 共用協作規範
+├── CLAUDE.md                 Claude 指引入口
+├── docs/                     使用、架構、契約與白皮書
+│   ├── README.md             文件地圖
+│   └── references/           特徵工程指南 PDF 與可編輯原稿
+├── skills/                   技能單一維護來源
+│   ├── _shared/              共用 session 契約
+│   ├── decision-analysis/    任務路由
+│   └── ds-*/                 定義、代理、EDA、規則、效益、審查、交付
+├── tools/                    狀態、證據與技能產生工具
+├── examples/                 選用的分析程式
+│   └── factory_analysis/     單一機台計算範例
+├── projects/                 各題獨立工作區，個別專案不提交
+├── tests/                    Harness runtime 測試
+├── evals/                    真實 agent 情境與評分規準
+├── .agents/skills/           產生的 Codex 技能入口
+├── .claude/skills/           產生的 Claude 技能入口
+├── .github/workflows/        自動驗證
+├── pyproject.toml            Python 環境與依賴
+├── uv.lock                   鎖定版本
+└── archive/                  舊教材、簡報與歷史素材
+```
 
-## 🚀 快速開始
+任務資料與執行紀錄放在本機 `projects/`，由 `.gitignore` 排除。技能內容改 `skills/`，再產生兩個 host 的入口。
 
-### Claude 與 Codex 決策分析專案
+## 最小使用流程
 
-使用 [決策分析 Harness](docs/harness.md)，讓 Claude Code 或 Codex 依業務問題選擇代理特徵、EDA、現場規則與效益分析。技能共用任務狀態、證據版本、review 與交付契約；分析方法由 agent 根據資料選擇。設計取捨見 [gstack 參考與架構](docs/harness-design.md)，共用規範見 [AGENTS.md](AGENTS.md)。
+從 repository 根目錄啟動 Claude Code 或 Codex：
 
-從 repository 根目錄啟動 Claude Code 使用 `/decision-analysis`，或在 Codex 使用 `$decision-analysis`。也可直接呼叫 `/ds-frame`、`/ds-eda` 等角色。Harness 狀態工具只需 Python 標準函式庫：
+- Claude Code：`/decision-analysis`，或直接使用 `/ds-frame`、`/ds-eda` 等角色。
+- Codex：使用 `$decision-analysis`，或指定 `$ds-frame`、`$ds-eda` 等角色。
+
+例如：「我想找出哪些條件與良率下降有關。先讀 Schema，推薦研究問題並和我確認，再擬定有假設與反證的分析計畫。」
+
+```text
+業務問題 ↔ Claude Code／Codex
+                    ↓ 選擇當前需要的角色
+             問題定義 → 人類確認 → 研究計畫 → EDA
+                         ├─ 可選：代理特徵／候選規則／效益情境
+                         └─ 決策草稿 → review → 本機交付
+                    ↕
+             case 狀態、證據與版本
+```
+
+角色可反覆迭代；不要求每次都建模型、提規則或算 ROI。已存在的 case 先查狀態，只重做缺失或失效的部分。
+
+Harness 工具僅需 Python 3.9 以上的標準函式庫：
 
 ```bash
-python3 tools/ds_harness.py init --case .decision/cases/first --goal eda
-python3 tools/ds_harness.py status --case .decision/cases/first
+python3 tools/ds_harness.py init --case projects/first --goal eda
+python3 tools/ds_harness.py status --case projects/first
 ```
 
-可執行的機台分析已移至 [examples/factory_analysis](examples/factory_analysis/README.md)，作為資料與方法適用時的選用工具。
+角色登錄、review 與交付命令見 [完整操作](docs/harness.md)。工具檢查版本和結構，統計方法與業務結論仍須審查。
 
-### 1️⃣ 克隆專案
-```bash
-git clone https://github.com/你的用戶名/iSpan_python-FE_DM-cookbooks.git
-cd iSpan_python-FE_DM-cookbooks
-```
-
-### 2️⃣ 設置環境（使用 [uv](https://docs.astral.sh/uv/)）
-
-本專案以 **uv** 管理依賴與虛擬環境，`pyproject.toml` 為唯一依賴來源、`uv.lock` 鎖定可重現版本。
+## 開發與驗證
 
 ```bash
-# 安裝 uv（若尚未安裝）
-curl -LsSf https://astral.sh/uv/install.sh | sh   # Linux/Mac
-# Windows: powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-
-# 依 lockfile 建立虛擬環境並安裝核心依賴（自動建立 .venv）
-uv sync
-
-# 多模態前處理 (M09：文字/圖像/音訊/影片) 與下游訓練 (M11) 的 PyTorch+HuggingFace 套件
-uv sync --extra multimodal --extra train
+python3 tools/render_skills.py --check
+python3 -m unittest discover -s tests -v
 ```
 
-> 📘 **第一次用 uv？** 完整新手教學見 **[UV_GUIDE.md](UV_GUIDE.md)** —— 安裝、心智模型、指令速查、疑難排解、pip/conda 對照一次到位。
->
-> 💡 不使用 uv 也可改用 pip：`pip install -r data_mining_course/environment/requirements.txt`
-> （該檔由 `uv export` 自動產生，僅含核心依賴）。
+修改技能模板後，執行 `python3 tools/render_skills.py --write` 產生兩個 host 的入口。
 
-### 3️⃣ 配置 Kaggle API
-```bash
-# 下載 kaggle.json 從 https://www.kaggle.com/account
-mkdir ~/.kaggle
-cp kaggle.json ~/.kaggle/
-chmod 600 ~/.kaggle/kaggle.json
-```
-
-### 4️⃣ 下載資料集
-```bash
-uv run python data_mining_course/data_setup/data_download.py
-```
-
-### 5️⃣ 開始學習
-```bash
-uv run jupyter lab
-```
-
-## 📚 課程內容
-
-### 📊 課程概覽
-
-| 模組 | 主題 | 筆記本數 | 狀態 | 主要技術 |
-|:---:|:---|:---:|:---:|:---|
-| **M01** | 課程導入與EDA複習 | 3 | ✅ | Pandas, Matplotlib, Seaborn |
-| **M02** | 資料清理與預處理 | 4 | ✅ | 分塊處理, 重複值, 型態轉換 |
-| **M03** | 缺失值與異常值處理 | 4 | ✅ | 插補方法, 異常檢測 |
-| **M04** | 類別變數編碼 | 5 | ✅ | One-Hot, Label, Target Encoding |
-| **M05** | 特徵縮放與變數轉換 | 4 | ✅ | StandardScaler, 冪轉換 |
-| **M06** | 特徵創造 | 4 | ✅ | 交互特徵, 聚合特徵 |
-| **M07** | 特徵選擇與降維 | 5 | ✅ | 過濾法, 包裹法, PCA |
-| **M08** | 時間序列特徵工程 | 5 | ✅ | 滯後特徵, 滑動窗口 |
-| **M09** | 多模態特徵工程（2026 大模型前處理） | 18 | ✅ | Tokenizer, ViT/CLIP, Whisper, VideoMAE |
-| **M10** | 資料探勘應用 | 9 | ✅ | 關聯規則, 聚類, 樹模型 |
-| **M11** | 大模型資料前處理後：能訓練什麼模型 | 6 | ✅ | 微調, LoRA/SFT, RAG, 生成/VLM 藍圖 |
-
-**總計**: 67 個實戰筆記本 | 12+ 個資料集 | PyTorch + HuggingFace 現代棧
-
-### 🎯 核心學習主題
-
-#### 🔍 **基礎數據分析**
-- **探索性數據分析 (EDA)**: 統計描述、分佈視覺化、相關性分析
-- **數據清理**: 重複值處理、異常值檢測、數據一致性檢查
-- **數據預處理**: 型態轉換、編碼轉換、格式標準化
-
-#### 🛠️ **特徵工程技術**
-- **缺失值處理**: 簡單插補、多重插補、進階插補策略
-- **類別編碼**: One-Hot、Label、Ordinal、Target Encoding
-- **數值特徵**: 標準化、正規化、分箱、冪轉換
-- **特徵創造**: 多項式特徵、交互特徵、聚合統計特徵
-
-#### 🚀 **進階技術**
-- **特徵選擇**: 過濾法、包裹法、嵌入法、遞歸特徵消除
-- **降維技術**: PCA、t-SNE、UMAP
-- **時間序列**: 滯後特徵、滑動統計、季節性分解
-
-#### 🤖 **2026 大模型非結構化資料前處理（M09）**
-- **文字**: Subword Tokenizer (BPE/WordPiece)、上下文/句嵌入、LLM 資料格式 (chat/JSONL/去重/packing)
-- **圖像**: 影像張量化、ViT/CLIP 通用特徵、`transforms.v2` 增強
-- **聲音**: torchaudio 16k/log-mel、Whisper/wav2vec2 特徵抽取
-- **影片**: 影格抽樣、`(N,T,C,H,W)`、VideoMAE
-- **多模態**: CLIP 圖文配對、VLM 資料格式
-- *（經典 BoW/TF-IDF、HOG、MFCC 保留為「快速回顧」）*
-
-#### 🚀 **下游模型訓練（M11）**
-- **微調**: DistilBERT 分類、ViT/CLIP、Whisper、VideoMAE
-- **大模型**: LoRA/QLoRA 高效微調、SFT 指令微調、RAG、生成式/VLM 訓練藍圖
-
-#### 🎲 **資料探勘應用**
-- **關聯規則挖掘**: Apriori 演算法、購物籃分析
-- **聚類分析**: K-Means、DBSCAN、層次聚類
-- **樹模型特徵重要性**: XGBoost、LightGBM、Random Forest
-
-## 🛠️ 環境設置
-
-### 系統需求
-- **Python**: 3.9 – 3.12（由 `pyproject.toml` 的 `requires-python` 鎖定）
-- **套件管理**: [uv](https://docs.astral.sh/uv/)（建議）
-- **記憶體**: 8GB+ (推薦 16GB)
-- **硬碟空間**: 10GB+ (含資料集)
-- **Kaggle 帳號**: 用於資料集下載
-
-### 主要依賴套件
-完整清單與版本鎖定見 [`pyproject.toml`](pyproject.toml) 與 `uv.lock`。
-
-**核心依賴**（模組 M01–M08、M10）：
-```
-pandas、numpy、scikit-learn、scipy、statsmodels、
-matplotlib、seaborn、missingno、mlxtend、xgboost、lightgbm、
-jupyterlab、notebook、kaggle
-```
-
-**選用群組**（2026 PyTorch + HuggingFace 棧）：
-- `multimodal`（M09 文字/圖像/音訊/影片）：`torch、torchvision、torchaudio、transformers、datasets、tokenizers、sentence-transformers、timm、librosa、soundfile、av`
-- `train`（M11 下游訓練）：`accelerate、peft、trl、evaluate`
-- `classical`（經典快速回顧小節）：`spacy、scikit-image、opencv-python、nltk`
-- `dev`（維護工具）：`jupytext、pdf2docx`
+只有使用計算範例時，才需要安裝分析環境：
 
 ```bash
-uv sync                                  # 僅核心依賴（M01–M08、M10）
-uv sync --extra multimodal --extra train # 加裝 M09 前處理 + M11 訓練
-uv sync --all-extras --dev               # 全部裝齊
+uv sync --locked
+uv run --locked python -m examples.factory_analysis demo --out /tmp/factory-demo-001
+uv run --locked python -m unittest discover -s examples/factory_analysis/tests -v
 ```
 
-### 🐳 Docker 支援
-Docker 映像同樣以 uv 安裝依賴（見 `environment/docker/Dockerfile`）：
-```bash
-cd data_mining_course/environment/docker
-docker compose up -d         # 開啟 http://localhost:8888
-```
+依賴與 lockfile 沿用既有分析環境，其中保留封存教材所用套件。單一機台範例的資料限制見 [範例說明](examples/factory_analysis/README.md)。Runtime 測試與真實 host 行為評估分開回報，後者見 [evals/scenarios.md](evals/scenarios.md)。
 
-## 📊 資料集管理
+## 舊內容去哪裡
 
-### 🎯 智能下載系統
-本專案採用 **零資料集上傳** 策略（二手車資料除外，見 `data_mining_course/data_setup/README.md`），資料集通過 `data_setup/data_download.py` 下載：
-
-```bash
-python data_mining_course/data_setup/data_download.py
-```
-
-#### 互動式選單
-- 📥 **下載所有資料集** (12個 Kaggle 資料集)
-- 📂 **按模組下載** (選擇特定學習模組)
-- 🎯 **單一資料集下載** (精確選擇)
-
-### 📋 完整資料集清單
-
-| 資料集 | 大小 | 用途 | 來源 |
-|:---|:---:|:---|:---:|
-| House Prices | ~80MB | 回歸、缺失值處理 | Kaggle Competition |
-| Titanic | ~60KB | 分類、特徵工程 | Kaggle Competition |
-| Insurance | ~50KB | 回歸、數值特徵 | Kaggle Dataset |
-| NYC Taxi | ~1.6GB | 時空特徵、大數據 | Kaggle Competition |
-| Breast Cancer | ~120KB | 分類、特徵選擇 | UCI ML Repository |
-| Power Consumption | ~2.1MB | 時間序列 | UCI ML Repository |
-| IMDB Reviews | ~66MB | 文字分析、NLP | Kaggle Dataset |
-| Dogs vs Cats | ~800MB | 圖像分類、CNN | Kaggle Competition |
-| UrbanSound8K | ~6GB | 音訊分析、頻譜 | Kaggle Dataset |
-| Instacart | ~1.4GB | 關聯規則、推薦 | Kaggle Competition |
-| Mall Customers | ~4KB | 聚類分析 | Kaggle Dataset |
-| Telco Churn | ~950KB | 分類、商業分析 | Kaggle Dataset |
-
-## 🎯 學習路徑
-
-### 🎓 **初學者路徑** (2-3 週)
-```mermaid
-graph LR
-    A[M01: EDA基礎] --> B[M02: 數據清理]
-    B --> C[M03: 缺失值處理]
-    C --> D[M04: 類別編碼]
-    D --> E[實戰項目: Titanic]
-```
-
-### 🚀 **進階路徑** (4-6 週)
-```mermaid
-graph LR
-    A[M05: 特徵縮放] --> B[M06: 特徵創造]
-    B --> C[M07: 特徵選擇]
-    C --> D[M08: 時間序列]
-    D --> E[實戰項目: House Prices]
-```
-
-### 🎯 **專家路徑 / 大模型方向** (6-8 週)
-```mermaid
-graph LR
-    A[M09: 文字/圖像/音訊/影片 前處理] --> B[資料結構設計]
-    B --> C[Tokenizer / ViT / CLIP / Whisper]
-    C --> D[M11: 下游微調與 LoRA/SFT]
-    D --> E[生成式 / 多模態藍圖]
-```
-
-## 💡 特色功能
-
-### 🎨 **視覺化工具**
-- 互動式 EDA 儀表板
-- 特徵重要性可視化
-- 模型效能比較圖表
-- 特徵分佈動態圖
-
-### ⚡ **自動化工具**
-- 一鍵資料集下載
-- 自動特徵工程流水線
-- 模型調參助手
-- 實驗結果追蹤
-
-### 📚 **學習輔助**
-- 詳細註解的程式碼
-- 理論與實作結合
-- 常見錯誤解析
-- 最佳實踐指南
-
-## 🏗️ 專案結構
-
-```
-📁 iSpan_python-FE_DM-cookbooks/
-├── 📂 data_mining_course/           # 主課程目錄
-│   ├── 📂 modules/                  # 教學模組（每個案例皆為 .ipynb 筆記本）
-│   │   ├── 📂 module_01_eda_intro/
-│   │   ├── 📂 module_02_data_cleaning/
-│   │   └── ...                      # 共 11 個模組、67 個筆記本
-│   ├── 📂 data_setup/               # 資料集下載腳本與說明（先讀這裡的 README）
-│   ├── 📂 datasets/                 # 資料集目錄（下載後產生，不進版控）
-│   │   ├── 📂 raw/                  # 原始資料
-│   │   └── 📂 processed/            # 處理後資料
-│   ├── 📂 projects/                 # 專案（含二手車 EDA 與隨附的 car_data/）
-│   ├── 📂 capstone/                 # 總整：二手車定價
-│   ├── 📂 utils/                    # 工具函數
-│   ├── 📂 templates/                # 範本檔案
-│   └── 📂 environment/              # 環境配置 (Docker / requirements 匯出)
-├── 📂 course_slides/                # 課程簡報
-├── 📄 pyproject.toml                # 依賴與專案設定（uv 管理）
-├── 📄 uv.lock                       # 鎖定的依賴版本
-├── 📄 .gitignore                    # Git 忽略檔案
-└── 📄 README.md                     # 專案說明
-```
-
-## 🤝 貢獻指南
-
-我們歡迎各種形式的貢獻！
-
-### 🎯 貢獻方式
-- 🐛 **Bug 回報**: 發現問題請開 Issue
-- 💡 **功能建議**: 提出新想法或改進建議
-- 📝 **文檔改進**: 完善說明或添加註解
-- 🔧 **程式碼貢獻**: 提交 Pull Request
-
-### 📋 貢獻流程
-1. Fork 本專案
-2. 創建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 開啟 Pull Request
-
-## 📞 聯絡資訊
-
-- **課程討論**: [開啟 Issue](../../issues)
-- **技術問題**: [查看 FAQ](data_mining_course/docs/faq.md)
-- **課程大綱**: [查看詳細說明](data_mining_course/docs/course_brief.md)
-
-## 📝 許可證
-
-本專案採用 MIT 許可證。詳見 [LICENSE](LICENSE) 檔案。
-
----
-
-### 🌟 如果這個專案對你有幫助，請給我們一個 Star！
-
-[![GitHub stars](https://img.shields.io/github/stars/你的用戶名/iSpan_python-FE_DM-cookbooks.svg?style=social&label=Star)](https://github.com/你的用戶名/iSpan_python-FE_DM-cookbooks)
+原 `data_mining_course/`、舊課程首頁、行銷圖片、其他簡報及舊 Cursor 規約已集中至 [archive/](archive/README.md)。與現行架構直接相關的白皮書與特徵工程指南保留在 `docs/`，搬移對照見封存索引。

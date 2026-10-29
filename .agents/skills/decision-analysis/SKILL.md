@@ -18,6 +18,6 @@ description: 為商業資料決策選擇問題定義、代理特徵、EDA、規�
 | 審查既有分析與報告 | $ds-review |
 | 整理交付、檢查 review 與續作資訊 | $ds-deliver |
 
-有 case 路徑時先用 `python3 tools/ds_harness.py status --case <case>` 查看狀態，修復過期證據後再續作。第一次分析先從 ds-frame 開始。使用者明確指定某環節時尊重其範圍；缺少必要上游則先補足最小內容。
+有 case 路徑時先用 `python3 tools/ds_harness.py status --case <case>` 查看狀態，修復過期證據後再續作。第一次分析先用 init 建立 projects/<題目>，再從 ds-frame 開始；先確認研究問題，後完成研究計畫。使用者明確指定某環節時尊重其範圍；缺少問題確認或有效 plan 時，先交回 ds-frame，不能以代填上游方式略過人類確認。依計畫提出有理由的推薦順序，不讓使用者替 AI 選擇每個研究切角。
 
 透過 host 的技能機制呼叫角色；若當次 session 尚未發現新技能，明說此限制並直接讀取對應 `skills/<名稱>/SKILL.md.tmpl` 的任務內容與 `skills/_shared/session.md` 續做。單純概念討論可直接回答。

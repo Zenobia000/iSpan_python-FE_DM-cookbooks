@@ -10,12 +10,29 @@ description: 依業務門檻與資料結構執行有優先順序的 EDA 或假�
 
 # 統計分析師
 
-先讀有效的 frame 與已存在的 proxy。確認觀測單位、資料品質、缺值、分組與時間／群集結構，選擇能回答問題的方法。資料可為交易、客戶、批次或多設備，不限定良率與單一時間序列。
+## 方法參考與本輪骨架
+
+依共用契約讀取探勘流程；從 repository 根目錄按本輪需要選載下列參考，不一次載入全部方法：
+
+| 情境 | 讀取文件 |
+| --- | --- |
+| 新資料、來源改版、資料品質或 join 問題 | `skills/ds-eda/references/data-understanding.md` |
+| 需要為研究問題選擇估計、檢定或比較方式 | `skills/ds-eda/references/method-selection.md` |
+| 時間序列、群集或同一單位重複量測 | `skills/ds-eda/references/dependent-data.md` |
+| 產品／設備組成、替代解釋或整體與分層不一致 | `skills/ds-eda/references/confounding-checks.md` |
+
+每輪以 `skills/ds-eda/templates/inquiry.md` 建立專案內 `reports/explorations/<輪次>/eda.md`。先寫問題與設計，計算後再填結果；依問題調整篇幅，不為填滿模板多做分析。需要圖表時遵循共用 chart-contract。
+
+## 執行與判讀
+
+先核對 `problem_confirmed`，讀取有效的 frame、plan、假設紀錄與已存在的 proxy；缺少確認或計畫時先交回 ds-frame。確認觀測單位、資料品質、缺值、分組與時間／群集結構，選擇能回答問題的方法。資料可為交易、客戶、批次或多設備，不限定良率與單一時間序列。
+
+依研究計畫的推薦順序執行，先處理主要替代解釋並主動找反證；說明每一步回答哪個假設、為何選此方法、什麼結果會削弱解釋。不把研究方向拆成缺乏推論理由的選單交由人類挑。新發現若只改變計畫內的切角，記為探索並持續執行；核心問題或授權範圍改變時先回到問題確認。
 
 在探索前保留驗證資料或明確限定這次僅為探索。依問題選擇分組比較、ANOVA、卡方、相關、非參數方法或適合相依資料的方法；使用既有套件或撰寫可重現程式，不將方法固定為 Spearman。執行環境用專案既有依賴。
 
 比較結果包含業務尺度的效果量、樣本數與不確定性，適當處理多重比較。以業務門檻與證據品質排序；沒有有用發現也是有效結果。不把 p-value、排行榜或 feature importance 解讀成因果。
 
-產出 `eda.md`，包含方法選擇、假設檢查、主要發現、失敗／不成立假設、圖表路徑、重現命令與限制。以 `--stage eda` 登錄文件；透過多個 `--input` 綁定資料、分析程式與實際產出。範例工具見 `examples/factory_analysis/`，僅在資料與假設符合時使用。
+本題程式放 analysis/、設定放 config/，每輪結果放 reports/explorations/<輪次>/，假設檢查結果與狀態寫入 research/findings.md，保留 plan 綁定的 hypotheses.md 定義不回填改寫。產出 `eda.md`，包含方法選擇、假設檢查、主要發現、失敗／不成立假設、圖表路徑、重現命令與限制。以 `--stage eda` 登錄文件；透過多個 `--input` 綁定資料、分析程式與實際產出。範例工具見 `examples/factory_analysis/`，僅在資料與假設符合時使用。
 
 證據足以支援業務判讀可交給 ds-deliver；需要操作條件用 ds-rules，需要成本比較用 ds-impact。不要為填滿流程而硬建模。
