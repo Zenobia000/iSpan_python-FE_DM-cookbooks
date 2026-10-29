@@ -1,12 +1,12 @@
 [project]
 name = "ispan-fe-dm-cookbooks"
 version = "0.1.0"
-description = "Claude Code／Codex 決策分析 Harness：角色技能、可續作證據與版本綁定交付"
+description = "Claude Code／Codex 決策分析 Harness：研究問題、方法參考與分析交付"
 readme = "README.md"
 requires-python = ">=3.9,<3.13"
 license = { text = "MIT" }
 
-# 沿用既有鎖定的分析環境，供計算範例與 archive/ 教材使用；Harness runtime 僅需標準函式庫。
+# 沿用既有鎖定的分析環境，供目前分析與 archive/ 教材使用；技能產生工具僅需標準函式庫。
 dependencies = [
     "pandas>=2.0.0",
     "numpy>=1.24.3,<2.1",

@@ -14,7 +14,7 @@ skills/
 │       └── chart-contract.md
 ├── ds-frame/
 │   ├── references/research-design.md
-│   └── assets/project/                 新題目資料夾與研究骨架
+│   └── SKILL.md.tmpl                   問題確認與研究計畫
 ├── ds-eda/
 │   ├── SKILL.md.tmpl
 │   ├── references/
@@ -55,7 +55,7 @@ skills/
 | [exploration-summary](../skills/ds-deliver/templates/exploration-summary.md) | EDA 或跨輪發現摘要，不需要強行加入 ROI | 正式草稿預設 `reports/decision.md`；另需摘要時可用 `reports/exploration-summary.md` |
 | [decision-report](../skills/ds-deliver/templates/decision-report.md) | 候選行動、規則、效益或試行決策 | `reports/decision.md` |
 
-Agent 讀取模板後寫入個別專案，替換提示文字；這三份模板不會在 init 時預先填入所有輪次或製造分析結果。Init 仍只建立題目目錄和研究骨架。
+研究骨架直接放在根目錄 `research/`。Agent 按需讀取上述模板，將實際內容寫入本專案的 `reports/`；不預填結果或建立另一層專案。
 
 結構可依問題調整，證據與推論要求保持一致。沒有執行的項目說明範圍，不以空表、虛構數字或不存在的 review 填滿章節。正式交付不論使用哪個模板，都需對實際報告版本完成 review。
 

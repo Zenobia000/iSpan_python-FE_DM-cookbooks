@@ -1,101 +1,71 @@
-# AI 協作決策分析 Harness
+# AI 協作決策分析
 
-在 Claude Code／Codex 中，以領域問題驅動資料分析：提出假設、執行計算、核對證據，再形成決策建議。本專案提供角色技能、本機狀態與版本綁定的審查交付；分析方法由 agent 依資料與問題選擇。
+一個分析題目就是一個專案，直接在目前資料夾透過 Claude Code／Codex 與 AI 工作。AI 先釐清問題並和人類確認，再推導研究計畫、執行分析、整理證據與決策報告。新題目由你另開新資料夾。
 
-## 先看哪裡
+## 怎麼開始
 
-| 你想做什麼 | 入口 |
+在目前專案開啟 Codex，直接輸入：
+
+```text
+使用 $decision-analysis。
+我要研究 <問題描述>，資料在 <資料路徑>，欄位定義在 <Schema 路徑>。
+先幫我想清楚並推薦研究問題，和我確認後再擬定分析計畫。
+```
+
+Claude Code 使用 `/decision-analysis`。你也可以直接指定 `$ds-frame`、`$ds-eda` 等角色；技能會讀取目前專案的研究文件接續。
+
+```text
+定義問題 → 人類確認 → AI 擬定研究計畫
+                         ↓
+                   分析與反證檢查
+                         ↓
+                 報告 → 審查 → 交付
+```
+
+分析可以反覆迭代，不強制建模型、提規則或算 ROI。
+
+## 文件放在哪裡
+
+```text
+目前專案/
+├── research/          問題、計畫、假設、來源與交接
+├── data/              raw／interim／processed
+├── analysis/          Python、SQL、notebook
+├── config/            分組、期間、切分與成本參數
+├── reports/           每輪結果、圖表、決策與審查報告
+├── skills/            技能來源、方法 references 與報告模板
+├── .agents/skills/    Codex 技能入口
+├── .claude/skills/    Claude Code 技能入口
+├── docs/              使用說明、方法與白皮書
+├── tools/             技能入口產生工具，供維護者使用
+├── tests/             技能產生工具測試
+└── archive/           歷史教材與素材
+```
+
+`research/question.md` 記問題與實際確認，`research/plan.md` 記研究方向；假設定義與觀測後結果分別放 hypotheses.md、findings.md。換對話時讀 `research/handoff.md` 接續。這些文件目前是空白骨架，開始分析時由 AI 依實際題目填寫。
+
+原始資料與報告產出預設不提交；分享前仍須逐項檢查研究文件、程式及參數是否包含敏感資訊。
+
+## 想了解更多
+
+| 想知道什麼 | 文件 |
 | --- | --- |
-| 不知道選哪個技能，想看情境與提示範例 | [技能使用指南](.agents/skills/README.md) |
-| 新題目如何確認問題、分開資料與報告？ | [研究流程與專案目錄](docs/research-workflow.md) |
-| 開始分析、接手已有任務 | [Harness 使用說明](docs/harness.md) |
-| 理解整套架構與 gstack 設計取捨 | [架構設計](docs/harness-design.md) |
-| 理解人機分工與分析方法 | [架構白皮書](docs/AI協作決策分析架構.md) |
-| 找特徵工程、EDA 與選圖參考 | [方法參考](docs/references/README.md) |
-| 尋找全部文件 | [文件地圖](docs/README.md) |
-| 查看舊課程與歷史素材 | [封存索引](archive/README.md) |
+| 每個技能什麼時候用、怎麼提問？ | [技能使用指南](.agents/skills/README.md) |
+| 從問題確認到研究與交付怎麼做？ | [研究流程](docs/research-workflow.md) |
+| 分析時如何操作與接續？ | [技能操作](docs/harness.md) |
+| References 與報告骨架何時讀？ | [技能參考與模板](docs/skill-resources.md) |
+| 為什麼採用這個架構？ | [設計取捨](docs/harness-design.md) |
+| 下一版如何安裝技能並初始化專案？ | [封裝設計規格](docs/skill-distribution-design.md)（尚未實作） |
+| 全部文件在哪裡？ | [文件地圖](docs/README.md) |
 
-## 目錄怎麼看
+## 維護技能
 
-日常工作集中在六個目錄：`skills/` 定義方法責任、`tools/` 管理證據、`docs/` 解釋用法、`examples/` 提供計算範例、`tests/` 驗證程式、`evals/` 評估真實 agent 行為。
-
-```text
-.
-├── README.md                 專案入口
-├── AGENTS.md                 共用協作規範
-├── CLAUDE.md                 Claude 指引入口
-├── docs/                     使用、架構、契約與白皮書
-│   ├── README.md             文件地圖
-│   └── references/           特徵工程指南 PDF 與可編輯原稿
-├── skills/                   技能單一維護來源
-│   ├── _shared/              共用 session 契約
-│   ├── decision-analysis/    任務路由
-│   └── ds-*/                 定義、代理、EDA、規則、效益、審查、交付
-├── tools/                    狀態、證據與技能產生工具
-├── examples/                 選用的分析程式
-│   └── factory_analysis/     單一機台計算範例
-├── projects/                 各題獨立工作區，個別專案不提交
-├── tests/                    Harness runtime 測試
-├── evals/                    真實 agent 情境與評分規準
-├── .agents/skills/           產生的 Codex 技能入口
-├── .claude/skills/           產生的 Claude 技能入口
-├── .github/workflows/        自動驗證
-├── pyproject.toml            Python 環境與依賴
-├── uv.lock                   鎖定版本
-└── archive/                  舊教材、簡報與歷史素材
-```
-
-任務資料與執行紀錄放在本機 `projects/`，由 `.gitignore` 排除。技能內容改 `skills/`，再產生兩個 host 的入口。
-
-## 最小使用流程
-
-從 repository 根目錄啟動 Claude Code 或 Codex：
-
-- Claude Code：`/decision-analysis`，或直接使用 `/ds-frame`、`/ds-eda` 等角色。
-- Codex：使用 `$decision-analysis`，或指定 `$ds-frame`、`$ds-eda` 等角色。
-
-例如：「我想找出哪些條件與良率下降有關。先讀 Schema，推薦研究問題並和我確認，再擬定有假設與反證的分析計畫。」
-
-```text
-業務問題 ↔ Claude Code／Codex
-                    ↓ 選擇當前需要的角色
-             問題定義 → 人類確認 → 研究計畫 → EDA
-                         ├─ 可選：代理特徵／候選規則／效益情境
-                         └─ 決策草稿 → review → 本機交付
-                    ↕
-             case 狀態、證據與版本
-```
-
-角色可反覆迭代；不要求每次都建模型、提規則或算 ROI。已存在的 case 先查狀態，只重做缺失或失效的部分。
-
-Harness 工具僅需 Python 3.9 以上的標準函式庫：
+平常使用者直接對話即可。維護技能內容時修改 `skills/<角色>/SKILL.md.tmpl`，再產生兩個 host 的入口：
 
 ```bash
-python3 tools/ds_harness.py init --case projects/first --goal eda
-python3 tools/ds_harness.py status --case projects/first
-```
-
-角色登錄、review 與交付命令見 [完整操作](docs/harness.md)。工具檢查版本和結構，統計方法與業務結論仍須審查。
-
-## 開發與驗證
-
-```bash
+python3 tools/render_skills.py --write
 python3 tools/render_skills.py --check
 python3 -m unittest discover -s tests -v
 ```
 
-修改技能模板後，執行 `python3 tools/render_skills.py --write` 產生兩個 host 的入口。
-
-只有使用計算範例時，才需要安裝分析環境：
-
-```bash
-uv sync --locked
-uv run --locked python -m examples.factory_analysis demo --out /tmp/factory-demo-001
-uv run --locked python -m unittest discover -s examples/factory_analysis/tests -v
-```
-
-依賴與 lockfile 沿用既有分析環境，其中保留封存教材所用套件。單一機台範例的資料限制見 [範例說明](examples/factory_analysis/README.md)。Runtime 測試與真實 host 行為評估分開回報，後者見 [evals/scenarios.md](evals/scenarios.md)。
-
-## 舊內容去哪裡
-
-原 `data_mining_course/`、舊課程首頁、行銷圖片、其他簡報及舊 Cursor 規約已集中至 [archive/](archive/README.md)。與現行架構直接相關的白皮書與特徵工程指南保留在 `docs/`，搬移對照見封存索引。
+需要資料分析套件時依根目錄 pyproject.toml 與 uv.lock 執行 `uv sync --locked`。歷史教材見 [archive/](archive/README.md)，不作為目前分析的預設流程。

@@ -1,16 +1,12 @@
-name: Decision harness
+name: Analysis skills
 
-on:
-  push:
-    paths: ['skills/**', 'tools/**', 'tests/**', 'docs/**', 'evals/**', 'examples/factory_analysis/**', '.agents/skills/**', '.claude/skills/**', 'AGENTS.md', 'CLAUDE.md', 'README.md', '.gitignore', 'pyproject.toml', 'uv.lock', '.github/workflows/harness-checks.yml']
-  pull_request:
-    paths: ['skills/**', 'tools/**', 'tests/**', 'docs/**', 'evals/**', 'examples/factory_analysis/**', '.agents/skills/**', '.claude/skills/**', 'AGENTS.md', 'CLAUDE.md', 'README.md', '.gitignore', 'pyproject.toml', 'uv.lock', '.github/workflows/harness-checks.yml']
+on: [push, pull_request]
 
 permissions:
   contents: read
 
 jobs:
-  harness:
+  skills:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,15 +18,3 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python tools/render_skills.py --check
       - run: python -m unittest discover -s tests -v
-  example-tools:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
-        with:
-          version: '0.11.20'
-          enable-cache: true
-      - run: uv python install 3.11
-      - run: uv sync --locked --python 3.11 --no-dev
-      - run: uv run --locked --no-dev python -m unittest discover -s examples/factory_analysis/tests -v
-      - run: uv run --locked --no-dev python -m examples.factory_analysis demo --out /tmp/factory-ci

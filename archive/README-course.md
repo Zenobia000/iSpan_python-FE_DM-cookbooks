@@ -40,8 +40,6 @@ python3 tools/ds_harness.py init --case .decision/cases/first --goal eda
 python3 tools/ds_harness.py status --case .decision/cases/first
 ```
 
-可執行的機台分析已移至 [examples/factory_analysis](../examples/factory_analysis/README.md)，作為資料與方法適用時的選用工具。
-
 ### 1️⃣ 克隆專案
 ```bash
 git clone https://github.com/你的用戶名/iSpan_python-FE_DM-cookbooks.git
@@ -304,7 +302,7 @@ graph LR
 
 ## 📞 聯絡資訊
 
-- **課程討論**: [開啟 Issue](../../issues)
+- **課程討論**: [開啟 Issue](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/issues)
 - **技術問題**: [查看 FAQ](data_mining_course/docs/faq.md)
 - **課程大綱**: [查看詳細說明](data_mining_course/docs/course_brief.md)
 

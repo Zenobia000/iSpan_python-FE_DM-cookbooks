@@ -1,5 +1,5 @@
 @AGENTS.md
 
-Claude Code 與 Codex 共用根目錄協作判準。決策分析使用 `decision-analysis` 路由或指定的 `ds-*` skill；跨 agent 續作時先對本機 case 執行 `python3 tools/ds_harness.py status --case <case>`。
+Claude Code 與 Codex 共用根目錄協作判準。目前資料夾就是本次分析專案，使用 `decision-analysis` 或指定的 `ds-*` skill。
 
-新題目以 `projects/<題目>/` 建立獨立資料、程式與報告目錄。先由 ds-frame 定義研究問題、取得使用者確認，再擬定 plan 並執行分析；流程見 `docs/research-workflow.md`。
+先釐清研究問題並取得使用者確認，再擬定計畫。接手時閱讀 `research/question.md`、`research/plan.md` 與 `research/handoff.md`；流程見 `docs/research-workflow.md`。

@@ -1,1 +1,1 @@
-"""Local harness utilities, independent of analytical dependencies."""
+"""Repository maintenance utilities."""
