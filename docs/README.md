@@ -1,4 +1,4 @@
-# 文件地圖
+# Hypothread 文件地圖
 
 目前資料夾就是一個分析專案；新題目由使用者另開資料夾。從 [專案入口](../README.md) 開始，直接在對話中叫用技能。
 
@@ -12,6 +12,7 @@
 | 如何安裝與初始化自己的專案 | [可安裝技能套件設計](skill-distribution-design.md) |
 | references 與報告骨架 | [資源索引](skill-resources.md) |
 | 背景、範式轉移與四環節 | [架構白皮書](AI協作決策分析架構.md) |
+| 品牌、圖像與推廣文案 | [品牌定義](marketing/brand.md)、[推廣素材包](marketing/launch-kit.md) |
 | 發行做過哪些驗證 | [v0.2.0 驗證](release-validation.md) |
 | 特徵工程方法來源 | [參考資料](references/README.md) |
 

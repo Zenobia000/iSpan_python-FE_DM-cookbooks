@@ -1,8 +1,8 @@
-# AI 協作決策分析技能
+# Hypothread｜問脈 安裝指南
 
 支援 Claude Code、Codex 與 OpenCode。安裝一次後，在自己開的資料夾研究一個分析題目：初始化、定義問題、人類確認、研究計畫、分析與交付。
 
-本分支只提供可安裝技能，開發來源與完整文件見 [開發分支](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/tree/feat/agentic-decision-analysis)。
+輕量 skills 分支提供可安裝技能與品牌介紹；開發來源與完整文件見 [開發分支](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/tree/feat/agentic-decision-analysis)。
 
 ## 安裝
 

@@ -1,76 +1,133 @@
-# AI 協作決策分析技能
+<p align="center">
+  <img src="assets/brand/icon.png" width="88" alt="Hypothread icon：以證據線串起的 H" />
+</p>
 
-支援 **Claude Code、Codex、OpenCode**。安裝一次，在自己開的題目資料夾工作；AI 先界定問題並和人類確認，再推導研究計畫、分析與交付。每個題目就是一個專案。
+<h1 align="center">Hypothread · 問脈</h1>
+<p align="center"><strong>把問題想清楚，讓分析有據可循。</strong></p>
+<p align="center">給資料科學家與分析師的 AI 協作技能。從問題定義、假設推演，走到可追溯的決策報告。</p>
+<p align="center"><strong>Claude Code · Codex · OpenCode</strong>　／　9 個技能　／　MIT</p>
+<p align="center">
+  <a href="#開始使用">開始使用</a> ·
+  <a href="#看一次它怎麼工作">看一段探勘</a> ·
+  <a href="README.en.md">English</a>
+</p>
 
-## 安裝與開始
+![Hypothread 主視覺：From questions to evidence，將提問、假設、比較與證據串成研究脈絡。](assets/brand/hero.png)
 
-使用 Node.js 22.20 以上安裝技能；初始化只需 Python 3.9 以上：
+你提出一個業務問題，Hypothread 引導 AI 先整理已知、未知與替代解釋，和你確認研究範圍，再擬定分析計畫。每次追問都能接著已有的假設與證據往下走。
+
+- **先把問題定好。** AI 推薦完整研究問題，取得人類確認後，再設計分析方向。
+- **讓探索接得起來。** 每輪保存方法、結果、反證與下一步，追問時沿用已有脈絡。
+- **把成果留在專案裡。** 資料、程式、參數與報告依用途整理，換對話或工具也能接續。
+
+## 開始使用
+
+先安裝一次，選擇你使用的 CLI，勾選全部九個技能：
 
 ```bash
 npx skills add https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/tree/skills -g
 ```
 
-選擇你使用的 CLI，勾選全部九個技能。`skills` 分支是輕量發行內容，不包含教材、原始商業資料與分析產物。完整安裝指令見 [安裝指南](docs/distribution-readme.md)。
+需要 Node.js 22.20 以上；初始化腳本使用 Python 3.9 以上。分析套件依你的題目環境準備。想直接指定 CLI，可看 [完整安裝指南](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/blob/feat/agentic-decision-analysis/docs/distribution-readme.md)。
 
-自己開啟一個分析資料夾，在 CLI 對話使用：
+接著，在你自己開的分析資料夾啟動 CLI：
 
-| CLI | 初始化 | 開始研究 |
+| 工具 | 第一次輸入 | 開始研究 |
 | --- | --- | --- |
-| Codex | `$ds-init 初始化目前專案` | `$ds-frame 我要研究……，資料在……` |
 | Claude Code | `/ds-init 初始化目前專案` | `/ds-frame 我要研究……，資料在……` |
-| OpenCode | `使用 ds-init skill 初始化目前專案並建立 OpenCode 指令` | `/ds-frame 我要研究……，資料在……` |
+| Codex | `$ds-init 初始化目前專案` | `$ds-frame 我要研究……，資料在……` |
+| OpenCode | `使用 ds-init skill 初始化目前專案，並建立 OpenCode 指令` | `/ds-frame 我要研究……，資料在……` |
 
-OpenCode 首次以自然語言載入 ds-init，初始化時產生 `/ds-*` 指令；其後可以使用 slash command，也可以直接叫用 skill。已有檔案保留，重跑只補缺少部分。
+OpenCode 首次用自然語言載入技能；初始化後可用 `/ds-init`、`/ds-frame`、`/ds-eda` 等指令。既有檔案保留，重跑只補缺少部分。一個題目就是一個專案，新題目由你另開資料夾。
 
-```text
-初始化 → AI 推薦研究問題 → 人類確認 → AI 擬定計畫
-                                         ↓
-                              分析、追問與反證檢查
-                                         ↓
-                                報告 → 審查 → 交付
-```
+## 看一次它怎麼工作
 
-分析可以反覆迭代，只做 EDA 也可收斂，不強制建模型、提規則或算 ROI。
+以下為互動示意，未執行統計分析，也未附上範例中的資料。
 
-## 你的分析專案
+> **你**：夜班良率看起來比較低，我想知道值不值得安排製程調查。
+>
+> **Hypothread／ds-frame**：整體差異可能混合了產品與設備組成。我建議先把問題定為：在可比較的產品、設備與負載條件下，班別與良率是否仍有具業務意義的關聯？這次分析用來判斷是否值得現場調查。請確認範圍與用途。
+>
+> **你**：確認，先看最近三個月的 A 產線。
+>
+> **Hypothread／ds-frame**：我會先核對資料品質與產品組成，再比較可比群組，最後檢查不同期間是否穩定。每步記下假設、替代解釋與反證條件。
+>
+> **你**：後續也想查差異是不是集中在少數設備。
+>
+> **Hypothread／ds-eda**：這能檢查設備組成是否影響整體差異。我會接著既有計畫評估設備層級比較，保留整體結果供對照，並回報效果量、樣本與不確定性。
 
-```text
-目前分析專案/
-├── research/          問題、計畫、假設、來源、發現與交接
-├── data/              raw／interim／processed
-├── analysis/          Python、SQL、notebook
-├── config/            分組、期間、切分與成本參數
-└── reports/           每輪結果、圖表、決策與審查
-```
+你校正領域邏輯、資源限制與決策邊界；AI 負責推導研究方向、執行工具並回報依據。已確認範圍內可以連續工作，核心問題改變時再重新確認。
 
-問題與實際確認寫入 research/question.md，研究計畫寫入 plan.md；換工具或對話時讀 handoff.md 接續。原始資料與報告預設不提交，分享前仍需檢查研究文件、程式與設定。分析依賴沿用題目環境，不在初始化時安裝整套套件。
+![Hypothread 工作流：界定問題並由人類確認，推導研究設計，反覆探索與反證，最後交付證據與下一步。](assets/brand/workflow.svg)
 
-## 文件入口
+## 把它用在哪裡
 
-| 想知道什麼 | 文件 |
+| 你的題目 | 可以怎麼開始 | 希望得到什麼 |
+| --- | --- | --- |
+| 品質、停機或營運異常 | 釐清比較條件，追查產品、設備與時間效應 | 值得進一步調查的關聯與證據缺口 |
+| 缺少直接量測 | 以現有欄位推演代理特徵，交代機制與驗證方式 | 可以被否決或驗證的候選假設 |
+| 客群、留存或行為差異 | 定義觀測單位與期間，檢查組成與混雜 | 可比較的效果估計與限制 |
+| 候選警報與業務決策 | 提取白盒條件，再比較誤報漏報與成本情境 | 可供審查的規則、效益假設與試行建議 |
+
+只做探索也可以交付，不必補做模型、規則或 ROI。
+
+## 安裝後，你會有什麼
+
+| 工作 | 技能 |
 | --- | --- |
-| 每個技能什麼情境用、怎麼說 | [技能使用指南](.agents/skills/README.md) |
-| 安裝與第一個分析專案 | [安裝指南](docs/distribution-readme.md) |
-| 問題確認與研究方法 | [研究流程](docs/research-workflow.md) |
-| 日常操作與接續 | [操作流程](docs/harness.md) |
-| References 與報告骨架 | [技能資源](docs/skill-resources.md) |
-| 封裝、初始化與三個 CLI 的設計 | [發行設計](docs/skill-distribution-design.md) |
-| 背景、範式轉移與四環節 | [架構白皮書](docs/AI協作決策分析架構.md) |
-| 完整文件地圖 | [docs/](docs/README.md) |
+| 建立目前題目的資料夾骨架 | `ds-init` |
+| 依現有進度推薦下一步 | `decision-analysis` |
+| 定義問題、取得確認、設計研究 | `ds-frame` |
+| 推演可驗證的代理特徵 | `ds-proxy` |
+| 探索資料與檢查假設 | `ds-eda` |
+| 提取可解釋候選規則 | `ds-rules` |
+| 比較成本與效益情境 | `ds-impact` |
+| 審查實際計算與主張 | `ds-review` |
+| 整理報告與交接 | `ds-deliver` |
 
-## 維護與發行
+方法 references 與產出模板隨技能封裝，按需讀取。統計計算由工具實際執行；報告骨架保留必要證據，敘事與圖型依問題調整。圖表預設使用 Seaborn／Matplotlib。
 
-本分支是開發來源。`skills/` 維護角色模板與方法；產生器將需要的資源一起裝入 `.agents/skills/`（Codex／OpenCode 共用）與 `.claude/skills/`。`.opencode/commands/` 是載入 skill 的指令轉接，不另寫一份分析邏輯。
+```text
+你的分析專案/
+├── research/     問題、確認、計畫、假設、發現與交接
+├── data/         raw／interim／processed
+├── analysis/     Python、SQL、notebook
+├── config/       期間、分組、資料切分與成本參數
+└── reports/      每輪結果、圖表、決策與審查
+```
+
+換對話或工具時，請 AI 先讀 `research/question.md`、`plan.md`、`handoff.md`。原始資料與報告預設忽略，分享前仍需檢查研究文件、程式與設定是否包含敏感內容。
+
+## 方法與可信度
+
+Hypothread 將「假設、觀察關聯、獨立驗證、介入成效」分開陳述。分析準則要求效果量、樣本、不確定性、多重比較及資料洩漏檢查，重要主張連回實際計算。
+
+目前已驗證九個技能的安裝產物、初始化、可攜資源與檔案保留，13 項測試通過，並完成從 GitHub 安裝的實測。完整模型對話與 OpenCode TUI 的端到端分析驗收仍待進行。詳見 [驗證紀錄](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/blob/feat/agentic-decision-analysis/docs/release-validation.md)。
+
+套件採 MIT 授權；CLI 的模型使用與運算費用依你的環境計算。
+
+## 深入了解與參與
+
+- [每個技能的使用情境與提問範例](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/blob/feat/agentic-decision-analysis/.agents/skills/README.md)
+- [研究流程與方法依據](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/blob/feat/agentic-decision-analysis/docs/research-workflow.md)
+- [架構白皮書](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/blob/feat/agentic-decision-analysis/docs/AI協作決策分析架構.md)
+- [回報使用情境、問題或建議](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/issues)
+- [品牌與可分享素材](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/blob/feat/agentic-decision-analysis/docs/marketing/launch-kit.md)
+
+歡迎分享你最想用 AI 追查的一個問題，以及哪一步讓分析卡住。Star 可以幫助其他人找到 Hypothread；具體的使用回饋會幫助我們改進它。
+
+<details>
+<summary>給維護者：來源與發行</summary>
+
+`skills/` 是方法與角色的單一來源。產生器輸出 Claude Code 入口、Codex／OpenCode 共用技能，以及 OpenCode 的薄指令轉接。輕量 `skills` 分支由建置工具產生，不含歷史教材。
 
 ```bash
 python3 tools/render_skills.py --write
 python3 tools/render_skills.py --check
 python3 -m unittest discover -s tests -v
-python3 tools/build_release.py --out /tmp/ds-analysis-release
+python3 tools/build_release.py --out /tmp/hypothread-release
 ```
 
-發行目錄需不存在或為空白；只有 SKILL.md、所需 references、模板、初始化腳本、說明與授權。`VERSION` 記錄套件版本，發行分支由建置結果產生。
+[開發文件地圖](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/blob/feat/agentic-decision-analysis/docs/README.md) · [歷史教材](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/tree/feat/agentic-decision-analysis/archive)
 
-現行驗證涵蓋產生器、可攜資源、初始化及指令產物；真實模型的研究判斷另外依 [行為情境](evals/scenarios.md)評估，不將檔案測試視為三個 CLI 已完成端到端分析驗收。
-
-開發環境分析套件依 pyproject.toml／uv.lock，以 `uv sync --locked` 安裝。歷史教材見 [archive/](archive/README.md)。
+</details>

@@ -264,3 +264,8 @@ figures/
 !/reports/tables/
 /reports/tables/*
 !/reports/tables/.gitkeep
+
+# Hypothread 的公開品牌資產（只放行指定檔案）
+!/assets/brand/icon.png
+!/assets/brand/hero.png
+!/assets/brand/workflow.svg

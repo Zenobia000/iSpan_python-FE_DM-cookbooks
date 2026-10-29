@@ -2,6 +2,7 @@
 
 import argparse
 from pathlib import Path
+import shutil
 import sys
 
 if __package__:
@@ -19,14 +20,23 @@ def build(destination):
         for path, text in render('codex').items()
     }
     for target, source in (
-        ('README.md', 'docs/distribution-readme.md'), ('LICENSE', 'LICENSE'), ('VERSION', 'VERSION')
+        ('README.md', 'README.md'), ('README.en.md', 'README.en.md'),
+        ('LICENSE', 'LICENSE'), ('VERSION', 'VERSION')
     ):
         outputs[Path(target)] = (ROOT / source).read_text(encoding='utf-8')
+    artwork = [ROOT / 'assets/brand' / name for name in ('icon.png', 'hero.png', 'workflow.svg')]
+    for source in artwork:
+        if not source.is_file():
+            raise ValueError(f'缺少品牌資產：{source}')
     for relative, text in outputs.items():
         target = destination / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(text, encoding='utf-8')
-    return len(outputs)
+    for source in artwork:
+        target = destination / source.relative_to(ROOT)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+    return len(outputs) + len(artwork)
 
 
 def main():

@@ -9,7 +9,7 @@ import sys
 import tempfile
 import unittest
 
-from tools.build_release import build
+from tools.build_release import ROOT, build
 
 
 class DistributionTests(unittest.TestCase):
@@ -35,10 +35,16 @@ class DistributionTests(unittest.TestCase):
 
     def test_release_is_complete_and_local_resource_links_resolve(self):
         self.assertEqual(len(list((self.release / 'skills').glob('*/SKILL.md'))), 9)
-        self.assertEqual({p.name for p in self.release.iterdir()}, {'skills', 'README.md', 'VERSION', 'LICENSE'})
+        self.assertEqual({p.name for p in self.release.iterdir()},
+                         {'skills', 'assets', 'README.md', 'README.en.md', 'VERSION', 'LICENSE'})
+        for name in ('icon.png', 'hero.png', 'workflow.svg'):
+            relative = Path('assets/brand') / name
+            self.assertEqual((self.release / relative).read_bytes(), (ROOT / relative).read_bytes())
         for path in self.release.rglob('*.md'):
             text = path.read_text(encoding='utf-8')
-            for target in re.findall(r'(?<!!)\[[^\]]*\]\(([^\s)]+)\)', text):
+            targets = re.findall(r'!?\[[^\]]*\]\(([^\s)]+)\)', text)
+            targets += re.findall(r'<img[^>]+src="([^"]+)"', text)
+            for target in targets:
                 if '://' in target or target.startswith('#'):
                     continue
                 self.assertTrue((path.parent / target.split('#')[0]).exists(), (path, target))

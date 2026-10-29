@@ -1,6 +1,6 @@
 # 專案協作指引
 
-本 repository 的開發來源以 Claude Code／Codex／OpenCode 決策分析 Harness 為主。舊教材與歷史素材封存於 `archive/`。以繁體中文撰寫教學、決策說明與交接紀錄。
+本 repository 是 Hypothread｜問脈的開發來源，以 Claude Code／Codex／OpenCode 決策分析 Harness 為主。舊教材與歷史素材封存於 `archive/`。以繁體中文撰寫教學、決策說明與交接紀錄。
 
 ## 先讀什麼
 

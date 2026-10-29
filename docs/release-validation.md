@@ -38,3 +38,13 @@ skills add https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/tree/skill
 ## 尚未驗證的範圍
 
 未在 Claude Code、Codex、OpenCode 各自呼叫付費模型完成完整分析對話，也未實際開啟 OpenCode TUI 驗證 slash command 的互動。這些需依 [行為情境](../evals/scenarios.md)另行驗收；安裝與腳本通過不代表模型已正確執行研究推論或統計設計。
+
+## v0.2.1：Hypothread 品牌與發行圖文
+
+新增 Hypothread｜問脈品牌、透明 icon、主視覺、SVG 流程圖、繁體中文及英文 README、推廣文案與 release 說明。圖片由內建 image_gen 產生，未指定或宣稱底層模型版本；生成 prompts 與使用方式見 [品牌定義](marketing/brand.md)。
+
+本次實際執行產生器同步檢查、13 項測試與 git diff --check，全部通過。發行測試新增圖片與文字的逐位元組比對，並檢查 README 圖片的相對路徑，避免發行分支遺漏素材。
+
+以本機 Chrome 檢視 README 的桌面與手機閱讀預覽，確認品牌圖片、安裝內容與表格可呈現。這是 GitHub 風格的本機閱讀預覽，並非 OpenCode 或完整模型分析的互動驗收。
+
+基本技能核心維持原有規模；含品牌圖片及雙語 README 的 v0.2.1 發行目錄共 91 個檔案，約 1.75 MiB。技能功能與既有 ds-* 指令保持相容。

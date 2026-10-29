@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 460" role="img" aria-labelledby="title desc">
+  <title id="title">Hypothread 研究工作流</title>
+  <desc id="desc">界定研究問題並取得人類確認，推導假設與研究計畫，反覆探索及檢查反證，最後整理報告、審查與交接。</desc>
+  <rect width="1120" height="460" rx="24" fill="#F6F2E9"/>
+  <g fill="#173E37" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif">
+    <text x="60" y="64" font-size="15" letter-spacing="3">HYPOTHREAD / HOW IT WORKS</text>
+    <text x="60" y="110" font-size="29" font-weight="700">讓每次探勘，都接得上下一個判斷。</text>
+  </g>
+  <g stroke="#D26A39" stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M290 245H318M546 245H574M802 245H830"/>
+    <path d="M297 238L304 245L297 252M553 238L560 245L553 252M809 238L816 245L809 252"/>
+    <path d="M766 343C766 406 609 406 609 343"/>
+    <path d="M602 350L609 343L616 350"/>
+  </g>
+  <g fill="#FFFDFA" stroke="#D8DED5" stroke-width="1.5">
+    <rect x="60" y="150" width="232" height="194" rx="14"/>
+    <rect x="316" y="150" width="232" height="194" rx="14"/>
+    <rect x="572" y="150" width="232" height="194" rx="14"/>
+    <rect x="828" y="150" width="232" height="194" rx="14"/>
+  </g>
+  <g font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif">
+    <g fill="#D26A39" font-size="14" letter-spacing="2">
+      <text x="82" y="182">01 / FRAME</text><text x="338" y="182">02 / DESIGN</text>
+      <text x="594" y="182">03 / EXPLORE</text><text x="850" y="182">04 / DELIVER</text>
+    </g>
+    <g fill="#173E37" font-size="24" font-weight="700">
+      <text x="82" y="224">把問題定清楚</text><text x="338" y="224">推導研究方向</text>
+      <text x="594" y="224">沿著證據追問</text><text x="850" y="224">交付下一個決定</text>
+    </g>
+    <g fill="#536960" font-size="17">
+      <text x="82" y="261">決策、範圍與未知</text><text x="338" y="261">假設、替代解釋</text>
+      <text x="594" y="261">方法、效果與限制</text><text x="850" y="261">報告、審查與交接</text>
+      <text x="338" y="288">反證與推薦順序</text><text x="594" y="288">不成立的結果也保留</text>
+    </g>
+    <rect x="82" y="283" width="110" height="32" rx="16" fill="#F4E3D5"/>
+    <text x="101" y="305" fill="#8C4729" font-size="16">人類確認</text>
+    <text x="584" y="425" fill="#8C4729" font-size="16">探索・反證・再提問</text>
+    <text x="850" y="315" fill="#536960" font-size="13">research / analysis / reports</text>
+  </g>
+</svg>
