@@ -6,7 +6,7 @@
 
 | 工作 | Claude Code | Codex | OpenCode（已建立指令） |
 | --- | --- | --- | --- |
-| 初始化單一題目 | `/ds-init` | `$ds-init` | `/ds-init` |
+| 初始化單一題目 | `/lab-init` | `$lab-init` | `/lab-init` |
 | 選擇角色與續作 | `/decision-analysis` | `$decision-analysis` | `/decision-analysis` |
 | 定義問題與計畫 | `/ds-frame` | `$ds-frame` | `/ds-frame` |
 | 代理特徵 | `/ds-proxy` | `$ds-proxy` | `/ds-proxy` |
@@ -16,7 +16,7 @@
 | 證據審查 | `/ds-review` | `$ds-review` | `/ds-review` |
 | 整理交付 | `/ds-deliver` | `$ds-deliver` | `/ds-deliver` |
 
-先依 [安裝指南](distribution-readme.md)安裝技能。OpenCode 第一次說「使用 ds-init skill 初始化目前專案並建立 OpenCode 指令」；AI 應載入原生 skill，執行腳本時加上 `--opencode-commands`，完成後可用 `/ds-*`。已在開發倉庫執行入口產生器時，轉接指令已存在。[OpenCode skills](https://opencode.ai/docs/skills/)、[commands](https://opencode.ai/docs/commands/)
+先依 [技能指南](skill-guide.md)安裝技能。OpenCode 第一次說「使用 lab-init skill 初始化目前專案並建立 OpenCode 指令」；AI 應載入原生 skill，執行腳本時加上 `--opencode-commands`，完成後可用 `核心指令`。已在開發倉庫執行入口產生器時，轉接指令已存在。[OpenCode skills](https://opencode.ai/docs/skills/)、[commands](https://opencode.ai/docs/commands/)
 
 例如：「使用 `$ds-frame`，資料在 data/raw/，先推薦研究問題並和我確認，之後擬定有假設與反證的分析計畫。」
 

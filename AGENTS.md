@@ -8,7 +8,6 @@
 - 決策分析：使用 `decision-analysis` 路由，或使用者指定的 `ds-*` 技能。角色契約見 `skills/_shared/session.md`，操作見 `docs/harness.md`。
 - Harness 開發：先讀 `docs/harness-design.md`。`skills/` 為技能單一來源，透過 `tools/render_skills.py` 產生 Claude Code、Codex 與 OpenCode 的可攜入口；發行工具為 `tools/build_release.py`。
 - 目前資料夾就是一個分析專案，新題目由使用者另外開資料夾。先由 AI 界定問題並取得使用者確認，再將分析計畫寫入 `research/plan.md`；流程見 `docs/research-workflow.md`。
-- 四環節的業務定位：`docs/AI協作決策分析架構.md`；方法參考見 `docs/references/README.md`。
 - 封存資料：只有任務需要時才讀 `archive/`；教材維護另見 `archive/AGENTS.md`，不要將封存規約當成現行 Harness 的指令。
 
 ## 執行方式

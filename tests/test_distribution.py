@@ -24,7 +24,7 @@ class DistributionTests(unittest.TestCase):
         cls.temporary.cleanup()
 
     def call_init(self, root, *args, installed=None):
-        skill = installed or self.release / 'skills/ds-init'
+        skill = installed or self.release / 'skills/lab-init'
         return subprocess.run(
             [sys.executable, str(skill / 'scripts/init_project.py'), '--root', str(root), *args],
             cwd=root.parent, text=True, capture_output=True, check=False,
@@ -34,9 +34,9 @@ class DistributionTests(unittest.TestCase):
         return {p.relative_to(root): p.read_bytes() for p in root.rglob('*') if p.is_file()}
 
     def test_release_is_complete_and_local_resource_links_resolve(self):
-        self.assertEqual(len(list((self.release / 'skills').glob('*/SKILL.md'))), 9)
+        self.assertEqual(len(list((self.release / 'skills').glob('*/SKILL.md'))), 6)
         self.assertEqual({p.name for p in self.release.iterdir()},
-                         {'skills', 'assets', 'README.md', 'README.en.md', 'VERSION', 'LICENSE'})
+                         {'skills', 'assets', 'docs', 'README.md', 'README.en.md', 'VERSION', 'LICENSE'})
         for name in ('icon.png', 'hero.png', 'workflow.svg'):
             relative = Path('assets/brand') / name
             self.assertEqual((self.release / relative).read_bytes(), (ROOT / relative).read_bytes())
@@ -52,20 +52,30 @@ class DistributionTests(unittest.TestCase):
             for resource in re.findall(r'`(resources/[^`]+\.md)`', entry.read_text(encoding='utf-8')):
                 self.assertTrue((entry.parent / resource).is_file(), (entry, resource))
 
+    def test_bundled_guides_remain_available_offline(self):
+        guide = (self.release / 'docs/skill-guide.md').read_text()
+        self.assertIn('](project-layout.md)', guide)
+        self.assertIn('](kaggle-readiness.md)', guide)
+        readiness = (self.release / 'docs/kaggle-readiness.md').read_text()
+        self.assertIn('](../skills/research/resources/skills/_shared/references/task-contract.md)', readiness)
+
     def test_relocated_skill_initializes_unicode_workspace_and_is_idempotent(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
-            installed = base / 'installed skills/ds-init'
-            shutil.copytree(self.release / 'skills/ds-init', installed)
+            installed = base / 'installed skills/lab-init'
+            shutil.copytree(self.release / 'skills/lab-init', installed)
             project = base / '分析題目 A'
             result = self.call_init(project, installed=installed)
             self.assertEqual(result.returncode, 0, result.stderr)
             for relative in ('research/question.md', 'research/plan.md', 'research/handoff.md',
                              'AGENTS.md', 'CLAUDE.md', '.gitignore'):
                 self.assertTrue((project / relative).is_file(), relative)
-            for relative in ('data/raw', 'data/interim', 'data/processed', 'analysis', 'config',
-                             'reports/explorations', 'reports/figures', 'reports/tables'):
+            for relative in ('data/raw', 'data/processed', 'data/features', 'materials/external',
+                             'materials/generated', 'analysis/notebooks', 'analysis/scripts',
+                             'config', 'reports', 'artifacts'):
                 self.assertTrue((project / relative).is_dir(), relative)
+            self.assertTrue(all(len(p.relative_to(project).parts) <= 2
+                                for p in project.rglob('*') if p.is_dir()))
             (project / 'research/question.md').write_text('Human confirmed scope\n')
             (project / 'data/raw/private.csv').write_text('Keep original data\n')
             before = self.snapshot(project)
@@ -82,14 +92,14 @@ class DistributionTests(unittest.TestCase):
             (root / '.gitignore').write_text('personal/')
             commands = root / '.opencode/commands'
             commands.mkdir(parents=True)
-            (commands / 'ds-frame.md').write_text('Existing custom command\n')
+            (commands / 'research.md').write_text('Existing custom command\n')
             result = self.call_init(root, '--opencode-commands')
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual((root / 'AGENTS.md').read_text(), 'Existing policy\n')
             self.assertTrue((root / '.gitignore').read_text().startswith('personal/\n'))
-            self.assertEqual((commands / 'ds-frame.md').read_text(), 'Existing custom command\n')
-            self.assertEqual(len(list(commands.glob('*.md'))), 9)
-            self.assertIn('$ARGUMENTS', (commands / 'ds-eda.md').read_text())
+            self.assertEqual((commands / 'research.md').read_text(), 'Existing custom command\n')
+            self.assertEqual(len(list(commands.glob('*.md'))), 6)
+            self.assertIn('$ARGUMENTS', (commands / 'eda.md').read_text())
             before = self.snapshot(root)
             result = self.call_init(root, '--opencode-commands')
             self.assertEqual(result.returncode, 0, result.stderr)

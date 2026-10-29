@@ -2,7 +2,7 @@
 
 本專案借鏡 gstack 的角色分工、漸進讀取、共用規約與審查精神，讓 Claude Code／Codex／OpenCode 在目前資料夾處理一個分析題目。新題目由使用者另外開新專案。
 
-現行版本將技能安裝位置與分析專案分開，以 ds-init 在使用者自己的資料夾建立骨架；封裝與遷移規格見 [可安裝技能套件設計](skill-distribution-design.md)。已提供 ds-init、可攜 references 與發行建置工具。
+現行版本將技能安裝位置與分析專案分開，以 lab-init 在使用者自己的資料夾建立骨架；封裝與遷移規格見 [技能指南](skill-guide.md)。已提供 lab-init、可攜 references 與發行建置工具。
 
 ## 保留的設計
 

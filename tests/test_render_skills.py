@@ -10,6 +10,29 @@ from tools.render_skills import ROOT, render
 
 
 class RenderSkillsTests(unittest.TestCase):
+    def test_native_command_names_are_rejected(self):
+        for name in ('init', 'model', 'review', 'models', 'help'):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                source = root / 'skills' / name / 'SKILL.md.tmpl'
+                source.parent.mkdir(parents=True)
+                source.write_text(f'---\nname: {name}\ndescription: Conflict\n---\nBody\n')
+                with self.assertRaisesRegex(ValueError, '原生指令衝突'):
+                    render('codex', root)
+
+    def test_manual_policy_and_retired_names_absent(self):
+        for host, folder in (("codex", ".agents"), ("claude", ".claude")):
+            outputs = render(host)
+            names = {path.parent.name for path in outputs if path.name == "SKILL.md"}
+            self.assertEqual(names, {"lab-init", "research", "eda", "model-fit", "analysis-review", "report"})
+            for name in names:
+                base = Path(folder) / "skills" / name
+                self.assertEqual("disable-model-invocation: true" in outputs[base / "SKILL.md"], name == "lab-init")
+                if host == "codex":
+                    expected = "false" if name == "lab-init" else "true"
+                    self.assertIn("allow_implicit_invocation: " + expected, outputs[base / "agents/openai.yaml"])
+            self.assertFalse(any(part.startswith("ds-") for path in outputs for part in path.parts))
+
     def run_generator(self, output_root, mode, *args):
         return subprocess.run(
             [sys.executable, str(ROOT / "tools/render_skills.py"), mode,
@@ -27,12 +50,12 @@ class RenderSkillsTests(unittest.TestCase):
                     self.assertEqual((root / path).read_text(), expected)
             result = self.run_generator(root, "--check")
             self.assertEqual(result.returncode, 0, result.stderr)
-            path = root / ".agents/skills/ds-frame/SKILL.md"
+            path = root / ".agents/skills/research/SKILL.md"
             changed = path.read_text() + "\nLocal drift\n"
             path.write_text(changed)
             result = self.run_generator(root, "--check")
             self.assertEqual(result.returncode, 1)
-            self.assertIn(".agents/skills/ds-frame/SKILL.md", result.stderr)
+            self.assertIn(".agents/skills/research/SKILL.md", result.stderr)
             self.assertEqual(path.read_text(), changed)
 
     def test_missing_output_check_does_not_create_files(self):
@@ -68,7 +91,7 @@ class RenderSkillsTests(unittest.TestCase):
                 self.assertEqual((root / path).read_text(), expected)
             commands = list((root / ".opencode/commands").glob("*.md"))
             self.assertEqual(len(commands), sum(path.name == "SKILL.md" for path in render("codex")) + 1)
-            command = root / ".opencode/commands/ds-frame.md"
+            command = root / ".opencode/commands/research.md"
             self.assertIn('$ARGUMENTS', command.read_text())
             result = self.run_generator(root, "--check", "--host", "opencode")
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -76,7 +99,7 @@ class RenderSkillsTests(unittest.TestCase):
             command.write_text(changed)
             result = self.run_generator(root, "--check", "--host", "opencode")
             self.assertEqual(result.returncode, 1)
-            self.assertIn(".opencode/commands/ds-frame.md", result.stderr)
+            self.assertIn(".opencode/commands/research.md", result.stderr)
             self.assertEqual(command.read_text(), changed)
 
     def test_discovers_templates_and_adapts_host_invocation(self):
@@ -93,7 +116,7 @@ class RenderSkillsTests(unittest.TestCase):
                 ("opencode", ".agents", ""),
             ):
                 result = render(host, root)
-                self.assertEqual(len(result), 2 if host == "opencode" else 1)
+                self.assertEqual(len(result), {"opencode": 3, "codex": 2, "claude": 1}[host])
                 text = result[Path(folder) / "skills/custom/SKILL.md"]
                 self.assertIn(f"Use {prefix}custom.", text)
                 self.assertNotIn("{{", text)

@@ -19,7 +19,9 @@ flowchart TD
 
 問題定義與實際回覆記在 research/question.md，研究計畫記在 research/plan.md。已有相同問題的明確確認時引用既有紀錄，不重問；計畫內工作持續執行，只有重要邊界改變才重新確認。
 
-方法 reference 見 [研究設計](../skills/ds-frame/references/research-design.md)，其中參考彭明輝著作的公開資料，並區分本專案的操作化設計。
+方法 reference 見 [研究設計](../skills/research/references/research-design.md)，其中參考彭明輝著作的公開資料，並區分本專案的操作化設計。
+
+描述與開放探索不必先有假說或 target；確認想理解的現象與用途後即可擬定計畫。每輪以穩定 ID／路徑引用必要證據，來源改變時只重查受影響下游，缺資料只暫緩依賴它的分析。研究操作可以回訪，修訂保留舊版；共用資料的多次分析不算獨立驗證。具體紀錄依 [探索流程](../skills/_shared/references/exploration-protocol.md)，不另建排程或圖資料庫。
 
 ## 文件與工作位置
 
@@ -37,9 +39,9 @@ flowchart TD
 | config/ | 分組、期間、切分與成本參數 |
 | reports/explorations/ | 每輪獨立結果，避免覆寫先前探索 |
 | reports/figures/、reports/tables/ | 報告採用圖表與計算表 |
-| reports/decision.md、reports/review.md | 決策報告與審查紀錄 |
+| reports/decision.md、reports/analysis-review.md | 決策報告與審查紀錄 |
 
-安裝套件後以 ds-init 在目前資料夾建立空白骨架，再依實際題目填寫。資料可在允許的外部來源，記清楚位置與取得方式；不同題目的暫存結果不自行混用。
+安裝套件後以 lab-init 在目前資料夾建立空白骨架，再依實際題目填寫。資料可在允許的外部來源，記清楚位置與取得方式；不同題目的暫存結果不自行混用。
 
 ## 夜班差異的例子
 
@@ -53,12 +55,12 @@ AI 先整理：「整體夜班良率較低，但產品、設備及負載可能�
 
 換對話時請 AI 閱讀研究問題、計畫和 handoff，先核對資料、程式與結果再續作。每輪保留實際命令、參數、資料範圍和限制；新增假說維持探索身分，避免看到結果才改寫事前問題。
 
-交付前對照報告與證據審查，問題寫入 reports/review.md，重要未解事項先處理或清楚限制主張。資料、方法或結論改變後重查相關部分；不能以資料夾、檔名或模板存在證明分析正確。
+交付前對照報告與證據審查，問題寫入 reports/analysis-review.md，重要未解事項先處理或清楚限制主張。資料、方法或結論改變後重查相關部分；不能以資料夾、檔名或模板存在證明分析正確。
 
 ## 對話範例
 
 ```text
-使用 $decision-analysis。
+使用 $research。
 這個資料夾就是本次分析專案，資料在 <來源位置>。
 先推薦完整研究問題，向我確認後再擬定假設與分析計畫。
 將資料、程式、參數和報告放入對應目錄，保留反證與替代解釋。

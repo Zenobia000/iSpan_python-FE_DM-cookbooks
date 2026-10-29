@@ -4,11 +4,12 @@ import argparse
 from pathlib import Path
 import shutil
 import sys
+from urllib.parse import quote
 
 if __package__:
-    from .render_skills import ROOT, render
+    from .render_skills import ROOT, render, LINK, SOURCE_URL
 else:
-    from render_skills import ROOT, render
+    from render_skills import ROOT, render, LINK, SOURCE_URL
 
 
 def build(destination):
@@ -25,6 +26,23 @@ def build(destination):
     ):
         outputs[Path(target)] = (ROOT / source).read_text(encoding='utf-8')
     artwork = [ROOT / 'assets/brand' / name for name in ('icon.png', 'hero.png', 'workflow.svg')]
+    bundled_docs = {'skill-guide.md', 'project-layout.md', 'kaggle-readiness.md'}
+    for name in sorted(bundled_docs):
+        source = ROOT / 'docs' / name
+        def release_link(match):
+            target = match.group(1)
+            if '://' in target or target.startswith('#'):
+                return match.group(0)
+            path, marker, fragment = target.partition('#')
+            relative = (source.parent / path).resolve().relative_to(ROOT)
+            if relative.parent == Path('docs') and relative.name in bundled_docs:
+                return match.group(0)
+            if relative == Path('skills/_shared/references/task-contract.md'):
+                local = '../skills/research/resources/skills/_shared/references/task-contract.md'
+                return match.group(0).replace('(' + target + ')', '(' + local + marker + fragment + ')')
+            url = SOURCE_URL + quote(relative.as_posix()) + marker + fragment
+            return match.group(0).replace('(' + target + ')', '(' + url + ')')
+        outputs[Path('docs') / name] = LINK.sub(release_link, source.read_text(encoding='utf-8'))
     for source in artwork:
         if not source.is_file():
             raise ValueError(f'缺少品牌資產：{source}')
