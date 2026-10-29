@@ -1,0 +1,18 @@
+{
+  "case_id": "used_cars",
+  "run_id": "cars-first-study",
+  "data_dir": "data_mining_course/projects/project/car_data",
+  "output_root": "workspace",
+  "task": "regression",
+  "target": "price",
+  "snapshot_year": 2020,
+  "sample_n": 12000,
+  "seed": 42,
+  "folds": 3,
+  "approved_features": false,
+  "question": "車齡與里程如何共同關聯刊登價格？不同品牌是否一致？",
+  "hypotheses": [
+    "車齡與里程的價格關聯可能因品牌或車型構成而改變；此為待驗證假說。",
+    "年均里程可能補充原始年份與里程的預測資訊；沒有提升也屬有效結果。"
+  ]
+}

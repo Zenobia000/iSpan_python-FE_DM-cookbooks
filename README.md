@@ -10,6 +10,29 @@
 
 > 一套完整的資料探勘與特徵工程實戰課程，從基礎 EDA 到 **2026 大模型非結構化資料前處理**，涵蓋 11 個核心模組與 67 個實戰案例。技術棧：傳統 ML（scikit-learn）+ 現代大模型（PyTorch + HuggingFace）。
 
+**科學分析 Harness MVP**：單一 [scientific-analysis skill](.agents/skills/scientific-analysis/SKILL.md) 將問題與假說、資料診斷、互動圖表、特徵及模型比較串成可回溯的研究往返。它使用本機腳本，不需 MCP server 或常駐網站。舊內容仍可參考 [技術與概念大綱](docs/legacy-curriculum-outline.md)。
+
+### Harness 快速開始
+
+從 repo root 執行，使用隨庫二手車資料；不需要 Kaggle 憑證：
+
+```bash
+uv sync --extra harness
+uv run --extra harness python .agents/skills/scientific-analysis/scripts/run.py inspect --spec .agents/skills/scientific-analysis/examples/cars.json
+uv run --extra harness python .agents/skills/scientific-analysis/scripts/run.py explore --spec .agents/skills/scientific-analysis/examples/cars.json
+uv run --extra harness python .agents/skills/scientific-analysis/scripts/run.py report --spec .agents/skills/scientific-analysis/examples/cars.json
+```
+
+產物位於 `workspace/used_cars/cars-first-study/`。原始檔唯讀；同名階段拒絕覆寫，重跑須修改 spec 的 `run_id`。沒有模型結果時，探索報告不填入虛構指標。
+
+先檢視圖表與假說，經專家核准特徵後，以新 `run_id` 和 `approved_features: true` 依序執行 `inspect`、`explore`、`features`、`model`、`explain`、`report`。MVP 比較開發集交叉驗證結果，**不宣稱已完成獨立外部確認**。分類、調參、分群、異常與完整 XAI 等後續能力，依實際 CLI 支援及測試證據交付，不能因為方法卡列出就視為已完成。
+
+專家可從離線 HTML 匯出篩選／選取與註記，再要求 agent 用 `resume --spec <原spec> --view <匯出JSON> --new-run-id <新ID>` 接續研究。匯回會檢查資料版本；瀏覽器互動不代表模型已重新訓練。
+
+`resume` 建立新 run 的 `spec.json`，接著用該檔執行 `explore`／`report`，不用重跑 `inspect`。即使只篩選而未框選，也會計算該子群摘要；新報告恢復選取、篩選與註記，但不繼承舊模型分數。建模報告可檢視各 Fold 的線性係數與淺樹規則；MVP 不包含自動調參、SHAP、獨立 Holdout 或分群／異常建模。
+
+操作及邊界見 [研究流程](.agents/skills/scientific-analysis/references/research-workflow.md)，實作進度與驗證見 [執行紀錄](docs/mvp-execution.md)。
+
 <p align="center">
   <img src="assets/showcase.gif" alt="文字 · 圖像 · 聲音 · 影片 → 訓練大模型" width="90%">
 </p>
@@ -301,4 +324,4 @@ graph LR
 
 ### 🌟 如果這個專案對你有幫助，請給我們一個 Star！
 
-[![GitHub stars](https://img.shields.io/github/stars/你的用戶名/iSpan_python-FE_DM-cookbooks.svg?style=social&label=Star)](https://github.com/你的用戶名/iSpan_python-FE_DM-cookbooks) 
+[![GitHub stars](https://img.shields.io/github/stars/你的用戶名/iSpan_python-FE_DM-cookbooks.svg?style=social&label=Star)](https://github.com/你的用戶名/iSpan_python-FE_DM-cookbooks)

@@ -25,6 +25,7 @@ data_mining_course/datasets/.kagglehub_cache/
 # 聯絡表是衍生物，幾秒就能由 make_contact_sheet.py 重建，不進版控。
 data_mining_course/slides_plan/_contact/
 *.json
+!.agents/skills/scientific-analysis/examples/*.json
 *.xlsx
 *.xls
 *.parquet
@@ -182,6 +183,7 @@ checkpoints/
 
 # 實驗和結果檔案
 # =====================================
+/workspace/
 experiments/
 results/
 outputs/

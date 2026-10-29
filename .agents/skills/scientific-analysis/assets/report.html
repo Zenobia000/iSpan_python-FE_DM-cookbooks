@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>研究證據報告</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#202a32;background:#f5f6f6}*{box-sizing:border-box}body{margin:0}main{max-width:1440px;margin:auto;padding:28px}h1{font-size:26px;margin:4px 0 12px}h2{font-size:18px}p{line-height:1.65}small,.muted{color:#52616b}header{border-bottom:1px solid #cbd2d6;padding-bottom:16px}.toolbar{display:flex;gap:14px;flex-wrap:wrap;align-items:end;padding:18px 0}label{display:flex;flex-direction:column;gap:5px;font-size:13px}input,select,textarea,button{font:inherit;padding:8px;border:1px solid #aab7bf;border-radius:3px;background:white;color:inherit}button{cursor:pointer}button.primary{background:#155c70;color:white;border-color:#155c70}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{background:white;padding:14px;min-width:0;border:1px solid #d8dfe2}.plot{height:360px}.wide{grid-column:1/-1}.badge{padding:10px 14px;background:#e4eef1;border-left:4px solid #155c70}.badge.changed{background:#fff2d6;border-color:#9f6500}.scroll{overflow:auto;max-height:340px}table{border-collapse:collapse;width:100%;font-size:12px}td,th{text-align:left;padding:8px;border-bottom:1px solid #e0e5e8;white-space:nowrap}tr.selected{background:#d6eaf0}textarea{width:100%;min-height:90px}.provenance{overflow-wrap:anywhere;font-size:12px}.notes{display:grid;grid-template-columns:1fr 1fr;gap:18px}.facts{margin:0;padding-left:20px}.facts li{margin:8px 0}.metric-entry{padding:8px 0;border-bottom:1px solid #e0e5e8;overflow-wrap:anywhere}details pre{white-space:pre-wrap;font-size:12px}.empty{padding:30px;color:#52616b}@media(max-width:800px){main{padding:14px}.grid,.notes{grid-template-columns:1fr}.wide{grid-column:auto}.plot{height:320px}}
+</style><script>__PLOTLY__</script></head>
+<body><main>
+<header><small>SCIENTIFIC ANALYSIS · 研究證據</small><h1 id="title">解釋優先的互動分析</h1><div class="provenance" id="provenance"></div><p class="muted">探索已有證據：選取與篩選不會重訓模型，也不會產生新的因果結論。將疑點與條件匯出，再交給 agent 接續分析。</p></header>
+<section class="toolbar" aria-label="圖表變數">
+<label>X 欄位<select id="x-axis"></select></label><label>Y 欄位<select id="y-axis"></select></label><label>比較群組<select id="group-column"></select></label>
+</section>
+<section class="toolbar" aria-label="資料篩選">
+<label>數值篩選<select id="numeric-column"></select></label><label>最小值<input id="filter-min" type="number" step="any"></label><label>最大值<input id="filter-max" type="number" step="any"></label>
+<label>類別篩選<select id="category-column"></select></label><label>類別值<select id="category-value"></select></label><button id="apply-filter">套用篩選</button><button id="reset">重設全部</button>
+</section>
+<p id="status" class="badge" role="status"></p>
+<div class="grid">
+<section class="panel"><h2>關係與選取</h2><div id="scatter" class="plot"></div><small>框選／套索選取樣本，其他圖與明細同步高亮；灰色保留完整展示樣本作參考。</small></section>
+<section class="panel"><h2>分佈比較</h2><div id="distribution" class="plot"></div><small>完整展示樣本、目前篩選與選取樣本使用相同分箱；未重新估計任何模型。</small></section>
+<section class="panel"><h2>群組分佈比較</h2><div id="groups" class="plot"></div><small>按群組對照目前 Y 分佈；樣本數少的群組需謹慎解讀。切換 X／Y 可追查其他關係。</small></section>
+<section class="panel"><h2>分析證據</h2><ul id="findings" class="facts"></ul><div id="metrics"></div><details><summary>完整指標與設定</summary><pre id="metrics-json"></pre></details></section>
+<section id="model-panel" class="panel wide" hidden><h2>模型與特徵對照</h2><div id="model-comparison" class="plot"></div><small>每點為驗證 Fold 平均，誤差線是 Fold 標準差，不是信賴區間。原始與新特徵的比較以同一模型與切分為準。</small></section>
+<section id="interpretation-panel" class="panel wide" hidden><h2>可解釋模型：Fold 係數與規則</h2><label>檢查模型<select id="interpretation-select"></select></label><p id="interpretation-caption" class="muted"></p><div id="coefficient-plot" class="plot"></div><pre id="tree-rules" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre><small>這是個別 Fold 模型，不是全資料重訓模型；係數與規則呈現關聯，不代表介入後的因果效果。</small></section>
+<section class="panel wide"><h2>樣本明細</h2><p class="muted" id="table-caption"></p><div class="scroll"><table id="data-table"></table></div></section>
+</div>
+<section class="panel" style="margin-top:16px"><h2>保留疑點，交給 agent 接續研究</h2><div class="notes"><div><label>專家註記<textarea id="notes" placeholder="觀察到什麼？還有哪些替代解釋？希望下一步查什麼？"></textarea></label><p><button class="primary" id="export-state">匯出選取與研究註記</button></p></div><p class="muted">匯出檔包含資料版本、run、變數、篩選條件與選取樣本識別。原報告結論只適用於計算時條件；目前互動發現屬探索線索，需要 agent 檢查並計算後才能更新研究結論。</p></div></section>
+<script type="application/json" id="report-data">__DATA__</script>
+<script>
+"use strict";
+const payload=JSON.parse(document.getElementById('report-data').textContent);
+const rows=payload.rows, $=id=>document.getElementById(id);
+const finite=v=>typeof v==='number'&&Number.isFinite(v);
+const columns=Array.from(new Set(rows.flatMap(r=>Object.keys(r))));
+const numeric=(payload.numeric_columns||columns.filter(c=>rows.some(r=>finite(r[c])))).filter(c=>columns.includes(c)&&c!=='row_id');
+const categorical=columns.filter(c=>c!=='row_id'&&!numeric.includes(c));
+const state={selected:new Set(),filters:{numeric:null,category:null}};
+const label=v=>v===null||v===undefined?'（缺失）':String(v);
+const safeLabel=v=>label(v).replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+const columnUnits={...(payload.units||{}),...(payload.column_units||{})};
+const fieldLabel=c=>`${c} (${columnUnits[c]||'單位未提供'})`;
+function options(id,values,empty){const e=$(id);e.replaceChildren();if(empty){const o=document.createElement('option');o.value='';o.textContent=empty;e.append(o)}for(const v of values){const o=document.createElement('option');o.value=v;o.textContent=v;e.append(o)}}
+options('x-axis',numeric);options('y-axis',numeric);options('group-column',categorical,'不分組');options('numeric-column',numeric,'不篩選');options('category-column',categorical,'不篩選');
+if(numeric.includes('mileage'))$('x-axis').value='mileage';
+if(numeric.includes(payload.target))$('y-axis').value=payload.target;else if(numeric.length>1)$('y-axis').selectedIndex=1;
+if(categorical.includes('brand'))$('group-column').value='brand';
+$('provenance').textContent=`Run：${payload.run_id} ｜資料 SHA256：${payload.data_hash} ｜圖表展示 ${rows.length} 列${payload.source_count?`／來源 ${payload.source_count} 列`:''}`;
+$('metrics-json').textContent=JSON.stringify(payload.metrics||{},null,2);
+const findingLabels={observation:'觀察',alternative:'替代解釋',alternatives:'替代解釋',limitation:'限制',limitations:'限制',next_step:'下一步'};
+for(const finding of payload.findings||[]){for(const [key,value]of(typeof finding==='string'?[['',finding]]:Object.entries(finding))){const li=document.createElement('li');li.textContent=`${key?(findingLabels[key]||key)+'：':''}${typeof value==='string'?value:JSON.stringify(value)}`;$('findings').append(li)}}
+if(!(payload.findings||[]).length){const li=document.createElement('li');li.textContent='目前為探索性證據；請記錄觀察、替代解釋與待驗證事項。';$('findings').append(li)}
+function collectMetrics(value,path=''){if(!value||typeof value!=='object')return;for(const [k,v]of Object.entries(value)){const key=path?`${path} / ${k}`:k;if(finite(v)&&/mae|rmse|auc|accuracy|r2|precision|recall|silhouette/i.test(k)){const d=document.createElement('div');d.className='metric-entry';d.textContent=`${key}：${v.toFixed(4)}`;$('metrics').append(d)}else if(v&&typeof v==='object'&&$('metrics').childElementCount<12)collectMetrics(v,key)}}
+const experiments=payload.metrics?.experiments||[];
+if(experiments.length){for(const exp of experiments){const d=document.createElement('div');d.className='metric-entry';const metric=payload.metrics.primary_metric;const score=exp.aggregate?.[metric];d.textContent=`${exp.model} / ${exp.variant}：${metric} ${finite(score?.mean)?score.mean.toFixed(4):'未定義'}`;$('metrics').append(d)}}else collectMetrics(payload.metrics||{});
+function categoryOptions(){const c=$('category-column').value;options('category-value',c?Array.from(new Set(rows.map(r=>label(r[c])))).sort():[],'全部')}
+$('category-column').addEventListener('change',categoryOptions);categoryOptions();
+const resumed=payload.resume_state||payload.view;
+if(resumed&&typeof resumed==='object'){
+ const previousView=resumed.view||{};
+ for(const [key,id]of [['x','x-axis'],['y','y-axis'],['group','group-column']]){if(Array.from($(id).options).some(o=>o.value===previousView[key]))$(id).value=previousView[key]}
+ const n=resumed.filters?.numeric,c=resumed.filters?.category;
+ if(n&&numeric.includes(n.column)){state.filters.numeric={column:n.column,min:finite(n.min)?n.min:null,max:finite(n.max)?n.max:null};$('numeric-column').value=n.column;$('filter-min').value=n.min??'';$('filter-max').value=n.max??''}
+ if(c&&categorical.includes(c.column)){$('category-column').value=c.column;categoryOptions();if(Array.from($('category-value').options).some(o=>o.value===c.value)){$('category-value').value=c.value;state.filters.category={column:c.column,value:c.value}}}
+ const known=new Set(rows.map(r=>String(r.row_id)));state.selected=new Set((resumed.selected_row_ids||[]).map(String).filter(id=>known.has(id)));
+ $('notes').value=resumed.notes||'';
+ $('provenance').textContent+=` ｜接續探索：${payload.parent_run_id||resumed.run_id||'先前選取'}，這不是獨立驗證`;
+}
+
+function visibleRows(){return rows.filter(r=>{const n=state.filters.numeric,c=state.filters.category;return(!n||(finite(r[n.column])&&(n.min===null||r[n.column]>=n.min)&&(n.max===null||r[n.column]<=n.max)))&&(!c||label(r[c.column])===c.value)})}
+function selectedRows(active){return active.filter(r=>state.selected.has(String(r.row_id)))}
+function layout(extra={}){return{margin:{l:60,r:20,t:25,b:60},paper_bgcolor:'white',plot_bgcolor:'white',font:{family:'system-ui,sans-serif',size:12,color:'#27343c'},legend:{orientation:'h'},...extra}}
+const config={responsive:true,displaylogo:false};
+const interpretations=payload.interpretations||[];
+function drawInterpretation(){const record=interpretations[Number($('interpretation-select').value)];if(!record)return;const coeff=record.coefficients?.[0];$('interpretation-caption').textContent=`${record.model} / ${record.variant} / Fold ${record.fold_id} ${coeff?`/ class_index ${coeff.class_index}`:''}。${record.limitation||''}`;$('coefficient-plot').hidden=!coeff;$('tree-rules').hidden=!record.rules;$('tree-rules').textContent=record.rules||'';if(coeff){const available=coeff.terms.filter(t=>finite(t.coefficient)),terms=available.slice().sort((a,b)=>Math.abs(b.coefficient)-Math.abs(a.coefficient)).slice(0,20);$('interpretation-caption').textContent+=` 顯示絕對值前 ${terms.length} 項／${coeff.total_terms??available.length} 項${coeff.total_terms?'完整模型係數':'提供係數'}；完整紀錄保留於模型證據 JSON。`;Plotly.react('coefficient-plot',[{x:terms.map(t=>t.coefficient),y:terms.map(t=>safeLabel(t.feature)),type:'bar',orientation:'h',name:'係數',marker:{color:'#27798f'}}],layout({margin:{l:240,r:25,t:20,b:60},height:Math.max(360,terms.length*23+90),xaxis:{title:{text:'模型輸出係數（轉換後特徵尺度）'}},yaxis:{automargin:true,autorange:'reversed'}}),config);$('coefficient-plot').style.height=`${Math.max(360,terms.length*23+90)}px`}}
+if(interpretations.length){$('interpretation-panel').hidden=false;for(let i=0;i<interpretations.length;i++){const item=interpretations[i],option=document.createElement('option');option.value=String(i);option.textContent=`${item.model} / ${item.variant} / Fold ${item.fold_id}`;$('interpretation-select').append(option)}$('interpretation-select').addEventListener('change',drawInterpretation);drawInterpretation()}
+if(experiments.length){const metric=payload.metrics.primary_metric,valid=experiments.filter(e=>finite(e.aggregate?.[metric]?.mean));if(valid.length){$('model-panel').hidden=false;Plotly.newPlot('model-comparison',[{x:valid.map(e=>e.aggregate[metric].mean),y:valid.map(e=>safeLabel(`${e.model} / ${e.variant}`)),error_x:{type:'data',array:valid.map(e=>e.aggregate[metric].std||0),visible:true},type:'scatter',mode:'markers',marker:{color:'#27798f',size:10},name:safeLabel(metric)}],layout({margin:{l:190,r:30,t:20,b:60},xaxis:{title:{text:safeLabel(metric)}},yaxis:{automargin:true}}),config)}}
+function draw(){const active=visibleRows(),chosen=selectedRows(active),x=$('x-axis').value,y=$('y-axis').value,g=$('group-column').value;
+ const changed=Boolean(state.filters.numeric||state.filters.category||state.selected.size);
+ $('status').className=changed?'badge changed':'badge';$('status').textContent=`完整展示 ${rows.length} 列 ｜目前篩選 ${active.length} 列 ｜選取 ${chosen.length} 列${changed?' ｜探索條件已改變，原研究結論未重新驗證':' ｜原始檢視條件'}`;
+ if(numeric.length){
+ const xy=rs=>rs.filter(r=>finite(r[x])&&finite(r[y]));
+ const scatterTrace=(rs,name,color,opacity)=>{const a=xy(rs);return{x:a.map(r=>r[x]),y:a.map(r=>r[y]),customdata:a.map(r=>r.row_id),type:'scattergl',mode:'markers',name,marker:{color,opacity,size:6},hovertemplate:`${safeLabel(fieldLabel(x))}: %{x}<br>${safeLabel(fieldLabel(y))}: %{y}<br>row_id: %{customdata}<extra></extra>`}};
+ Plotly.react('scatter',[scatterTrace(rows,'完整展示','#c9d1d5',.35),scatterTrace(active,'目前篩選','#27798f',.65),scatterTrace(chosen,'選取','#b86a21',1)],layout({xaxis:{title:{text:safeLabel(fieldLabel(x))}},yaxis:{title:{text:safeLabel(fieldLabel(y))}},dragmode:'select',uirevision:`${x}/${y}`}),config);
+ const vals=rows.map(r=>r[x]).filter(finite),lo=Math.min(...vals),hi=Math.max(...vals),size=hi>lo?(hi-lo)/30:1;
+ const hist=(rs,name,color)=>({x:rs.map(r=>r[x]).filter(finite),type:'histogram',name,opacity:.65,marker:{color},xbins:{start:lo,end:hi+size,size}});
+ Plotly.react('distribution',[hist(rows,'完整展示','#c9d1d5'),hist(active,'目前篩選','#27798f'),hist(chosen,'選取','#b86a21')],layout({barmode:'overlay',xaxis:{title:{text:safeLabel(fieldLabel(x))}},yaxis:{title:{text:'樣本數'}}}),config);
+ const grouped=active.filter(r=>finite(r[y]));
+ const traces=[{x:grouped.map(r=>g?safeLabel(r[g]):'全部'),y:grouped.map(r=>r[y]),type:'box',name:'目前篩選',boxpoints:false,marker:{color:'#27798f'}}];
+ if(chosen.length)traces.push({x:chosen.filter(r=>finite(r[y])).map(r=>g?safeLabel(r[g]):'全部'),y:chosen.filter(r=>finite(r[y])).map(r=>r[y]),type:'scatter',mode:'markers',name:'選取',marker:{color:'#b86a21',size:7}});
+ Plotly.react('groups',traces,layout({xaxis:{title:{text:g?safeLabel(g):'全部樣本'},automargin:true},yaxis:{title:{text:safeLabel(fieldLabel(y))}}}),config);
+ }else{for(const id of ['scatter','distribution','groups']){$(id).textContent='沒有可繪製的數值欄位；仍可查看類別篩選與樣本明細。'}}
+ const display=chosen.length?chosen:active,table=$('data-table');table.replaceChildren();const head=document.createElement('tr');for(const c of columns){const th=document.createElement('th');th.textContent=c;head.append(th)}table.append(head);
+ for(const r of display.slice(0,100)){const tr=document.createElement('tr');if(state.selected.has(String(r.row_id)))tr.className='selected';for(const c of columns){const td=document.createElement('td');td.textContent=label(r[c]);tr.append(td)}table.append(tr)}
+ $('table-caption').textContent=`${chosen.length?'選取樣本':'目前篩選'} ${display.length} 列；明細最多顯示前 100 列。匯出保留全部選取識別，不只目前表格列。`;
+}
+$('apply-filter').addEventListener('click',()=>{const c=$('numeric-column').value,min=$('filter-min').value,max=$('filter-max').value;state.filters.numeric=c?{column:c,min:min===''?null:Number(min),max:max===''?null:Number(max)}:null;const cat=$('category-column').value,value=$('category-value').value;state.filters.category=cat&&value?{column:cat,value}:null;draw()});
+for(const id of ['x-axis','y-axis','group-column'])$(id).addEventListener('change',draw);
+$('reset').addEventListener('click',()=>{state.selected.clear();state.filters={numeric:null,category:null};$('numeric-column').value='';$('filter-min').value='';$('filter-max').value='';$('category-column').value='';categoryOptions();draw()});
+draw();
+if(numeric.length)$('scatter').on('plotly_selected',event=>{state.selected=new Set((event?.points||[]).map(p=>String(p.customdata)));draw()});
+function exportState(){const active=visibleRows();return{schema_version:1,run_id:payload.run_id,data_hash:payload.data_hash,filters:state.filters,selected_row_ids:selectedRows(active).map(r=>r.row_id),filtered_row_ids:active.map(r=>r.row_id),notes:$('notes').value,view:{x:$('x-axis').value,y:$('y-axis').value,group:$('group-column').value},scope:{displayed_row_count:rows.length,filtered_row_count:active.length,selected_row_count:selectedRows(active).length},created_at:new Date().toISOString()}}
+$('export-state').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(exportState(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='research-view.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+window.researchReport={exportState,ready:true};
+</script></main></body></html>

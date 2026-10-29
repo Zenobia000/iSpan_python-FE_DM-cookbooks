@@ -28,6 +28,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+harness = [
+    "plotly>=5.20",
+    "jinja2>=3.1",
+    "pytest>=8",
+    "playwright>=1.40",
+]
 # === 多模態前處理核心（M09：文字 / 圖像 / 音訊 / 影片）===
 # 2026 主流大模型資料前處理棧：PyTorch + HuggingFace 生態系
 multimodal = [
