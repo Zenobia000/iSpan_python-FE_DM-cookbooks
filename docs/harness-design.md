@@ -1,8 +1,8 @@
 # 參考 gstack 的分析協作設計
 
-本專案借鏡 gstack 的角色分工、漸進讀取、共用規約與審查精神，讓 Claude Code／Codex 在目前資料夾處理一個分析題目。新題目由使用者另外開新專案。
+本專案借鏡 gstack 的角色分工、漸進讀取、共用規約與審查精神，讓 Claude Code／Codex／OpenCode 在目前資料夾處理一個分析題目。新題目由使用者另外開新專案。
 
-下一版將技能安裝位置與分析專案分開，以 ds-init 在使用者自己的資料夾建立骨架；封裝與遷移規格見 [可安裝技能套件設計](skill-distribution-design.md)。此功能尚未實作。
+現行版本將技能安裝位置與分析專案分開，以 ds-init 在使用者自己的資料夾建立骨架；封裝與遷移規格見 [可安裝技能套件設計](skill-distribution-design.md)。已提供 ds-init、可攜 references 與發行建置工具。
 
 ## 保留的設計
 
@@ -10,7 +10,7 @@
 | --- | --- |
 | 專業角色與路由 | frame、proxy、eda、rules、impact、review、deliver 各負其責 |
 | 文件供後續工作接續 | research/ 保存問題、計畫、假設、來源與 handoff |
-| 技能單一來源 | skills/ 維護模板，產生 Claude／Codex 入口 |
+| 技能單一來源 | skills/ 維護模板，產生 Claude 入口、Codex／OpenCode 共用技能與 OpenCode 指令轉接 |
 | 按需讀取 references | 依資料結構與問題選方法，避免載入所有手冊 |
 | 報告與審查 | 主要主張連到計算，保留反證、限制與修正紀錄 |
 

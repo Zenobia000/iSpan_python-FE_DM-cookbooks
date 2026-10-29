@@ -1,7 +1,7 @@
 [project]
 name = "ispan-fe-dm-cookbooks"
 version = "0.1.0"
-description = "Claude Code／Codex 決策分析 Harness：研究問題、方法參考與分析交付"
+description = "Claude Code／Codex／OpenCode 決策分析 Harness：研究問題、方法參考與分析交付"
 readme = "README.md"
 requires-python = ">=3.9,<3.13"
 license = { text = "MIT" }

@@ -1,23 +1,26 @@
 # 分析技能操作流程
 
-目前資料夾就是一個分析題目。直接在 Claude Code／Codex 對話中使用技能，將研究、資料、程式與報告保存在眼前這份專案。
+目前資料夾就是一個分析題目。直接在 Claude Code／Codex／OpenCode 對話中使用技能，將研究、資料、程式與報告保存在眼前這份專案。
 
 ## 技能入口
 
-| 工作 | Claude Code | Codex |
-| --- | --- | --- |
-| 選擇下一個角色與續作 | `/decision-analysis` | `$decision-analysis` |
-| 定義問題與研究計畫 | `/ds-frame` | `$ds-frame` |
-| 代理特徵假設 | `/ds-proxy` | `$ds-proxy` |
-| EDA 與假設檢查 | `/ds-eda` | `$ds-eda` |
-| 候選規則 | `/ds-rules` | `$ds-rules` |
-| 成本與效益情境 | `/ds-impact` | `$ds-impact` |
-| 審查分析與報告 | `/ds-review` | `$ds-review` |
-| 整理交付 | `/ds-deliver` | `$ds-deliver` |
+| 工作 | Claude Code | Codex | OpenCode（已建立指令） |
+| --- | --- | --- | --- |
+| 初始化單一題目 | `/ds-init` | `$ds-init` | `/ds-init` |
+| 選擇角色與續作 | `/decision-analysis` | `$decision-analysis` | `/decision-analysis` |
+| 定義問題與計畫 | `/ds-frame` | `$ds-frame` | `/ds-frame` |
+| 代理特徵 | `/ds-proxy` | `$ds-proxy` | `/ds-proxy` |
+| 探索與假設檢查 | `/ds-eda` | `$ds-eda` | `/ds-eda` |
+| 候選規則 | `/ds-rules` | `$ds-rules` | `/ds-rules` |
+| 成本與效益 | `/ds-impact` | `$ds-impact` | `/ds-impact` |
+| 證據審查 | `/ds-review` | `$ds-review` | `/ds-review` |
+| 整理交付 | `/ds-deliver` | `$ds-deliver` | `/ds-deliver` |
+
+先依 [安裝指南](distribution-readme.md)安裝技能。OpenCode 第一次說「使用 ds-init skill 初始化目前專案並建立 OpenCode 指令」；AI 應載入原生 skill，執行腳本時加上 `--opencode-commands`，完成後可用 `/ds-*`。已在開發倉庫執行入口產生器時，轉接指令已存在。[OpenCode skills](https://opencode.ai/docs/skills/)、[commands](https://opencode.ai/docs/commands/)
 
 例如：「使用 `$ds-frame`，資料在 data/raw/，先推薦研究問題並和我確認，之後擬定有假設與反證的分析計畫。」
 
-若當次 host 未發現技能，可重開對話，或請 agent 讀取對應 skills/<名稱>/SKILL.md.tmpl 與 skills/_shared/session.md，依文件續做並說明載入方式。
+若當次 host 未發現技能，先核對安裝位置，必要時重開對話；不要求使用者下載開發模板。
 
 ## 一次分析如何進行
 
@@ -49,7 +52,7 @@
 
 ## 給技能維護者
 
-技能只維護在 skills/，透過 tools/render_skills.py 產生 .agents/ 與 .claude/ 入口；使用分析技能不需要先執行這個產生工具。
+技能只維護在 skills/，透過 tools/render_skills.py 產生含資源的 .agents/ 與 .claude/ 入口，以及 .opencode/commands/ 指令轉接；使用分析技能不需要先執行這個產生工具。
 
 ```bash
 python3 tools/render_skills.py --check

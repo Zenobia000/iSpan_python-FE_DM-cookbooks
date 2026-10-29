@@ -1,10 +1,12 @@
 # 資料科學技能使用指南
 
-目前資料夾就是一個分析專案。資料、程式與報告直接放在這裡；新題目由你另外開新資料夾。開啟 Codex 後直接描述需求，不需要初始化、查狀態或登錄角色。
+目前資料夾就是一個分析專案。資料、程式與報告直接放在這裡；新題目由你另外開新資料夾。安裝技能後用 ds-init 建立骨架，再直接描述研究需求。詳見 [安裝指南](../../docs/distribution-readme.md)。
 
-Claude Code 使用相同名稱的 `/ds-frame` 等入口。若工具未顯示技能，請 AI 直接讀取 `skills/<角色>/SKILL.md.tmpl` 與 `skills/_shared/session.md`，依其工作規約執行。
+Claude Code 使用 `/ds-frame` 等入口；OpenCode 首次用自然語言叫用 ds-init 建立指令，之後可用 `/ds-frame` 或原生 skill 載入。若工具未顯示技能，核對安裝位置或重開對話。
 
 ## 如何開始
+
+先在你的題目資料夾初始化：Codex 使用 `$ds-init`，Claude Code 使用 `/ds-init`，OpenCode 說「使用 ds-init skill 初始化目前專案並建立 OpenCode 指令」。重跑會保留既有檔案。
 
 ```text
 使用 $decision-analysis。
@@ -20,6 +22,7 @@ AI 先整理問題、範圍與關鍵未知，取得你的確認，再提出有�
 
 | 技能 | 適用情境 | 主要產出 |
 | --- | --- | --- |
+| ds-init | 新資料夾或要補齊骨架 | 研究、資料、程式、設定與報告目錄 |
 | decision-analysis | 不確定從何開始，或接續既有研究 | 推薦下一個角色與理由 |
 | ds-frame | 新題目、目標模糊或研究範圍改變 | 問題確認、研究計畫與假設 |
 | ds-proxy | 缺少直接量測，需尋找代理訊號 | 候選代理與驗證設計 |
@@ -139,7 +142,7 @@ AI 先盤點資料與可行性，將待確認問題寫入 `research/question.md`
 
 ## 為什麼有 skills/ 和 .agents/skills/
 
-`skills/` 是唯一維護來源，包含角色模板、方法 references 與報告骨架；這裡與 `.claude/skills/` 是工具能讀取的產生入口，兩者不是不同分析系統。修改角色後由維護者執行 `python3 tools/render_skills.py --write` 同步。
+`skills/` 是唯一維護來源，包含角色模板、方法 references 與報告骨架；這裡供 Codex／OpenCode 共用，`.claude/skills/` 供 Claude Code 載入；所需方法資源已封裝在各技能內。`.opencode/commands/` 只負責載入對應 skill。修改角色後由維護者執行 `python3 tools/render_skills.py --write` 同步。
 
 報告骨架固定必要的證據欄位，敘事依問題調整。圖表預設使用 Seaborn／Matplotlib，遵守 [圖表契約](../../skills/_shared/references/chart-contract.md)；不是每次固定產出相同圖型。
 

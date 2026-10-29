@@ -1,6 +1,6 @@
 # 可安裝的資料科學技能套件設計
 
-本文件是下一版的封裝規格。現行程式仍是 repository 內使用的八個分析技能；此處的 `ds-init`、發布目錄及安裝命令尚未實作或發布，不能視為現有功能。
+本文件記錄 v0.2.0 的封裝設計與實作。現行已提供九個技能、ds-init 腳本、技能內附資源、OpenCode 指令轉接與輕量發行建置。發行內容由 tools/build_release.py 產生至 skills 分支；真實模型的分析行為驗收另行記錄。
 
 ## 產品定位與使用體驗
 
@@ -8,7 +8,7 @@
 
 建議採用 Archify 的安裝與資源封裝方式，搭配 gstack 的角色分工與文件交接；保留目前的研究推論要求。Archify 的官方入口示範安裝技能後直接用自然語言工作；gstack 則示範以多個技能承接不同工作責任。[Archify](https://github.com/tt-a1i/archify)、[gstack](https://github.com/garrytan/gstack)
 
-預期的對話如下。這些是目標介面，不是目前可執行的新增命令：
+預期的對話如下。以下技能入口已提供：
 
 ```text
 使用者在自己開的新資料夾啟動 Codex。
@@ -28,7 +28,7 @@ AI：讀取本專案研究文件與技能內的方法參考，執行比較，
     回報效果量、不確定性、仍未排除的解釋及推薦下一步。
 ```
 
-Claude Code 對應 `/ds-init`、`/ds-frame`、`/ds-eda`。使用者也可以說「使用 ds-init 初始化目前專案」；名稱與自然語言都是載入工作指令的入口。技能載入後由 agent 呼叫腳本，不代表 CLI 新增了一個獨立的 `ds-init` shell 程式。Claude 的技能指令與腳本能力見 [官方文件](https://code.claude.com/docs/en/skills)，Codex 的技能與本機探索機制見 [官方文件](https://learn.chatgpt.com/docs/build-skills)。
+Claude Code 對應 `/ds-init`、`/ds-frame`、`/ds-eda`；OpenCode 初次以自然語言叫用 ds-init，建立 commands 後也可用同名斜線指令。使用者也可以說「使用 ds-init 初始化目前專案」；名稱與自然語言都是載入工作指令的入口。技能載入後由 agent 呼叫腳本，不代表 CLI 新增了一個獨立的 `ds-init` shell 程式。Claude 的技能指令與腳本能力見 [官方文件](https://code.claude.com/docs/en/skills)，Codex 的技能與本機探索機制見 [官方文件](https://learn.chatgpt.com/docs/build-skills)。
 
 ## 安裝位置與專案位置分開
 
@@ -55,14 +55,27 @@ Codex 官方文件目前列出的使用者技能位置為 `~/.agents/skills/`，
 
 另一個分析題目由使用者另開資料夾，沿用已安裝技能。技能安裝區不保存商業資料或特定題目的記憶。
 
+
+## 三個 CLI 的相容契約
+
+| CLI | 本機開發入口 | 發行套件載入方式 | 使用者操作 |
+| --- | --- | --- | --- |
+| Claude Code | .claude/skills/ | 安裝器放入其技能位置 | /ds-init、/ds-frame 等 |
+| Codex | .agents/skills/ | 安裝器放入其技能位置 | $ds-init、$ds-frame 等 |
+| OpenCode | 共用 .agents/skills/，另有 .opencode/commands/ | 原生 skill 工具，初始化可建立 commands | 首次自然語言載入；之後 /ds-* 或 skill |
+
+OpenCode 支援 .agents/skills/，不另產生第三份 SKILL.md。Slash commands 是薄轉接檔，只呼叫對應 skill 並傳入使用者需求；不固定模型、不啟動子 agent，也不修改 opencode.json。依據：[skills](https://opencode.ai/docs/skills/)、[commands](https://opencode.ai/docs/commands/)。
+
+各 CLI 共用研究方法與初始化腳本；不把 Claude 專用變數、權限設定或 hooks 當成跨工具能力。切換工具時先讀問題、計畫與 handoff。
+
 ## 第一版的安裝方案
 
-第一版採標準 Agent Skills 目錄與既有安裝工具，先完成兩個 CLI 共用的可攜資源；不另寫套件管理器。Vercel 的 skills CLI 支援選擇技能與 agent，並以 `-g` 提供跨專案安裝。[skills CLI](https://github.com/vercel-labs/skills)
+第一版採標準 Agent Skills 目錄與既有安裝工具，提供三個 CLI 共用的可攜資源；不另寫套件管理器。Vercel 的 skills CLI 支援選擇技能與 agent，並以 `-g` 提供跨專案安裝。[skills CLI](https://github.com/vercel-labs/skills)
 
-發布倉庫暫名為 `ds-analysis-skills`，實際名稱發布時決定。以下僅示範安裝介面，`<owner>/<release-repo>` 需要替換成實際已發布的倉庫：
+使用同一 GitHub repository 的輕量 `skills` 分支發行，開發分支保留原稿、測試與完整文件：
 
 ```bash
-npx skills add <owner>/<release-repo> -g
+npx skills add https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/tree/skills -g
 ```
 
 安裝流程選擇完整分析套件與正在使用的 CLI。使用者不必逐一尋找九個技能；安裝文件提供完整套件的選取方式與可選角色清單。Node.js 是此安裝工具的前提，Python 是初始化腳本的執行前提；實際分析依使用者專案環境。
@@ -71,7 +84,7 @@ npx skills add <owner>/<release-repo> -g
 
 ## 發布內容：一個產品，九個技能入口
 
-保留現有八個技能，只增加負責建立檔案的 `ds-init`。完整套件一次安裝，平常從初始化、問題定義與探索三個入口開始；其他角色在需要時使用。
+保留原有八個分析技能，另提供負責建立檔案的 `ds-init`。完整套件一次安裝，平常從初始化、問題定義與探索三個入口開始；其他角色在需要時使用。
 
 | 入口 | 責任 | 工作產出 |
 | --- | --- | --- |
@@ -87,48 +100,44 @@ npx skills add <owner>/<release-repo> -g
 
 不同角色共用研究文件，不代表自動啟動多個 agent。只有 EDA 的題目可以直接收斂交付。
 
-建議發布倉庫的安裝內容如下：
+實際發行內容如下，方法原稿的層級保留在各技能的 resources/skills/：
 
 ```text
-ds-analysis-skills/
-├── README.md                         安裝、開始與更新說明
-├── LICENSE
-└── skills/                           安裝器可發現的完整技能
+發行分支/
+├── README.md、LICENSE、VERSION
+└── skills/
     ├── ds-init/
     │   ├── SKILL.md
     │   ├── scripts/init_project.py
-    │   └── assets/project/           空白研究文件、目錄與規約片段
-    ├── decision-analysis/
-    │   ├── SKILL.md
-    │   └── references/               路由需要的共用約定
-    ├── ds-frame/
-    │   ├── SKILL.md
-    │   └── references/               研究方法與共用約定
+    │   └── assets/
+    │       ├── project/              空白骨架與專案指引
+    │       └── commands/             OpenCode 的九個薄轉接檔
     ├── ds-eda/
     │   ├── SKILL.md
-    │   ├── references/               方法選擇、相依資料、混雜、圖表
-    │   └── assets/inquiry.md
+    │   └── resources/skills/
+    │       ├── _shared/             共用約定、證據與圖表方法
+    │       ├── ds-eda/              方法參考與 inquiry 模板
+    │       └── ds-frame/            相依的研究方法參考
     ├── ds-deliver/
     │   ├── SKILL.md
-    │   ├── references/
-    │   └── assets/                   探索摘要與決策報告骨架
-    └── …                            proxy、rules、impact、review
+    │   └── resources/skills/        共用方法與交付模板
+    └── …                            其餘六個角色及所需資源
 ```
 
 每個可安裝技能都攜帶實際需要的資源。不依賴安裝器保留兄弟資料夾，也不要求使用者下載原始開發 repository。標準 SKILL.md 與安裝器的探索方式見 [Agent Skills 建立格式](https://github.com/vercel-labs/skills/blob/main/docs/creating-skills.md)。
 
-## 資源路徑：現行版本必須先補的部分
+## 資源路徑：已完成的可攜封裝
 
-目前的 ds-eda 會要求從 repository 根目錄讀取 `skills/ds-eda/references/…`，共用文件又會引用 `docs/`、`AGENTS.md` 與原始 PDF。`tools/render_skills.py` 目前只產生入口 Markdown，未將這些資源裝進各技能，因此現有 `.agents/skills/` 不能直接當成可攜套件發行。
+舊版入口依賴開發 repository 的 skills/、docs/、AGENTS.md 與 PDF。現行產生器已將角色所需的方法文件連同其相依參考封裝到各技能的 resources/skills/，原稿內的 repository 外部說明連結則轉成 GitHub 來源連結。
 
-下一版採兩種明確的路徑語意：
+現行採兩種明確的路徑語意：
 
-- 技能資源相對於「本次載入的 SKILL.md 所在位置」：references、scripts、assets。
+- 技能資源相對於「本次載入的 SKILL.md 所在位置」：resources、scripts、assets。
 - 分析資料與成果相對於「目前分析專案根目錄」：research、data、analysis、config、reports。
 
-例如 ds-eda 的 `references/method-selection.md` 來自技能安裝區；`research/plan.md` 來自使用者專案。由 agent 從載入技能的實際位置解析腳本和資源，不猜測家目錄。Claude 支援 `${CLAUDE_SKILL_DIR}`，但共用版本不假設 Codex 會展開相同變數。[Claude 路徑替換規格](https://code.claude.com/docs/en/skills)
+例如 ds-eda 的 `resources/skills/ds-eda/references/method-selection.md` 來自技能安裝區；`research/plan.md` 來自使用者專案。由 agent 從載入技能的實際位置解析腳本和資源，不猜測家目錄。Claude 支援 `${CLAUDE_SKILL_DIR}`，但共用版本不假設 Codex 會展開相同變數。[Claude 路徑替換規格](https://code.claude.com/docs/en/skills)
 
-開發來源仍維護一份 `_shared/`。建置時將必要共用 references 複製到各技能並重寫相對連結，發行產物之間可以有小量重複；維護者不手動維護重複原稿。核心方法整理成具來源的輕量文件，原始課程 PDF 與 archive 不納入基本安裝。
+開發來源仍維護一份 `_shared/`。建置時將必要共用 references 複製到各技能並重寫相對連結，發行產物之間可以有小量重複；維護者不手動維護重複原稿。核心方法整理成具來源的輕量文件，原始課程 PDF 與 archive 不納入基本安裝。方法原稿的目錄層級保留在 resources/skills/，使相依參考的相對連結可攜。
 
 ## ds-init 的行為契約
 
@@ -138,7 +147,7 @@ ds-init 是一個小型、可重複執行的檔案建立動作。使用者在自
 python3 "<已解析的技能位置>/scripts/init_project.py" --root .
 ```
 
-`<已解析的技能位置>` 是規格示意，實作需傳入真實路徑並妥善引用參數。使用者日常只需要 `$ds-init` 或 `/ds-init`。
+`<已解析的技能位置>` 是規格示意，實作需傳入真實路徑並妥善引用參數。使用者日常透過 `$ds-init`、`/ds-init` 或自然語言叫用。OpenCode 首次載入 ds-init 時加上 --opencode-commands，由腳本從本技能內的 assets/commands/ 建立本專案指令；標準技能安裝器本身不會代為安裝這些 commands。
 
 初始化產出：
 
@@ -179,7 +188,7 @@ references 管方法與主張邊界，assets 管產出骨架，scripts 管穩定
 
 每輪用文件記錄問題、方法、效果量、樣本、不確定性、反證及重現方式。接續時先讀 question、plan 與 handoff；不增加 case ID、角色 session、SQLite 或手動登錄命令。
 
-## 從目前版本遷移的最小工作
+## 實作與驗收項目
 
 | 工作 | 要改什麼 | 驗收方式 |
 | --- | --- | --- |
@@ -187,9 +196,9 @@ references 管方法與主張邊界，assets 管產出骨架，scripts 管穩定
 | 改寫資源位置 | 技能內資源相對於技能、題目檔案相對於專案 | 移到任意安裝路徑，在另一空資料夾仍可使用 |
 | 建置完整套件 | 產生 SKILL.md 並攜帶必要 references／assets／scripts | 掃描連結，確認無原 repository 的本機路徑依賴 |
 | 輕量發布 | 從開發來源產出乾淨發布倉庫或可安裝發行分支 | 不包含 archive、真實資料、報告與個人環境 |
-| 兩個 CLI 驗收 | 安裝、初始化、問題確認及接續 | 各留一份實際對話與產出，不以產生器測試替代 |
+| 三個 CLI 驗收 | 安裝、初始化、問題確認及接續 | 各留一份實際對話與產出，不以產生器測試替代 |
 | 文件改版 | 首頁改成安裝、初始化、第一次分析三步驟 | 新使用者無需理解開發倉庫即可開始 |
 
 保留目前原稿為單一維護來源，先在暫存位置驗證發行產物。安裝器的檢查／更新負責更新技能區，分析專案內容持續由使用者持有；技能升級不自動重寫研究、程式或報告。每個專案可在 handoff 記錄所用套件版本，重現分析仍需資料、程式、參數與環境依據。
 
-本階段交付的是封裝規格；發布倉庫建立、套件實作與實際安裝驗收仍待完成。
+實作與檔案層級驗證已提供；各 CLI 的安裝產物與初始化可重現檢查，真實付費模型的研究對話仍需依 evals/scenarios.md 執行，不能以單元測試宣稱已通過。

@@ -1,12 +1,12 @@
 # 專案協作指引
 
-本 repository 以 Claude Code／Codex 決策分析 Harness 為主。舊教材與歷史素材封存於 `archive/`。以繁體中文撰寫教學、決策說明與交接紀錄。
+本 repository 的開發來源以 Claude Code／Codex／OpenCode 決策分析 Harness 為主。舊教材與歷史素材封存於 `archive/`。以繁體中文撰寫教學、決策說明與交接紀錄。
 
 ## 先讀什麼
 
 - 專案入口：先讀 `README.md`，文件地圖見 `docs/README.md`。日常工作以根目錄的現行架構為準。
 - 決策分析：使用 `decision-analysis` 路由，或使用者指定的 `ds-*` 技能。角色契約見 `skills/_shared/session.md`，操作見 `docs/harness.md`。
-- Harness 開發：先讀 `docs/harness-design.md`。`skills/` 為技能單一來源，透過 `tools/render_skills.py` 產生兩個 host 的入口。
+- Harness 開發：先讀 `docs/harness-design.md`。`skills/` 為技能單一來源，透過 `tools/render_skills.py` 產生 Claude Code、Codex 與 OpenCode 的可攜入口；發行工具為 `tools/build_release.py`。
 - 目前資料夾就是一個分析專案，新題目由使用者另外開資料夾。先由 AI 界定問題並取得使用者確認，再將分析計畫寫入 `research/plan.md`；流程見 `docs/research-workflow.md`。
 - 四環節的業務定位：`docs/AI協作決策分析架構.md`；方法參考見 `docs/references/README.md`。
 - 封存資料：只有任務需要時才讀 `archive/`；教材維護另見 `archive/AGENTS.md`，不要將封存規約當成現行 Harness 的指令。
@@ -14,6 +14,7 @@
 ## 執行方式
 
 - Python 依賴以根目錄 `pyproject.toml` 與 `uv.lock` 為準，使用 `uv sync --locked`。
+- 發行建置：`python3 tools/build_release.py --out <不存在或空白的目錄>`；不要將教材、資料或個人環境放進發行產物。
 - Harness 驗證：`python3 tools/render_skills.py --check` 與 `python3 -m unittest discover -s tests -v`，不需安裝分析套件。
 - 格式檢查：`git diff --check`。
 - 不要為了檢查小範圍修改，執行整套教材、下載模型或啟動 GPU 訓練。

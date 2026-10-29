@@ -17,12 +17,12 @@ class RenderSkillsTests(unittest.TestCase):
             capture_output=True, text=True, check=False,
         )
 
-    def test_both_hosts_and_read_only_drift_check(self):
+    def test_all_hosts_and_read_only_drift_check(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             result = self.run_generator(root, "--write")
             self.assertEqual(result.returncode, 0, result.stderr)
-            for host in ("codex", "claude"):
+            for host in ("codex", "claude", "opencode"):
                 for path, expected in render(host).items():
                     self.assertEqual((root / path).read_text(), expected)
             result = self.run_generator(root, "--check")
@@ -51,6 +51,33 @@ class RenderSkillsTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(user_file.read_text(), "User guide\n")
             self.assertFalse((root / ".claude").exists())
+            self.assertFalse((root / ".opencode").exists())
+
+    def test_opencode_commands_and_shared_skills_are_installed_together(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            user_command = root / ".opencode/commands/custom.md"
+            user_command.parent.mkdir(parents=True)
+            user_command.write_text("User command\n")
+            result = self.run_generator(root, "--write", "--host", "opencode")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertFalse((root / ".claude").exists())
+            self.assertFalse((root / ".opencode/skills").exists())
+            self.assertEqual(user_command.read_text(), "User command\n")
+            for path, expected in render("codex").items():
+                self.assertEqual((root / path).read_text(), expected)
+            commands = list((root / ".opencode/commands").glob("*.md"))
+            self.assertEqual(len(commands), sum(path.name == "SKILL.md" for path in render("codex")) + 1)
+            command = root / ".opencode/commands/ds-frame.md"
+            self.assertIn('$ARGUMENTS', command.read_text())
+            result = self.run_generator(root, "--check", "--host", "opencode")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            changed = command.read_text() + "\nLocal command drift\n"
+            command.write_text(changed)
+            result = self.run_generator(root, "--check", "--host", "opencode")
+            self.assertEqual(result.returncode, 1)
+            self.assertIn(".opencode/commands/ds-frame.md", result.stderr)
+            self.assertEqual(command.read_text(), changed)
 
     def test_discovers_templates_and_adapts_host_invocation(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -62,10 +89,11 @@ class RenderSkillsTests(unittest.TestCase):
                 "{{SESSION_START}}\nUse {{INVOKE}}custom.\n"
             )
             for host, folder, prefix in (
-                ("codex", ".agents", "$"), ("claude", ".claude", "/")
+                ("codex", ".agents", ""), ("claude", ".claude", "/"),
+                ("opencode", ".agents", ""),
             ):
                 result = render(host, root)
-                self.assertEqual(len(result), 1)
+                self.assertEqual(len(result), 2 if host == "opencode" else 1)
                 text = result[Path(folder) / "skills/custom/SKILL.md"]
                 self.assertIn(f"Use {prefix}custom.", text)
                 self.assertNotIn("{{", text)
@@ -77,10 +105,10 @@ class RenderSkillsTests(unittest.TestCase):
                 render("codex", root)
             source = root / "skills/custom/SKILL.md.tmpl"
             source.parent.mkdir(parents=True)
-            source.write_text("---\nname: wrong\n---\nBody\n")
+            source.write_text("---\nname: wrong\ndescription: Test role\n---\nBody\n")
             with self.assertRaisesRegex(ValueError, "名稱與資料夾不符"):
                 render("codex", root)
-            source.write_text("---\nname: custom\n---\n{{UNKNOWN}}\n")
+            source.write_text("---\nname: custom\ndescription: Test role\n---\n{{UNKNOWN}}\n")
             with self.assertRaisesRegex(ValueError, "未解析"):
                 render("codex", root)
 

@@ -12,6 +12,10 @@ skills/
 │       ├── evidence-levels.md
 │       ├── exploration-protocol.md
 │       └── chart-contract.md
+├── ds-init/
+│   ├── SKILL.md.tmpl
+│   ├── scripts/init_project.py
+│   └── assets/project/
 ├── ds-frame/
 │   ├── references/research-design.md
 │   └── SKILL.md.tmpl                   問題確認與研究計畫
@@ -45,7 +49,7 @@ skills/
 | 多設備、重複量測或時間資料 | [dependent-data](../skills/ds-eda/references/dependent-data.md)：獨立單位、群集／時間結構與驗證 |
 | 組成差異或替代解釋 | [confounding-checks](../skills/ds-eda/references/confounding-checks.md)：可比範圍、分層、敏感度及主張邊界 |
 
-技能入口和共用 session 契約明確要求按需讀取 repository 根目錄的資源。這是 agent 執行規則，沒有新增會自動判讀 Schema 或檢查統計正確性的 runtime；必須由 agent 實際讀取、執行工具並留下證據。
+技能入口和共用工作約定明確要求按需讀取技能內附的 resources/ 資源。這是 agent 執行規則，沒有新增會自動判讀 Schema 或檢查統計正確性的 runtime；必須由 agent 實際讀取、執行工具並留下證據。
 
 ## 模板用在哪裡
 
@@ -55,7 +59,7 @@ skills/
 | [exploration-summary](../skills/ds-deliver/templates/exploration-summary.md) | EDA 或跨輪發現摘要，不需要強行加入 ROI | 正式草稿預設 `reports/decision.md`；另需摘要時可用 `reports/exploration-summary.md` |
 | [decision-report](../skills/ds-deliver/templates/decision-report.md) | 候選行動、規則、效益或試行決策 | `reports/decision.md` |
 
-研究骨架直接放在根目錄 `research/`。Agent 按需讀取上述模板，將實際內容寫入本專案的 `reports/`；不預填結果或建立另一層專案。
+研究骨架來源位於 `skills/ds-init/assets/project/`，由 ds-init 在使用者專案建立 `research/` 等目錄。Agent 按需讀取上述模板，將實際內容寫入本專案的 `reports/`；不預填結果或建立另一層專案。
 
 結構可依問題調整，證據與推論要求保持一致。沒有執行的項目說明範圍，不以空表、虛構數字或不存在的 review 填滿章節。正式交付不論使用哪個模板，都需對實際報告版本完成 review。
 
@@ -79,6 +83,6 @@ skills/
 
 ## 維護與驗證
 
-資源只維護在 `skills/`，`.agents/` 與 `.claude/` 入口引用同一份來源。調整技能本文後用 `python3 tools/render_skills.py --write` 產生入口，再用 `--check` 核對漂移。
+資源只維護在 `skills/`，產生器將所需方法資源放入 `.agents/` 與 `.claude/` 各技能，OpenCode 共用 `.agents/` 並另產生指令轉接。調整技能本文後用 `python3 tools/render_skills.py --write` 產生入口，再用 `--check` 核對漂移。
 
 Markdown 存在、連結有效與 skill 格式通過，不能證明實際分析判斷正確。真實行為評估需檢查 agent 是否在適當情境讀取參考、選擇合理方法、保存不成立假設及維持主張邊界；情境見 [evals](../evals/scenarios.md)。
