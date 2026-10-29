@@ -29,13 +29,16 @@
 
 ### Claude 與 Codex 決策分析專案
 
-新增 [agentic 原生決策分析專案](agentic/README.md)：讓 Claude Code 或 Codex 從代理特徵、EDA、白盒規則一路執行到 ROI 情境估算，保留可重現證據與跨 agent 交接紀錄。共用規範見 [AGENTS.md](AGENTS.md)，分析定位見 [AI 協作決策分析架構](data_mining_course/docs/AI協作決策分析架構.md)。
+使用 [決策分析 Harness](docs/harness.md)，讓 Claude Code 或 Codex 依業務問題選擇代理特徵、EDA、現場規則與效益分析。技能共用任務狀態、證據版本、review 與交付契約；分析方法由 agent 根據資料選擇。設計取捨見 [gstack 參考與架構](docs/harness-design.md)，共用規範見 [AGENTS.md](AGENTS.md)。
 
-完成下方環境設置後，可直接執行離線示範：
+從 repository 根目錄啟動 Claude Code 使用 `/decision-analysis`，或在 Codex 使用 `$decision-analysis`。也可直接呼叫 `/ds-frame`、`/ds-eda` 等角色。Harness 狀態工具只需 Python 標準函式庫：
 
 ```bash
-uv run --locked python -m agentic demo --out /tmp/decision-demo-001
+python3 tools/ds_harness.py init --case .decision/cases/first --goal eda
+python3 tools/ds_harness.py status --case .decision/cases/first
 ```
+
+可執行的機台分析已移至 [examples/factory_analysis](examples/factory_analysis/README.md)，作為資料與方法適用時的選用工具。
 
 ### 1️⃣ 克隆專案
 ```bash

@@ -1,4 +1,4 @@
-"""Run from the repository root with python -m agentic."""
+"""Optional example: python -m examples.factory_analysis."""
 
 import argparse
 import json

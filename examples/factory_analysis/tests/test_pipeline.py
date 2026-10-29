@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from agentic.pipeline import (
+from examples.factory_analysis.pipeline import (
     add_proxies, associations, business_scenarios, make_demo, run, wilson_interval,
 )
 
@@ -98,7 +98,7 @@ class PipelineTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             marker = Path(temp) / "keep.md"
             marker.write_text("original")
-            result = subprocess.run([sys.executable, "-m", "agentic", "demo", "--out", temp],
+            result = subprocess.run([sys.executable, "-m", "examples.factory_analysis", "demo", "--out", temp],
                                     capture_output=True, text=True)
             self.assertEqual(result.returncode, 2)
             self.assertEqual(marker.read_text(), "original")

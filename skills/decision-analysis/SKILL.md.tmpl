@@ -1,0 +1,22 @@
+---
+name: decision-analysis
+description: 為商業資料決策選擇問題定義、代理特徵、EDA、規則、效益或審查技能；既有 case 則依證據狀態續作。一般教材編輯不適用。
+---
+
+# 決策分析路由
+
+只載入當前需要的角色，不啟動固定的四階段 pipeline。
+
+| 使用者需要 | 使用的技能 |
+| --- | --- |
+| 定義要做的決策、資料缺口或分析計畫 | {{INVOKE}}ds-frame |
+| 缺少直接量測，推演替代訊號 | {{INVOKE}}ds-proxy |
+| 找出有業務影響的關聯、驗證假設 | {{INVOKE}}ds-eda |
+| 提取可解釋的現場條件與處置 | {{INVOKE}}ds-rules |
+| 將觀測與成本連結，估算情境價值 | {{INVOKE}}ds-impact |
+| 審查既有分析與報告 | {{INVOKE}}ds-review |
+| 整理交付、檢查 review 與續作資訊 | {{INVOKE}}ds-deliver |
+
+有 case 路徑時先用 `python3 tools/ds_harness.py status --case <case>` 查看狀態，修復過期證據後再續作。第一次分析先從 ds-frame 開始。使用者明確指定某環節時尊重其範圍；缺少必要上游則先補足最小內容。
+
+透過 host 的技能機制呼叫角色；若當次 session 尚未發現新技能，明說此限制並直接讀取對應 `skills/<名稱>/SKILL.md.tmpl` 的任務內容與 `skills/_shared/session.md` 續做。單純概念討論可直接回答。

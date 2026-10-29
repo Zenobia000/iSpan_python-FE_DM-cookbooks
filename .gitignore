@@ -240,6 +240,6 @@ figures/
 !**/slides_plan/*/_generated/
 !**/slides_plan/*/_generated/*.png
 
-# Agentic 專案：僅追蹤示範設定，執行資料與證據留在本機
-!agentic/example.config.json
-agentic/artifacts/
+# Harness 任務狀態與資料留在本機；範例設定可追蹤
+.decision/
+!examples/factory_analysis/example.config.json
