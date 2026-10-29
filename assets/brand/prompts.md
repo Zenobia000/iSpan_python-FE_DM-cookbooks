@@ -15,4 +15,3 @@ Create a wide premium editorial brand cover for the open-source software Hypothr
 ```
 
 生成後以原檔複製進 repository，未以其他工具修改圖像內容。workflow.svg 為程式維護的流程圖，不是生成式圖像。
-
