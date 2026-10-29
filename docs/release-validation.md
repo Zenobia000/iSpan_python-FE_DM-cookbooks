@@ -23,6 +23,18 @@ python3 <安裝位置>/ds-init/scripts/init_project.py --root <另一個空白�
 
 成功建立分析骨架與九個 .opencode/commands/*.md，未依賴開發倉庫的 assets 或 references。基本發行內容有 87 個檔案，約 175 KiB；不含教材、真實資料或分析產物。
 
+## GitHub 發行後檢查
+
+從公開輕量分支實際執行同樣的安裝流程：
+
+```text
+skills add https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/tree/skills --skill '*' -a claude-code codex opencode --copy -y
+```
+
+成功安裝全部九個技能至獨立暫存專案，包含 Claude Code 與 Codex／OpenCode 的共用入口。從 GitHub 下載的 ds-init 腳本可在另一個目錄建立研究骨架及九個 OpenCode 指令；再次執行時 created 與 updated 均為空。
+
+發行分支提交為 `7df9637`，對應實作提交 `7fb5faf`。後者的 [GitHub Actions](https://github.com/Zenobia000/iSpan_python-FE_DM-cookbooks/actions/runs/40873952537) 已完成且成功，包含 Python 3.9／3.12 的產生器同步與測試。
+
 ## 尚未驗證的範圍
 
 未在 Claude Code、Codex、OpenCode 各自呼叫付費模型完成完整分析對話，也未實際開啟 OpenCode TUI 驗證 slash command 的互動。這些需依 [行為情境](../evals/scenarios.md)另行驗收；安裝與腳本通過不代表模型已正確執行研究推論或統計設計。
