@@ -1,0 +1,35 @@
+{
+  "dataset_kind": "synthetic_demo",
+  "timestamp": "timestamp",
+  "target": "yield_rate",
+  "event_below": 0.9,
+  "train_fraction": 0.7,
+  "min_samples_leaf": 15,
+  "features": ["temperature", "pressure", "current_std_6h", "power_change"],
+  "proxies": [
+    {
+      "name": "current_std_6h",
+      "source": "motor_current",
+      "operation": "rolling_std",
+      "window": 6,
+      "available_at_decision": true,
+      "rationale": "示範假設：電流波動可能反映負載異常，尚未證明可推估震動。時間窗為六筆；只有逐小時資料才是六小時。"
+    },
+    {
+      "name": "power_change",
+      "source": "power_kwh",
+      "operation": "pct_change",
+      "available_at_decision": true,
+      "rationale": "示範假設：耗電變化率可能補充設備負載變化的訊號，須排除運轉模式影響。"
+    }
+  ],
+  "business": {
+    "currency": "TWD",
+    "months": 3,
+    "monthly_baseline_loss": 100000,
+    "monthly_action_cost": 2000,
+    "initial_cost": 5000,
+    "assumed_reductions": [0.05, 0.1, 0.15],
+    "parameter_source": "全部為示範假設，正式分析須由業務提供成本基準與可追溯來源。"
+  }
+}

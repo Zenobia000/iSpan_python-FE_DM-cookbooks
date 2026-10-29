@@ -27,6 +27,16 @@
 
 ## 🚀 快速開始
 
+### Claude 與 Codex 決策分析專案
+
+新增 [agentic 原生決策分析專案](agentic/README.md)：讓 Claude Code 或 Codex 從代理特徵、EDA、白盒規則一路執行到 ROI 情境估算，保留可重現證據與跨 agent 交接紀錄。共用規範見 [AGENTS.md](AGENTS.md)，分析定位見 [AI 協作決策分析架構](data_mining_course/docs/AI協作決策分析架構.md)。
+
+完成下方環境設置後，可直接執行離線示範：
+
+```bash
+uv run --locked python -m agentic demo --out /tmp/decision-demo-001
+```
+
 ### 1️⃣ 克隆專案
 ```bash
 git clone https://github.com/你的用戶名/iSpan_python-FE_DM-cookbooks.git
@@ -301,4 +311,4 @@ graph LR
 
 ### 🌟 如果這個專案對你有幫助，請給我們一個 Star！
 
-[![GitHub stars](https://img.shields.io/github/stars/你的用戶名/iSpan_python-FE_DM-cookbooks.svg?style=social&label=Star)](https://github.com/你的用戶名/iSpan_python-FE_DM-cookbooks) 
+[![GitHub stars](https://img.shields.io/github/stars/你的用戶名/iSpan_python-FE_DM-cookbooks.svg?style=social&label=Star)](https://github.com/你的用戶名/iSpan_python-FE_DM-cookbooks)

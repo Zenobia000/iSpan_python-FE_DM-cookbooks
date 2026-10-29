@@ -239,3 +239,7 @@ figures/
 # 檔名固定為 pNN.png，重生是覆蓋而不是新增，diff 乾淨
 !**/slides_plan/*/_generated/
 !**/slides_plan/*/_generated/*.png
+
+# Agentic 專案：僅追蹤示範設定，執行資料與證據留在本機
+!agentic/example.config.json
+agentic/artifacts/
