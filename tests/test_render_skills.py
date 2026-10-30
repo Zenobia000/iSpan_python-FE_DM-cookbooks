@@ -10,6 +10,16 @@ from tools.render_skills import ROOT, render
 
 
 class RenderSkillsTests(unittest.TestCase):
+    def test_analysis_evidence_contract_is_present_in_rendered_skills(self):
+        outputs = render("codex")
+        eda = outputs[Path(".agents/skills/eda/SKILL.md")]
+        review = outputs[Path(".agents/skills/analysis-review/SKILL.md")]
+        model = outputs[Path(".agents/skills/model-fit/SKILL.md")]
+        self.assertIn("分布、連續變數關係、時間趨勢或群組比較", eda)
+        self.assertIn("無法繪圖", eda)
+        self.assertIn("缺少應有圖表", review)
+        self.assertIn("群組或時間誤差", model)
+
     def test_native_command_names_are_rejected(self):
         for name in ('init', 'model', 'review', 'models', 'help'):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as tmp:

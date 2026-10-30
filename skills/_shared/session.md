@@ -25,7 +25,7 @@
 
 重要方法選擇簡述「依哪些資料、為何適用、哪些前提未確認、替代做法與限制」即可，深度依任務調整。有引用就記來源，不以方法名稱代替理由。
 
-按需讀取：主張與證據用 `skills/_shared/references/evidence-levels.md`；較完整的探勘用 `skills/_shared/references/exploration-protocol.md`；繪圖用 `skills/_shared/references/chart-contract.md`。模板是參考，可省略不適用項目。
+按需讀取：主張與證據用 `skills/_shared/references/evidence-levels.md`；實際進行 EDA 前讀 `skills/_shared/references/exploration-protocol.md`；繪圖用 `skills/_shared/references/chart-contract.md`。短任務可精簡記錄，模板可省略不適用項目。
 
 被採用的重要結果留下輸入資料、程式、實際參數、方法與輸出位置，必要時加版本與重跑命令。草稿可自由，正式主張需能追溯；不把未執行、關聯或同來源的重複比較稱為獨立驗證或因果。
 
